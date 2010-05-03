@@ -16,8 +16,9 @@ Bones{
   version RestGraph::VERSION
 
   depend_on 'rest-client'
-  depend_on 'bacon', :development => true
-  depend_on 'rr',    :development => true
+  depend_on 'rr',      :development => true
+  depend_on 'webmock', :development => true
+  depend_on 'bacon',   :development => true
 
   name    proj
   url     "http://github.com/godfat/#{proj}"
