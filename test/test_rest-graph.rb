@@ -122,4 +122,20 @@ describe RestGraph do
     RestGraph.parse_token_in_fb_cookie(fbs).
       should == access_token
   end
+
+  it 'would do fql query with/without access_token' do
+    fql = 'SELECT name FROM likes where id="123"'
+    query = "query=#{fql}&format=json"
+    stub_request(:get, "https://api.facebook.com/method/fql.query?#{query}").
+      to_return(:body => '[]')
+
+    RestGraph.new.fql(fql).should == []
+
+    token = 'token'.reverse
+    stub_request(:get, "https://api.facebook.com/method/fql.query?#{query}" \
+      "&access_token=#{token}").
+      to_return(:body => '[]')
+
+    RestGraph.new(:access_token => token).fql(fql).should == []
+  end
 end

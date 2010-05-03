@@ -2,7 +2,7 @@
 
 == rest-graph 0.9.0 -- ?
 * renamed :server option to :graph_server
-* added :fql_server option
+* added :fql_server option and fql support.
 
 == rest-graph 0.8.1 -- 2010-05-03
 * added access_token parsing utility
