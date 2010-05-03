@@ -15,7 +15,11 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 == SYNOPSIS:
 
  require 'rest-graph'
- rg = RestGraph.new(:access_token => '...')
+ rg = RestGraph.new(:access_token => '...',
+                    :server       => 'https://graph.facebook.com/,
+                    :accept       => 'text/javascript',
+                    :lang         => 'en-us', # this affect search
+                    :auto_decode  => true)    # decode by json
  rg.get('me')
  rg.post('feed/me', :message => 'bread!')
 
