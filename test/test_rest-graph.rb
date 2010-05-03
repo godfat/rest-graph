@@ -95,4 +95,11 @@ describe RestGraph do
       RestGraph.send(:private, :post_request) # TODO: rr, why??
     end
   end
+
+  it 'would not raise exception when encountering 500' do
+    stub_request(:delete, 'https://graph.facebook.com/123').to_return(
+      :body => '[]', :status => 500)
+
+    RestGraph.new.delete('123').should == []
+  end
 end
