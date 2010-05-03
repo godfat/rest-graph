@@ -46,6 +46,7 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 * gem install rest-client
 * gem install json (optional)
 * gem install json_pure (optional)
+* gem install rack (optional, to parse access_token in HTTP_COOKIE)
 
 == INSTALL:
 
