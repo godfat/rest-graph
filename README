@@ -23,6 +23,8 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 
 * tested with MRI 1.8.7 and 1.9.1
 * gem install rest-client
+* gem install json (optional)
+* gem install json_pure (optional)
 
 == INSTALL:
 
