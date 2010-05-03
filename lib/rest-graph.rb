@@ -6,7 +6,7 @@ require 'cgi'
 class RestGraph
   autoload :Rack, 'rack'
   def self.parse_token_in_rack_env env, app_id = '\d+'
-    env['HTTP_COOKIE'] =~ /fbs_#{app_id}+="(.+?)"/ &&
+    env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
       Rack::Utils.parse_query($1)['access_token']
   end
 
