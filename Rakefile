@@ -16,6 +16,8 @@ Bones{
   version RestGraph::VERSION
 
   depend_on 'rest-client'
+  depend_on 'json',    :development => true
+
   depend_on 'rr',      :development => true
   depend_on 'webmock', :development => true
   depend_on 'bacon',   :development => true
