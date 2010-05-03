@@ -12,6 +12,12 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 
  super simple facebook open graph api client
 
+== FEATURES:
+
+* simple graph api call
+* simple fql call
+* utility to extract access_token and check sig in cookies
+
 == SYNOPSIS:
 
  require 'rest-graph'
