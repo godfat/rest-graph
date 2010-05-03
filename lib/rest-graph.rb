@@ -5,7 +5,7 @@ require 'cgi'
 
 class RestGraph
   attr_accessor :access_token, :server, :accept, :lang, :auto_decode
-  def initialize o
+  def initialize o = {}
     self.access_token = o[:access_token]
     self.server       = o[:server] || 'https://graph.facebook.com/'
     self.accept       = o[:accept] || 'text/javascript'
@@ -50,10 +50,10 @@ class RestGraph
     post_request(e.http_body)
   end
 
-  def build_query_string q
+  def build_query_string q = {}
     query = q.merge(access_token ? {:access_token => access_token} : {})
     return '' if query.empty?
-    return '?' + query.map{ |(k, v)| "#{k}=#{CGI.escape(v)}" }.join('&')
+    return '?' + query.sort.map{ |(k, v)| "#{k}=#{CGI.escape(v)}" }.join('&')
   end
 
   def build_headers

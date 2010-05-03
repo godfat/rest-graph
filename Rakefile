@@ -11,7 +11,7 @@ proj = 'rest-graph'
 require "#{proj}/version"
 
 Bones{
-  # ruby_opts [''] # silence warning for now
+  ruby_opts [''] # silence warning for now
 
   version RestGraph::VERSION
 
