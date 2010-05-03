@@ -17,6 +17,7 @@ Bones{
 
   depend_on 'rest-client'
   depend_on 'json',    :development => true
+  depend_on 'rack',    :development => true
 
   depend_on 'rr',      :development => true
   depend_on 'webmock', :development => true

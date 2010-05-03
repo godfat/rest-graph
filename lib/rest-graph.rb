@@ -4,6 +4,20 @@ require 'rest_client'
 require 'cgi'
 
 class RestGraph
+  autoload :Rack, 'rack'
+  def self.parse_token_in_rack_env env, app_id = '\d+'
+    env['HTTP_COOKIE'] =~ /fbs_#{app_id}+="(.+?)"/ &&
+      Rack::Utils.parse_query($1)['access_token']
+  end
+
+  def self.parse_token_in_cookies cookies, app_id
+    parse_token_in_fb_cookie(cookies["fbs_#{app_id}"])
+  end
+
+  def self.parse_token_in_fb_cookie fb_cookie
+    fb_cookie && Rack::Utils.parse_query(fb_cookie[1..-2])['access_token']
+  end
+
   attr_accessor :access_token, :server, :accept, :lang, :auto_decode
   def initialize o = {}
     self.access_token = o[:access_token]

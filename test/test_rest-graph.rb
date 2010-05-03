@@ -102,4 +102,23 @@ describe RestGraph do
 
     RestGraph.new.delete('123').should == []
   end
+
+  it 'would extract correct access_token' do
+    access_token = '1|2-5|f.'
+    app_id       = '1829'
+    fbs          = "\"access_token=#{CGI.escape(access_token)}&expires=0&" \
+                   "secret=abc&session_key=def-456&sig=zzz&uid=3\""
+    http_cookie  =
+      "__utma=123; __utmz=456.utmcsr=(d)|utmccn=(d)|utmcmd=(n); " \
+      "fbs_#{app_id}=#{fbs}"
+
+    RestGraph.parse_token_in_rack_env('HTTP_COOKIE' => http_cookie).
+      should == access_token
+
+    RestGraph.parse_token_in_cookies({"fbs_#{app_id}" => fbs}, app_id).
+      should == access_token
+
+    RestGraph.parse_token_in_fb_cookie(fbs).
+      should == access_token
+  end
 end
