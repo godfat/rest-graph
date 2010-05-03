@@ -10,14 +10,14 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 
 == DESCRIPTION:
 
- facebook graph api client
+ super simple facebook open graph api client
 
 == SYNOPSIS:
 
  require 'rest-graph'
- rg = RestGraph.new(:access_token => ...)
+ rg = RestGraph.new(:access_token => '...')
  rg.get('me')
- rg.post('feed/me', :message => 'hi!')
+ rg.post('feed/me', :message => 'bread!')
 
 == REQUIREMENTS:
 
