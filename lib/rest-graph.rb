@@ -53,7 +53,7 @@ class RestGraph
   def build_query_string q = {}
     query = q.merge(access_token ? {:access_token => access_token} : {})
     return '' if query.empty?
-    return '?' + query.sort.map{ |(k, v)| "#{k}=#{CGI.escape(v)}" }.join('&')
+    return '?' + query.map{ |(k, v)| "#{k}=#{CGI.escape(v)}" }.join('&')
   end
 
   def build_headers

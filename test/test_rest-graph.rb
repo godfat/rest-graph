@@ -1,4 +1,5 @@
 
+require 'rubygems' if RUBY_VERSION < '1.9.0'
 require 'rest-graph'
 
 require 'rr'
@@ -13,6 +14,10 @@ Bacon.summary_on_exit
 describe RestGraph do
   before do
     reset_webmock
+  end
+
+  def normalize_query query
+    '?' + query[1..-1].split('&').sort.join('&')
   end
 
   it 'would build correct headers' do
@@ -32,12 +37,14 @@ describe RestGraph do
   end
 
   it 'would build correct query string' do
+    normalize_query(
     RestGraph.new(:access_token => 'token').send(:build_query_string,
-                                                 :message => 'hi!!').
+                                                 :message => 'hi!!')).
       should == '?access_token=token&message=hi%21%21'
 
+    normalize_query(
     RestGraph.new.send(:build_query_string, :message => 'hi!!',
-                                            :subject => '(&oh&)').
+                                            :subject => '(&oh&)')).
       should == '?message=hi%21%21&subject=%28%26oh%26%29'
   end
 
@@ -46,7 +53,9 @@ describe RestGraph do
       :headers => {'Accept'          => 'text/plain',
                    'Accept-Language' => 'zh-tw',
                    'Accept-Encoding' => 'gzip, deflate', # this is by ruby
-                   'User-Agent'      => 'Ruby'}).        # this is by ruby
+                  }.merge(RUBY_VERSION <= '1.9.0' ?
+                  {} :
+                  {'User-Agent'      => 'Ruby'})).       # this is by ruby
       to_return(:body => '{"data": []}')
 
     RestGraph.new(:server => 'http://nothing.godfat.org',
