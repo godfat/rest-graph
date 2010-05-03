@@ -37,20 +37,20 @@ class RestGraph
     end
   end
 
-  def get    path, query = {}
-    request(graph_server, path, query, :get)
+  def get    path, opts = {}
+    request(graph_server, path, opts, :get)
   end
 
-  def delete path, query = {}
-    request(graph_server, path, query, :delete)
+  def delete path, opts = {}
+    request(graph_server, path, opts, :delete)
   end
 
-  def post   path, payload, query = {}
-    request(graph_server, path, query, :post, payload)
+  def post   path, payload, opts = {}
+    request(graph_server, path, opts, :post, payload)
   end
 
-  def put    path, payload, query = {}
-    request(graph_server, path, query, :put,  payload)
+  def put    path, payload, opts = {}
+    request(graph_server, path, opts, :put,  payload)
   end
 
   def fql query, opts = {}
@@ -59,9 +59,9 @@ class RestGraph
   end
 
   private
-  def request server, path, query, method, payload = nil
+  def request server, path, opts, method, payload = nil
     post_request(
-      RestClient::Resource.new(server)[path + build_query_string(query)].
+      RestClient::Resource.new(server)[path + build_query_string(opts)].
       send(method, *[payload, build_headers].compact))
   rescue RestClient::InternalServerError => e
     post_request(e.http_body)
