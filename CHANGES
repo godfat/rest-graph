@@ -5,6 +5,7 @@
 * added :fql_server option and fql support.
 * cookies related parsing utility is now instance methods.
   you'll need to pass app_id and secret when initializing
+* if sig in cookies is bad, then it won't extract the access_token
 
 == rest-graph 0.8.1 -- 2010-05-03
 * added access_token parsing utility
