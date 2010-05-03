@@ -1,0 +1,17 @@
+= cerealize todo list
+
+= ?
+
+* cleanup test cases...
+
+= 1.1+
+
+* json support
+
+= 1.2+
+
+* extract base64 decorator, then we can use pure marshal
+
+= 1.3+
+
+* datamapper support
