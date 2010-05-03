@@ -70,4 +70,15 @@ describe RestGraph do
     RestGraph.new(:auto_decode => false).
       post('feed/me', :message => 'hi there').should == 'ok'
   end
+
+  it 'would auto decode json' do
+    RestGraph.new(:auto_decode => true).send(:post_request, '[]').
+      should == []
+  end
+
+  it 'would not auto decode json' do
+    RestGraph.new(:auto_decode => false).send(:post_request, '[]').
+      should == '[]'
+  end
+
 end
