@@ -59,7 +59,7 @@ describe RestGraph do
                   {'User-Agent'      => 'Ruby'})).       # this is by ruby
       to_return(:body => '{"data": []}')
 
-    RestGraph.new(:server => 'http://nothing.godfat.org',
+    RestGraph.new(:graph_server => 'http://nothing.godfat.org/',
                   :lang   => 'zh-tw',
                   :accept => 'text/plain').get('me').should == {'data' => []}
   end

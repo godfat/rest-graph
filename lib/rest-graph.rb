@@ -18,10 +18,12 @@ class RestGraph
     fb_cookie && Rack::Utils.parse_query(fb_cookie[1..-2])['access_token']
   end
 
-  attr_accessor :access_token, :server, :accept, :lang, :auto_decode
+  attr_accessor :access_token, :graph_server, :fql_server,
+                :accept, :lang, :auto_decode
   def initialize o = {}
     self.access_token = o[:access_token]
-    self.server       = o[:server] || 'https://graph.facebook.com/'
+    self.graph_server = o[:graph_server] || 'https://graph.facebook.com/'
+    self.fql_server   = o[:fql_server]   || 'https://api.facebook.com/'
     self.accept       = o[:accept] || 'text/javascript'
     self.lang         = o[:lang]   || 'en-us'
     self.auto_decode  = o.key?(:auto_decode) ? o[:auto_decode] : true
@@ -35,31 +37,31 @@ class RestGraph
     end
   end
 
-  def client
-    @client ||= RestClient::Resource.new(server)
-  end
-
   def get    path, query = {}
-    request(path, query, :get)
+    request(graph_server, path, query, :get)
   end
 
   def delete path, query = {}
-    request(path, query, :delete)
+    request(graph_server, path, query, :delete)
   end
 
   def post   path, payload, query = {}
-    request(path, query, :post, payload)
+    request(graph_server, path, query, :post, payload)
   end
 
   def put    path, payload, query = {}
-    request(path, query, :put,  payload)
+    request(graph_server, path, query, :put,  payload)
+  end
+
+  def fql query
+    request(fql_server, 'method/fql.query', :get, :query => query)
   end
 
   private
-  def request path, query, method, payload = nil
+  def request server, path, query, method, payload = nil
     post_request(
-      client[path + build_query_string(query)].
-        send(method, *[payload, build_headers].compact))
+      RestClient::Resource.new(server)[path + build_query_string(query)].
+      send(method, *[payload, build_headers].compact))
   rescue RestClient::InternalServerError => e
     post_request(e.http_body)
   end
