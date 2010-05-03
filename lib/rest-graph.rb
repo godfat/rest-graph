@@ -53,8 +53,9 @@ class RestGraph
     request(graph_server, path, query, :put,  payload)
   end
 
-  def fql query
-    request(fql_server, 'method/fql.query', :get, :query => query)
+  def fql query, opts = {}
+    request(fql_server, 'method/fql.query',
+      {:query  => query, :format => 'json'}.merge(opts), :get)
   end
 
   private
