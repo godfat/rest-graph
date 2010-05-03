@@ -10,7 +10,7 @@ class RestGraph
     self.server       = o[:server] || 'https://graph.facebook.com/'
     self.accept       = o[:accept] || 'text/javascript'
     self.lang         = o[:lang]   || 'en-us'
-    self.auto_decode  = o[:auto_decode] || true
+    self.auto_decode  = o.key?(:auto_decode) ? o[:auto_decode] : true
 
     if auto_decode
       begin
