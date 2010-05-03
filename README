@@ -20,26 +20,27 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
                     :fql_server   => 'https://api.facebook.com/',
                     :accept       => 'text/javascript',
                     :lang         => 'en-us', # this affect search
-                    :auto_decode  => true)    # decode by json
+                    :auto_decode  => true,    # decode by json
+                    :app_id       => '123',
+                    :secret       => '1829')
  rg.get('me')
  rg.post('feed/me', :message => 'bread!')
 
  # for rack
- app_id = '\d+'
  lambda{ |env|
-   rg = RestGraph.new(:access_token =>
-          RestGraph.parse_token_in_rack_env(env, app_id))
+   rg = RestGraph.new(:app_id => '123', :secret => '1829')
+   rg.parse_token_in_rack_env!(env)  # auto save access_token if sig checked
  }
 
  # for fully blown cookies hash
- app_id = '123'
- rg = RestGraph.new(:access_token =>
-        RestGraph.parse_token_in_cookies(cookies, app_id))
+ rg = RestGraph.new(:app_id => '123', :secret => '1829')
+ rg.parse_token_in_cookies!(cookies) # auto save access_token if sig checked
 
- # for fully blown cookies hash
+ # for fbs in cookies
  app_id = '456'
- rg = RestGraph.new(:access_token =>
-        RestGraph.parse_token_in_fb_cookie(cookies["fbs_#{app_id}"]))
+ rg = RestGraph.new(:app_id => '123', :secret => '1829')
+ fbs = cookies["fbs_#{rg.app_id}"]
+ rg.parse_token_in_fbs!(fbs)         # auto save access_token if sig checked
 
 == REQUIREMENTS:
 
