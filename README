@@ -23,6 +23,23 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
  rg.get('me')
  rg.post('feed/me', :message => 'bread!')
 
+ # for rack
+ app_id = '\d+'
+ lambda{ |env|
+   rg = RestGraph.new(:access_token =>
+          RestGraph.parse_token_in_rack_env(env, app_id))
+ }
+
+ # for fully blown cookies hash
+ app_id = '123'
+ rg = RestGraph.new(:access_token =>
+        RestGraph.parse_token_in_cookies(cookies, app_id))
+
+ # for fully blown cookies hash
+ app_id = '456'
+ rg = RestGraph.new(:access_token =>
+        RestGraph.parse_token_in_fb_cookie(cookies["fbs_#{app_id}"]))
+
 == REQUIREMENTS:
 
 * tested with MRI 1.8.7 and 1.9.1
