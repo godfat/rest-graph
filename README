@@ -16,7 +16,8 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 
  require 'rest-graph'
  rg = RestGraph.new(:access_token => '...',
-                    :server       => 'https://graph.facebook.com/,
+                    :graph_server => 'https://graph.facebook.com/',
+                    :fql_server   => 'https://api.facebook.com/',
                     :accept       => 'text/javascript',
                     :lang         => 'en-us', # this affect search
                     :auto_decode  => true)    # decode by json
