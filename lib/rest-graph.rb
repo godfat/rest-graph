@@ -105,9 +105,9 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
   end
 
   def calculate_sig cookies
-    payload = cookies.reject{ |(k, v)| k == 'sig' }.sort.
+    args = cookies.reject{ |(k, v)| k == 'sig' }.sort.
       map{ |a| a.join('=') }.join
 
-    Digest::MD5.hexdigest(payload + secret)
+    Digest::MD5.hexdigest(args + secret)
   end
 end
