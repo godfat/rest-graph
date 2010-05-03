@@ -12,14 +12,10 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
     self.accept       = o[:accept] || 'text/javascript'
     self.lang         = o[:lang]   || 'en-us'
     self.auto_decode  = o.key?(:auto_decode) ? o[:auto_decode] : true
+    self.app_id       = o[:app_id]
+    self.secret       = o[:secret]
 
-    if auto_decode
-      begin
-        require 'json'
-      rescue LoadError
-        require 'json_pure'
-      end
-    end
+    check_arguments!
   end
 
   def get    path, opts = {}
@@ -43,7 +39,42 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
       {:query  => query, :format => 'json'}.merge(opts), :get)
   end
 
+  # cookies, app_id, secrect related below
+
+  def parse_token_in_rack_env! env
+    self.access_token = env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
+      extract_token_if_sig_ok(Rack::Utils.parse_query($1))
+  end
+
+  def parse_token_in_cookies! cookies
+    self.access_token = parse_token_in_fbs!(cookies["fbs_#{app_id}"])
+  end
+
+  def parse_token_in_fbs! fbs
+    self.access_token = fbs &&
+      extract_token_if_sig_ok(Rack::Utils.parse_query(fbs[1..-2]))
+  end
+
   private
+  def check_arguments!
+    if auto_decode
+      begin
+        require 'json'
+      rescue LoadError
+        require 'json_pure'
+      end
+    end
+
+    if app_id && secret # want to parse access_token in cookies
+      require 'digest/md5'
+      require 'rack'
+    elsif app_id || secret
+      raise ArgumentError.new("You may want pass both"         \
+                              " app_id(#{app_id.inspect}) and" \
+                              " secret(#{secret.inspect})")
+    end
+  end
+
   def request server, path, opts, method, payload = nil
     post_request(
       RestClient::Resource.new(server)[path + build_query_string(opts)].
@@ -67,5 +98,16 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
 
   def post_request result
     auto_decode ? JSON.parse(result) : result
+  end
+
+  def extract_token_if_sig_ok cookies
+    cookies['access_token'] if calculate_sig(cookies) == cookies['sig']
+  end
+
+  def calculate_sig cookies
+    payload = cookies.reject{ |(k, v)| k == 'sig' }.sort.
+      map{ |a| a.join('=') }.join
+
+    Digest::MD5.hexdigest(payload + secret)
   end
 end

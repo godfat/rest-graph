@@ -107,20 +107,26 @@ describe RestGraph do
   it 'would extract correct access_token' do
     access_token = '1|2-5|f.'
     app_id       = '1829'
+    secret       = app_id.reverse
+    sig          = '398262caea8442bd8801e8fba7c55c8a'
     fbs          = "\"access_token=#{CGI.escape(access_token)}&expires=0&" \
-                   "secret=abc&session_key=def-456&sig=zzz&uid=3\""
+                   "secret=abc&session_key=def-456&sig=#{sig}&uid=3\""
     http_cookie  =
       "__utma=123; __utmz=456.utmcsr=(d)|utmccn=(d)|utmcmd=(n); " \
       "fbs_#{app_id}=#{fbs}"
 
-    RestGraph.parse_token_in_rack_env('HTTP_COOKIE' => http_cookie).
-      should == access_token
+    rg  = RestGraph.new(:app_id => app_id, :secret => secret)
+    rg.parse_token_in_rack_env!('HTTP_COOKIE' => http_cookie).
+                    should == access_token
+    rg.access_token.should == access_token
 
-    RestGraph.parse_token_in_cookies({"fbs_#{app_id}" => fbs}, app_id).
-      should == access_token
+    rg.parse_token_in_cookies!({"fbs_#{app_id}" => fbs}).
+                    should == access_token
+    rg.access_token.should == access_token
 
-    RestGraph.parse_token_in_fb_cookie(fbs).
-      should == access_token
+    rg.parse_token_in_fbs!(fbs).
+                    should == access_token
+    rg.access_token.should == access_token
   end
 
   it 'would do fql query with/without access_token' do
