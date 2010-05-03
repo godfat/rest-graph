@@ -53,4 +53,12 @@ describe RestGraph do
                   :lang   => 'zh-tw',
                   :accept => 'text/plain').get('me').should == {'data' => []}
   end
+
+  it 'would post right' do
+    stub_request(:post, 'https://graph.facebook.com/feed/me').
+      with(:body => 'message=hi%20there').to_return(:body => 'ok')
+
+    RestGraph.new(:auto_decode => false).
+      post('feed/me', :message => 'hi there').should == 'ok'
+  end
 end
