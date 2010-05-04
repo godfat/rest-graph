@@ -69,7 +69,7 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
       require 'digest/md5'
       require 'rack'
     elsif app_id || secret
-      raise ArgumentError.new("You may want pass both"         \
+      raise ArgumentError.new("You may want to pass both"      \
                               " app_id(#{app_id.inspect}) and" \
                               " secret(#{secret.inspect})")
     end
