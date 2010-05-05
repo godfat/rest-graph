@@ -118,16 +118,16 @@ describe RestGraph do
         "fbs_#{app_id}=#{fbs}"
 
       rg  = RestGraph.new(:app_id => app_id, :secret => secret)
-      rg.parse_rack_env!('HTTP_COOKIE' => http_cookie)['sig'].
-                      should == (token ? sig : nil)
+      rg.parse_rack_env!('HTTP_COOKIE' => http_cookie).
+                      should.kind_of?(token ? Hash : NilClass)
       rg.access_token.should ==  token
 
-      rg.parse_cookies!({"fbs_#{app_id}" => fbs})['sig'].
-                      should == (token ? sig : nil)
+      rg.parse_cookies!({"fbs_#{app_id}" => fbs}).
+                      should.kind_of?(token ? Hash : NilClass)
       rg.access_token.should ==  token
 
-      rg.parse_fbs!(fbs)['sig'].
-                      should == (token ? sig : nil)
+      rg.parse_fbs!(fbs).
+                      should.kind_of?(token ? Hash : NilClass)
       rg.access_token.should ==  token
     }
     check.call(access_token)
@@ -139,6 +139,12 @@ describe RestGraph do
   it 'would return true in authorized? if there is an access_token' do
     RestGraph.new(:access_token => '1').authorized?.should == true
     RestGraph.new(:access_token => nil).authorized?.should == false
+  end
+
+  it 'would return nil if parse error, but not when call data directly' do
+    rg = RestGraph.new
+    rg.parse_cookies!({}).should == nil
+    rg.data              .should == {}
   end
 
   it 'would do fql query with/without access_token' do

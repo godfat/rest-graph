@@ -28,6 +28,10 @@ class RestGraph < Struct.new(:data, :graph_server, :fql_server,
     data['access_token'] = token
   end
 
+  def data
+    super || self.data = {}
+  end
+
   def authorized?
     !!access_token
   end
@@ -57,7 +61,7 @@ class RestGraph < Struct.new(:data, :graph_server, :fql_server,
 
   def parse_rack_env! env
     self.data = env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
-      check_sig_and_extract_data(Rack::Utils.parse_query($1))
+      check_sig_and_return_data(Rack::Utils.parse_query($1))
   end
 
   def parse_cookies! cookies
@@ -66,7 +70,7 @@ class RestGraph < Struct.new(:data, :graph_server, :fql_server,
 
   def parse_fbs! fbs
     self.data = fbs &&
-      check_sig_and_extract_data(Rack::Utils.parse_query(fbs[1..-2]))
+      check_sig_and_return_data(Rack::Utils.parse_query(fbs[1..-2]))
   end
 
   private
@@ -114,8 +118,8 @@ class RestGraph < Struct.new(:data, :graph_server, :fql_server,
     auto_decode ? JSON.parse(result) : result
   end
 
-  def check_sig_and_extract_data cookies
-    calculate_sig(cookies) == cookies['sig'] ? cookies : {}
+  def check_sig_and_return_data cookies
+    cookies if calculate_sig(cookies) == cookies['sig']
   end
 
   def calculate_sig cookies
