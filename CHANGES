@@ -1,8 +1,9 @@
 = rest-graph changes history
 
-== rest-graph 0.10.0 -- ?
+== rest-graph 0.91.0 -- ?
 * now access_token is saved in data attributes.
 * cookies related methods got renamed, and saved all data in RestGraph
+* parse failed would return nil, while data is always a hash
 
 == rest-graph 0.9.0 -- 2010-05-04
 * renamed :server option to :graph_server

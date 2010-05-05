@@ -1,4 +1,4 @@
 
 class RestGraph
-  VERSION = '0.9.0'
+  VERSION = '0.91.0'
 end
