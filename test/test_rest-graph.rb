@@ -118,17 +118,17 @@ describe RestGraph do
         "fbs_#{app_id}=#{fbs}"
 
       rg  = RestGraph.new(:app_id => app_id, :secret => secret)
-      rg.parse_token_in_rack_env!('HTTP_COOKIE' => http_cookie).
-                      should == token
-      rg.access_token.should == token
+      rg.parse_rack_env!('HTTP_COOKIE' => http_cookie)['sig'].
+                      should == (token ? sig : nil)
+      rg.access_token.should ==  token
 
-      rg.parse_token_in_cookies!({"fbs_#{app_id}" => fbs}).
-                      should == token
-      rg.access_token.should == token
+      rg.parse_cookies!({"fbs_#{app_id}" => fbs})['sig'].
+                      should == (token ? sig : nil)
+      rg.access_token.should ==  token
 
-      rg.parse_token_in_fbs!(fbs).
-                      should == token
-      rg.access_token.should == token
+      rg.parse_fbs!(fbs)['sig'].
+                      should == (token ? sig : nil)
+      rg.access_token.should ==  token
     }
     check.call(access_token)
     fbs.chop!

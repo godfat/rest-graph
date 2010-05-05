@@ -3,10 +3,11 @@ require 'rest_client'
 
 require 'cgi'
 
-class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
+class RestGraph < Struct.new(:data, :graph_server, :fql_server,
                              :accept, :lang, :auto_decode, :app_id, :secret)
   def initialize o = {}
-    self.access_token = o[:access_token]
+    self.data = {}
+
     self.graph_server = o[:graph_server] || 'https://graph.facebook.com/'
     self.fql_server   = o[:fql_server]   || 'https://api.facebook.com/'
     self.accept       = o[:accept] || 'text/javascript'
@@ -14,8 +15,17 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
     self.auto_decode  = o.key?(:auto_decode) ? o[:auto_decode] : true
     self.app_id       = o[:app_id]
     self.secret       = o[:secret]
+    self.access_token = o[:access_token]
 
     check_arguments!
+  end
+
+  def access_token
+    data['access_token']
+  end
+
+  def access_token= token
+    data['access_token'] = token
   end
 
   def get    path, opts = {}
@@ -41,18 +51,18 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
 
   # cookies, app_id, secrect related below
 
-  def parse_token_in_rack_env! env
-    self.access_token = env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
-      extract_token_if_sig_ok(Rack::Utils.parse_query($1))
+  def parse_rack_env! env
+    self.data = env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
+      check_sig_and_extract_data(Rack::Utils.parse_query($1))
   end
 
-  def parse_token_in_cookies! cookies
-    self.access_token = parse_token_in_fbs!(cookies["fbs_#{app_id}"])
+  def parse_cookies! cookies
+    self.data = parse_fbs!(cookies["fbs_#{app_id}"])
   end
 
-  def parse_token_in_fbs! fbs
-    self.access_token = fbs &&
-      extract_token_if_sig_ok(Rack::Utils.parse_query(fbs[1..-2]))
+  def parse_fbs! fbs
+    self.data = fbs &&
+      check_sig_and_extract_data(Rack::Utils.parse_query(fbs[1..-2]))
   end
 
   private
@@ -100,8 +110,8 @@ class RestGraph < Struct.new(:access_token, :graph_server, :fql_server,
     auto_decode ? JSON.parse(result) : result
   end
 
-  def extract_token_if_sig_ok cookies
-    cookies['access_token'] if calculate_sig(cookies) == cookies['sig']
+  def check_sig_and_extract_data cookies
+    calculate_sig(cookies) == cookies['sig'] ? cookies : {}
   end
 
   def calculate_sig cookies
