@@ -6,8 +6,6 @@ require 'cgi'
 class RestGraph < Struct.new(:data, :graph_server, :fql_server,
                              :accept, :lang, :auto_decode, :app_id, :secret)
   def initialize o = {}
-    self.data = {}
-
     self.graph_server = o[:graph_server] || 'https://graph.facebook.com/'
     self.fql_server   = o[:fql_server]   || 'https://api.facebook.com/'
     self.accept       = o[:accept] || 'text/javascript'
