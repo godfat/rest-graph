@@ -28,6 +28,10 @@ class RestGraph < Struct.new(:data, :graph_server, :fql_server,
     data['access_token'] = token
   end
 
+  def authorized?
+    !!access_token
+  end
+
   def get    path, opts = {}
     request(graph_server, path, opts, :get)
   end

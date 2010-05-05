@@ -136,6 +136,11 @@ describe RestGraph do
     check.call(nil)
   end
 
+  it 'would return true in authorized? if there is an access_token' do
+    RestGraph.new(:access_token => '1').authorized?.should == true
+    RestGraph.new(:access_token => nil).authorized?.should == false
+  end
+
   it 'would do fql query with/without access_token' do
     fql = 'SELECT name FROM likes where id="123"'
     query = "query=#{fql}&format=json"
