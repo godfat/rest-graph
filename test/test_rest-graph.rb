@@ -86,15 +86,9 @@ describe RestGraph do
     stub_request(:put, 'https://graph.facebook.com/feed/me').
       with(:body => 'message=hi%20there').to_return(:body => '[]')
 
-    begin
-      RestGraph.send(:public, :post_request) # TODO: rr, why??
-
-      mock.proxy(rg = RestGraph.new).post_request('[]')
-      rg.put('feed/me', :message => 'hi there').
-        should == []
-    ensure
-      RestGraph.send(:private, :post_request) # TODO: rr, why??
-    end
+    mock.proxy(rg = RestGraph.new).post_request('[]')
+    rg.put('feed/me', :message => 'hi there').
+      should == []
   end
 
   it 'would not raise exception when encountering 500' do
