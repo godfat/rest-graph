@@ -71,6 +71,19 @@ class RestGraph < Struct.new(:data, :graph_server, :fql_server,
       check_sig_and_return_data(Rack::Utils.parse_query(fbs[1..-2]))
   end
 
+  # multi-request by eventmachine (em-http)
+  def multi requests
+    m = EM::MultiRequest.new
+    requests.each{ |(method, path, opts)|
+      m.add(EM::HttpRequest.new(graph_server + path).
+      send(method, :query => opts))
+    }
+    m.callback{
+      yield(m.responses[:succeeded].map(&:response).
+            map(&method(:post_request)))
+    }
+  end
+
   private
   def check_arguments!
     if auto_decode

@@ -1,31 +1,27 @@
 
-url = 'http://graph.facebook.com/spellbook'
+id = 'spellbook'
 times = 10
 require 'open-uri'
 require 'em-http'
 require 'async-rack'
 
+require 'rest-graph'
+
+use ContentType
+use Reloader
+
 run Builder.new{
-  use ContentType
   map('/async'){
     run lambda{ |env|
-      multi = EM::MultiRequest.new
-      times.times{
-        multi.add(EM::HttpRequest.new(url).get)
-      }
-      multi.callback{
-        env['async.callback'].call [200, {}, [
-          multi.responses[:succeeded].first.response
-        ]]
+      RestGraph.new.multi([[:get, id]]*times){ |r|
+        env['async.callback'].call [200, {}, r.map(&:inspect)]
       }
       throw :async
     }
   }
   map('/sync'){
     run lambda{ |env|
-      s = nil
-      times.times{ s = open(url).read }
-      [200, {}, [s]]
+      [200, {}, (0...times).map{ RestGraph.new.get(id) }.map(&:inspect)]
     }
   }
 }
