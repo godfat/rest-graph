@@ -162,4 +162,20 @@ describe RestGraph do
       RestGraph.new.send(name).should == RestGraph.send("default_#{name}")
     }
   end
+
+  it 'could use module to override default attributes' do
+    module BlahAttributes
+      def default_app_id
+        '1829'
+      end
+    end
+    begin
+      RestGraph.send(:extend, BlahAttributes)
+      RestGraph.default_app_id.should == '1829'
+    ensure # the defaults remain the same!
+      RestGraph.send(:extend, RestGraph::DefaultAttributes.dup)
+      RestGraph.default_app_id.should ==
+        RestGraph::DefaultAttributes.default_app_id
+    end
+  end
 end
