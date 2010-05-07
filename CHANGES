@@ -8,6 +8,11 @@
 
 * better way to deal with default attributes, use class methods.
 
+* if you want to auto load config, do require 'rest-graph/load_config'
+  if it's rails, it would go to config/rest-graph.y(a)ml to load up
+  if you're using rails plugin, we do require 'rest-graph/load_config'
+  for you.
+
 == rest-graph 1.0.0 -- 2010-05-06
 * now access_token is saved in data attributes.
 * cookies related methods got renamed, and saved all data in RestGraph
