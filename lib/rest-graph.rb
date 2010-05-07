@@ -23,6 +23,7 @@ class RestGraph < RestGraphStruct
 
   # setup defaults
   module DefaultAttributes
+    extend self
     def default_data        ; {}                           ; end
     def default_auto_decode ; true                         ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
