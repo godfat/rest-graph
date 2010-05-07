@@ -1,6 +1,6 @@
 
 test:
-  app_id: r41829
+  app_id: 41829
   secret: <%= 'r41829'.reverse %>
   auto_decode: false
   lang: zh-tw
