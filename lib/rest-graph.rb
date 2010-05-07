@@ -3,18 +3,40 @@ require 'rest_client'
 
 require 'cgi'
 
-class RestGraph < Struct.new(:data, :graph_server, :fql_server,
-                             :accept, :lang, :auto_decode, :app_id, :secret)
-  def initialize o = {}
-    self.graph_server = o[:graph_server] || 'https://graph.facebook.com/'
-    self.fql_server   = o[:fql_server]   || 'https://api.facebook.com/'
-    self.accept       = o[:accept] || 'text/javascript'
-    self.lang         = o[:lang]   || 'en-us'
-    self.auto_decode  = o.key?(:auto_decode) ? o[:auto_decode] : true
-    self.app_id       = o[:app_id]
-    self.secret       = o[:secret]
-    self.access_token = o[:access_token]
+# the data structure used in RestGraph
+RestGraphStruct = Struct.new(:data, :auto_decode,
+                             :graph_server, :fql_server,
+                             :accept, :lang,
+                             :app_id, :secret)
 
+class RestGraph < RestGraphStruct
+  Attributes = RestGraphStruct.members.map(&:to_sym)
+
+  # honor default attributes
+  Attributes.each{ |name|
+    module_eval <<-RUBY
+      def #{name}
+        (r = super).nil? ? (self.#{name} = self.class.default_#{name}) : r
+      end
+    RUBY
+  }
+
+  # setup defaults
+  class << self
+    def default_data        ; {}                           ; end
+    def default_auto_decode ; true                         ; end
+    def default_graph_server; 'https://graph.facebook.com/'; end
+    def default_fql_server  ; 'https://api.facebook.com/'  ; end
+    def default_accept      ; 'text/javascript'            ; end
+    def default_lang        ; 'en-us'                      ; end
+    def default_app_id      ; nil                          ; end
+    def default_secret      ; nil                          ; end
+  end
+
+  def initialize o = {}
+    (Attributes + [:access_token]).each{ |name|
+      send("#{name}=", o[name]) if o.key?(name)
+    }
     check_arguments!
   end
 
@@ -24,10 +46,6 @@ class RestGraph < Struct.new(:data, :graph_server, :fql_server,
 
   def access_token= token
     data['access_token'] = token
-  end
-
-  def data
-    super || self.data = {}
   end
 
   def authorized?

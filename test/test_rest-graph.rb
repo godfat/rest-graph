@@ -156,4 +156,10 @@ describe RestGraph do
 
     RestGraph.new(:access_token => token).fql(fql).should == []
   end
+
+  it 'would honor default attributes' do
+    RestGraph::Attributes.each{ |name|
+      RestGraph.new.send(name).should == RestGraph.send("default_#{name}")
+    }
+  end
 end
