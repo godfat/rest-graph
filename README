@@ -1,4 +1,4 @@
-= rest-graph 1.0.0
+= rest-graph 1.1.0
 by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
   godfat (XD) godfat.org
 
@@ -34,25 +34,9 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
  rg.get('me')
  rg.post('feed/me', :message => 'bread!')
 
- # for rack
- lambda{ |env|
-   rg = RestGraph.new(:app_id => '123', :secret => '1829')
-   rg.parse_rack_env!(env)  # auto save access_token if sig checked
-   rg.access_token # => ...
-   rg.data['uid']  # => facebook uid
- }
-
  # for fully blown cookies hash
  rg = RestGraph.new(:app_id => '123', :secret => '1829')
  rg.parse_cookies!(cookies) # auto save access_token if sig checked
- rg.access_token # => ...
- rg.data['uid']  # => facebook uid
-
- # for fbs in cookies
- app_id = '456'
- rg = RestGraph.new(:app_id => '123', :secret => '1829')
- fbs = cookies["fbs_#{rg.app_id}"]
- rg.parse_fbs!(fbs)         # auto save access_token if sig checked
  rg.access_token # => ...
  rg.data['uid']  # => facebook uid
 
@@ -63,9 +47,10 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 
 * tested with MRI 1.8.7 and 1.9.1
 * gem install rest-client
-* gem install json (optional)
+* gem install json      (optional)
 * gem install json_pure (optional)
-* gem install rack (optional, to parse access_token in HTTP_COOKIE)
+* gem install rack      (optional, to parse access_token in HTTP_COOKIE)
+* gem install em-http   (optional, to do concurrent http request)
 
 == INSTALL:
 
