@@ -22,7 +22,7 @@ class RestGraph < RestGraphStruct
   }
 
   # setup defaults
-  class << self
+  module DefaultAttributes
     def default_data        ; {}                           ; end
     def default_auto_decode ; true                         ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
@@ -32,6 +32,7 @@ class RestGraph < RestGraphStruct
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
   end
+  extend DefaultAttributes
 
   def initialize o = {}
     (Attributes + [:access_token]).each{ |name|
