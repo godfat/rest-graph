@@ -37,11 +37,26 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
  # for fully blown cookies hash
  rg = RestGraph.new(:app_id => '123', :secret => '1829')
  rg.parse_cookies!(cookies) # auto save access_token if sig checked
- rg.access_token # => ...
- rg.data['uid']  # => facebook uid
+ rg.data['uid']             # => facebook uid
 
  # fql query
  rg.fql('SELECT name FROM page WHERE page_id="123"')
+
+ # default setting:
+ class RestGraph
+   def self.default_app_id
+     '456'
+   end
+
+   def self.default_secret
+     'category theory'
+   end
+ end
+
+ # auto load config
+ require 'rest-graph'
+ require 'rest-graph/load_config' # under Rails, load config/rest-graph.yaml
+ rg = RestGraph.new               # all default options would honor config
 
 == REQUIREMENTS:
 
