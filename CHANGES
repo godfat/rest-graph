@@ -13,6 +13,9 @@
   if you're using rails plugin, we do require 'rest-graph/load_config'
   for you.
 
+* config could be load manually as well.
+  RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
+
 == rest-graph 1.0.0 -- 2010-05-06
 * now access_token is saved in data attributes.
 * cookies related methods got renamed, and saved all data in RestGraph

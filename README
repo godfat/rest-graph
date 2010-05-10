@@ -56,7 +56,12 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
  # auto load config
  require 'rest-graph'
  require 'rest-graph/load_config' # under Rails, load config/rest-graph.yaml
- rg = RestGraph.new               # all default options would honor config
+ RestGraph.new                    # all default options would honor config
+ RestGraph.new(:app_id => '123')  # default could be override as well
+
+ # manually load config
+ require 'rest-graph/load_config'
+ RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
 
 == REQUIREMENTS:
 
