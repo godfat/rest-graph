@@ -17,8 +17,8 @@ describe RestGraph::LoadConfig do
       RestGraph::LoadConfig.load_if_rails!
       RestGraph.default_app_id.should ==   41829
       RestGraph.default_secret.should == 'r41829'.reverse
-      RestGraph.default_auto_decode   == false
-      RestGraph.default_lang          == 'zh-tw'
+      RestGraph.default_auto_decode.should == false
+      RestGraph.default_lang.should        == 'zh-tw'
     ensure
       RestGraph.send(:extend, RestGraph::DefaultAttributes.dup)
     end
