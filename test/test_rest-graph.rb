@@ -152,7 +152,11 @@ describe RestGraph do
 
   it 'would honor default attributes' do
     RestGraph::Attributes.each{ |name|
-      RestGraph.new.send(name).should == RestGraph.send("default_#{name}")
+      RestGraph.new.send(name).should ==
+        RestGraph.send("default_#{name}")
+
+      RestGraph.new.send(name).should ==
+        RestGraph::DefaultAttributes.send("default_#{name}")
     }
   end
 
