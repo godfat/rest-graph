@@ -5,9 +5,6 @@ else
   require File.dirname(__FILE__) + '/common'
 end
 
-require 'erb'
-require 'yaml'
-
 require 'rest-graph/load_config'
 
 describe RestGraph::LoadConfig do
