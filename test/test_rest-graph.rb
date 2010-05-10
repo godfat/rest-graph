@@ -166,13 +166,10 @@ describe RestGraph do
         '1829'
       end
     end
-    begin
+
+    TestHelper.ensure_rollback{
       RestGraph.send(:extend, BlahAttributes)
       RestGraph.default_app_id.should == '1829'
-    ensure # the defaults remain the same!
-      RestGraph.send(:extend, RestGraph::DefaultAttributes.dup)
-      RestGraph.default_app_id.should ==
-        RestGraph::DefaultAttributes.default_app_id
-    end
+    }
   end
 end
