@@ -160,6 +160,13 @@ describe RestGraph do
     }
   end
 
+  it 'would convert query to string' do
+    mock(o = Object.new).to_s{ 'i am mock' }
+    stub_request(:get, "https://graph.facebook.com/search?q=i%20am%20mock").
+      to_return(:body => 'ok')
+    RestGraph.new(:auto_decode => false).get('search', :q => o).should == 'ok'
+  end
+
   it 'could use module to override default attributes' do
     module BlahAttributes
       def default_app_id
