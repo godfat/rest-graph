@@ -1,19 +1,23 @@
 = rest-graph changes history
 
 == rest-graph 1.1.0 -- ?
-* introduce RestGraph#multi to do multiple api call concurrently.
+* Main repository was moved to http://github.com/cardinalblue/rest-graph
+  Sorry for the inconvenience. I'll keep pushing to both repositories until
+  I am too lazy to do that.
+
+* Introduce RestGraph#multi to do multiple api call concurrently.
   to use this feature, you'll need to run RestGraph inside a eventmachine
-  event loop and install em-http. (and you may want async-rack if you're
+  event loop and install em-http. (And you may want async-rack if you're
   doing rack application too.)
 
-* better way to deal with default attributes, use class methods.
+* Better way to deal with default attributes, use class methods.
 
-* if you want to auto load config, do require 'rest-graph/load_config'
+* If you want to auto load config, do require 'rest-graph/load_config'
   if it's rails, it would go to config/rest-graph.y(a)ml to load up
   if you're using rails plugin, we do require 'rest-graph/load_config'
   for you.
 
-* config could be load manually as well.
+* Config could be load manually as well.
   RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
 
 == rest-graph 1.0.0 -- 2010-05-06
