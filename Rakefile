@@ -29,7 +29,7 @@ Bones{
   email   'dev (XD) cardinalblue.com'
 
   history_file   'CHANGES'
-   readme_file   'README'
+   readme_file   'README.rdoc'
    ignore_file   '.gitignore'
   rdoc.include   ['\w+']
   rdoc.exclude   ['test', 'doc', 'Rakefile']
