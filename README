@@ -32,6 +32,9 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
                     :app_id       => '123',
                     :secret       => '1829')
  rg.get('me')
+ rg.get('4/likes')
+ rg.get('search', :q => 'taiwan')
+ rg.get('me', :metadata => '1')
  rg.post('feed/me', :message => 'bread!')
 
  # for fully blown cookies hash
