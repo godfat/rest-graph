@@ -1,12 +1,11 @@
 = rest-graph 1.1.0
-by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
-  godfat (XD) godfat.org
+by Cardinal Blue ( http://cardinalblue.com )
 
 == LINKS:
 
-* {github}[http://github.com/godfat/rest-graph]
+* {github}[http://github.com/cardinalblue/rest-graph]
 * {rubygems}[http://rubygems.org/gems/rest-graph]
-* {rdoc}[http://rdoc.info/projects/godfat/rest-graph]
+* {rdoc}[http://rdoc.info/projects/cardinalblue/rest-graph]
 
 == DESCRIPTION:
 
@@ -89,13 +88,13 @@ by Lin Jen-Shin (aka godfat-真常[http://godfat.org])
 
  > gem install rest-graph
  # or if you want rails plugin and bleeding edge
- > script/plugin install git://github.com/godfat/rest-graph.git
+ > script/plugin install git://github.com/cardinalblue/rest-graph.git
 
 == LICENSE:
 
   Apache License 2.0
 
-  Copyright (c) 2010, Lin Jen-Shin (aka godfat 真常)
+  Copyright (c) 2010, Cardinal Blue
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
