@@ -41,7 +41,3 @@ task :default do
   Rake.application.options.show_task_pattern = /./
   Rake.application.display_tasks_and_comments
 end
-
-task 'doc:rdoc' do
-  sh 'cp -r ~/.gem/ruby/1.9.1/gems/rdoc-2.5.6/lib/rdoc/generator/template/darkfish/* doc/'
-end
