@@ -26,7 +26,7 @@ Bones{
   name    proj
   url     "http://github.com/cardinalblue/#{proj}"
   authors ['Cardinal Blue', 'Lin Jen-Shin (aka godfat 真常)']
-  email   'godfat (XD) cardinalblue.com'
+  email   'dev (XD) cardinalblue.com'
 
   history_file   'CHANGES'
    readme_file   'README'
