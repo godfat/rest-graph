@@ -40,5 +40,3 @@ class RestGraph < RestGraphStruct
     end
   end
 end
-
-RestGraph::LoadConfig.auto_load!
