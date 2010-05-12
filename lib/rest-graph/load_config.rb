@@ -7,7 +7,7 @@ require 'rest-graph'
 class RestGraph < RestGraphStruct
   module LoadConfig
     module_function
-    def load!
+    def auto_load!
       LoadConfig.load_if_rails!
     end
 
@@ -41,4 +41,4 @@ class RestGraph < RestGraphStruct
   end
 end
 
-RestGraph::LoadConfig.load!
+RestGraph::LoadConfig.auto_load!
