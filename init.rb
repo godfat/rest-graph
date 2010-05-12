@@ -1,2 +1,2 @@
 require 'rest-graph'
-require 'rest-graph/load_config'
+require 'rest-graph/auto_load'

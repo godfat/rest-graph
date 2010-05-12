@@ -13,12 +13,12 @@
 
 * Better way to deal with default attributes, use class methods.
 
-* If you want to auto load config, do require 'rest-graph/load_config'
-  if it's rails, it would go to config/rest-graph.y(a)ml to load up
-  if you're using rails plugin, we do require 'rest-graph/load_config'
+* If you want to auto load config, do require 'rest-graph/auto_load'
+  if it's rails, it would load the config from config/rest-graph.y(a)ml.
+  if you're using rails plugin, we do require 'rest-graph/auto_load'
   for you.
 
-* Config could be load manually as well.
+* Config could be load manually as well. require 'rest-graph/load_config' and
   RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
 
 == rest-graph 1.0.0 -- 2010-05-06
