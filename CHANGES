@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.1.0 -- ?
+== rest-graph 1.1.0 -- 2010-05-13
 * Main repository was moved to http://github.com/cardinalblue/rest-graph
   Sorry for the inconvenience. I'll keep pushing to both repositories until
   I am too lazy to do that.
