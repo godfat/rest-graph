@@ -5,11 +5,6 @@
   Sorry for the inconvenience. I'll keep pushing to both repositories until
   I am too lazy to do that.
 
-* Introduce RestGraph#multi to do multiple api call concurrently.
-  to use this feature, you'll need to run RestGraph inside a eventmachine
-  event loop and install em-http. (And you may want async-rack if you're
-  doing rack application too.)
-
 * Better way to deal with default attributes, use class methods.
 
 * If you want to auto load config, do require 'rest-graph/load_config'
