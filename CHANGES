@@ -12,8 +12,8 @@
   if you're using rails plugin, we do require 'rest-graph/auto_load'
   for you.
 
-* Config could be load manually as well. require 'rest-graph/load_config' and
-  RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
+* Config could be loaded manually as well. require 'rest-graph/load_config'
+  and RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
 
 == rest-graph 1.0.0 -- 2010-05-06
 * now access_token is saved in data attributes.
