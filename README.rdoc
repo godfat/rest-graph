@@ -82,6 +82,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 * gem install json      (optional)
 * gem install json_pure (optional)
 * gem install rack      (optional, to parse access_token in HTTP_COOKIE)
+* gem install em-http   (optional, to do concurrent http request)
 
 == INSTALL:
 
