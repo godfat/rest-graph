@@ -77,6 +77,17 @@ by Cardinal Blue ( http://cardinalblue.com )
 
  # see test/config/rest-graph.yaml for an example for config
 
+ # oauth utilites:
+ # https://graph.facebook.com/oauth/authorize?client_id=...&
+ RestGraph.new.authorize_url(:redirect_uri => '...')
+
+ # get access token by:
+ # https://graph.facebook.com/oauth/access_token?code=...&
+ rg = RestGraph.new
+ rg.authorize!(:redirect_uri => '...', :code => 'zzz')
+ rg.access_token    # your access_token is now available
+ rg.data['expires'] # other values as well
+
 == REQUIREMENTS:
 
 * tested with MRI 1.8.7 and 1.9.1
