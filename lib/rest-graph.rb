@@ -91,6 +91,19 @@ class RestGraph < RestGraphStruct
       check_sig_and_return_data(Rack::Utils.parse_query(fbs[1..-2]))
   end
 
+  # oauth related
+
+  def authorize_url opts={}
+    query = {:client_id => app_id}.merge(opts)
+    "#{graph_server}oauth/authorize#{build_query_string(query)}"
+  end
+
+  def authorize! opts={}
+    query = {:client_id => app_id, :client_secret => secret}.merge(opts)
+    self.data = Rack::Utils.parse_query(
+      request(graph_server, 'oauth/access_token', query, :get, nil, true))
+  end
+
   private
   def check_arguments!
     if auto_decode
@@ -111,12 +124,12 @@ class RestGraph < RestGraphStruct
     end
   end
 
-  def request server, path, opts, method, payload = nil
+  def request server, path, opts, method, payload=nil, suppress_decode=false
     post_request(
       RestClient::Resource.new(server)[path + build_query_string(opts)].
-      send(method, *[payload, build_headers].compact))
+      send(method, *[payload, build_headers].compact), suppress_decode)
   rescue RestClient::InternalServerError => e
-    post_request(e.http_body)
+    post_request(e.http_body, suppress_decode)
   end
 
   def build_query_string q = {}
@@ -132,8 +145,8 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result
-    auto_decode ? JSON.parse(result) : result
+  def post_request result, suppress_decode=false
+    (auto_decode && !suppress_decode) ? JSON.parse(result) : result
   end
 
   def check_sig_and_return_data cookies
