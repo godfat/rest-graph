@@ -10,10 +10,6 @@ describe RestGraph do
     reset_webmock
   end
 
-  def normalize_query query
-    '?' + query[1..-1].split('&').sort.join('&')
-  end
-
   it 'would build correct headers' do
     rg = RestGraph.new(:accept => 'text/html',
                        :lang   => 'zh-tw')
@@ -31,12 +27,12 @@ describe RestGraph do
   end
 
   it 'would build correct query string' do
-    normalize_query(
+    TestHelper.normalize_query(
     RestGraph.new(:access_token => 'token').send(:build_query_string,
                                                  :message => 'hi!!')).
       should == '?access_token=token&message=hi%21%21'
 
-    normalize_query(
+    TestHelper.normalize_query(
     RestGraph.new.send(:build_query_string, :message => 'hi!!',
                                             :subject => '(&oh&)')).
       should == '?message=hi%21%21&subject=%28%26oh%26%29'

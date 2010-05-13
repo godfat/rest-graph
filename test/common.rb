@@ -25,4 +25,9 @@ module TestHelper
         RestGraph::DefaultAttributes.send("default_#{name}")
     }
   end
+
+  def normalize_query query
+    '?' + query[1..-1].split('&').sort.join('&')
+  end
+
 end
