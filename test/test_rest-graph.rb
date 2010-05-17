@@ -135,7 +135,7 @@ describe RestGraph do
 
   it 'would do fql query with/without access_token' do
     fql = 'SELECT name FROM likes where id="123"'
-    query = "query=#{fql}&format=json"
+    query = "format=json&query=#{CGI.escape(fql)}"
     stub_request(:get, "https://api.facebook.com/method/fql.query?#{query}").
       to_return(:body => '[]')
 
