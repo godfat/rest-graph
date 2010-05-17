@@ -77,9 +77,16 @@ class RestGraph < RestGraphStruct
 
   # cookies, app_id, secrect related below
 
-  def parse_rack_env! env
-    self.data = env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
-      check_sig_and_return_data(Rack::Utils.parse_query($1))
+  if RUBY_VERSION >= '1.9.1'
+    def parse_rack_env! env
+      self.data = env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
+        check_sig_and_return_data(Rack::Utils.parse_query($1))
+    end
+  else
+    def parse_rack_env! env
+      self.data = (env['HTTP_COOKIE'] || '') =~ /fbs_#{app_id}="(.+?)"/ &&
+        check_sig_and_return_data(Rack::Utils.parse_query($1))
+    end
   end
 
   def parse_cookies! cookies

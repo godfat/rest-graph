@@ -105,6 +105,9 @@ describe RestGraph do
                       should.kind_of?(token ? Hash : NilClass)
       rg.access_token.should ==  token
 
+      rg.parse_rack_env!('HTTP_COOKIE' => nil).should == nil
+      rg.data.should == {}
+
       rg.parse_cookies!({"fbs_#{app_id}" => fbs}).
                       should.kind_of?(token ? Hash : NilClass)
       rg.access_token.should ==  token
