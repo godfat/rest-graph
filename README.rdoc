@@ -13,8 +13,8 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 == FEATURES:
 
-* Simple graph api call
-* Simple fql call
+* Simple Graph API call
+* Simple FQL call
 * Utility to extract access_token and check sig in cookies
 
 == SYNOPSIS:
