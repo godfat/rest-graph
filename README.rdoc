@@ -9,7 +9,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 == DESCRIPTION:
 
- A super simple facebook open graph api client
+ A super simple Facebook Open Graph API client
 
 == FEATURES:
 
