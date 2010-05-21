@@ -9,13 +9,13 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 == DESCRIPTION:
 
- super simple facebook open graph api client
+ A super simple facebook open graph api client
 
 == FEATURES:
 
-* simple graph api call
-* simple fql call
-* utility to extract access_token and check sig in cookies
+* Simple graph api call
+* Simple fql call
+* Utility to extract access_token and check sig in cookies
 
 == SYNOPSIS:
 
@@ -90,7 +90,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 == REQUIREMENTS:
 
-* tested with MRI 1.8.7 and 1.9.1
+* Tested with MRI 1.8.7 and 1.9.1
 * gem install rest-client
 * gem install json      (optional)
 * gem install json_pure (optional)
