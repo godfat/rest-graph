@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.1.1 -- ?
+== rest-graph 1.1.1 -- 2010-05-21
 * Add oauth realted utilites -- authorize_url and authorize!
 * Fixed a bug that in Ruby 1.8.7-, nil =~ /regexp/ equals to false.
   It is nil as expected in Ruby 1.9.1+
