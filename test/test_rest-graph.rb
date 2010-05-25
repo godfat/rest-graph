@@ -153,6 +153,34 @@ describe RestGraph do
     RestGraph.new(:access_token => token).fql(fql).should == []
   end
 
+  it 'would do fql.mutilquery correctly' do
+    f0 = 'SELECT display_name FROM application WHERE app_id="233082465238"'
+    f1 = 'SELECT display_name FROM application WHERE app_id="110225210740"'
+    f0q, f1q = "\"#{f0.gsub('"', '\\"')}\"", "\"#{f1.gsub('"', '\\"')}\""
+    q = "format=json&queries=#{CGI.escape("{\"f0\":#{f0q},\"f1\":#{f1q}}")}"
+
+    stub_multi = lambda{
+      stub_request(:get,
+        "https://api.facebook.com/method/fql.multiquery?#{q}").
+        to_return(:body => '[]')
+    }
+
+    stub_multi.call
+
+    queries = {:f0 => f0, :f1 => f1}
+    RestGraph.new.fql_multi(queries).should == []
+
+    # FIXME: didn't work
+    # mock(queries).respond_to?(:json){ false }
+    # mock.proxy(queries).inject
+    def queries.respond_to? msg
+      msg == :to_json ? false : super(msg)
+    end
+
+    stub_multi.call
+    RestGraph.new.fql_multi(queries).should == []
+  end
+
   it 'would honor default attributes' do
     TestHelper.attrs_no_callback.each{ |name|
       RestGraph.new.send(name).should ==

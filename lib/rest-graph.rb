@@ -81,6 +81,19 @@ class RestGraph < RestGraphStruct
       {:query  => query, :format => 'json'}.merge(opts), :get)
   end
 
+  def fql_multi queries, opts={}
+    q = if queries.respond_to?(:to_json)
+           queries.to_json
+        else
+          middle = queries.inject([]){ |r, (k, v)|
+                     r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
+                   }.join(',')
+          "{#{middle}}"
+        end
+    request(fql_server, 'method/fql.multiquery',
+      {:queries => q, :format => 'json'}.merge(opts), :get)
+  end
+
   # cookies, app_id, secrect related below
 
   if RUBY_VERSION >= '1.9.1'
