@@ -38,7 +38,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
  # You may want to do redirect instead of raising exception, for example,
  # in a Rails application, you might have this private controller method:
- def redirect_to_authorize
+ def redirect_to_authorize error = nil
    redirect_to @rg.authorize_url(:redirect_uri => request.url)
  end
 
