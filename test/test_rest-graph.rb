@@ -10,6 +10,10 @@ describe RestGraph do
     reset_webmock
   end
 
+  after do
+    RR.verify
+  end
+
   it 'would build correct headers' do
     rg = RestGraph.new(:accept => 'text/html',
                        :lang   => 'zh-tw')
