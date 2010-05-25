@@ -8,7 +8,7 @@ RestGraphStruct = Struct.new(:data, :auto_decode,
                              :graph_server, :fql_server,
                              :accept, :lang,
                              :app_id, :secret,
-                             :error_callback)
+                             :error_callback) unless defined?(RestGraphStruct)
 
 class RestGraph < RestGraphStruct
   class Error < RuntimeError; end
