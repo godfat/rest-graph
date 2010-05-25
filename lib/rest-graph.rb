@@ -151,9 +151,10 @@ class RestGraph < RestGraphStruct
   end
 
   def request server, path, opts, method, payload=nil, suppress_decode=false
+    start_time = Time.now
     post_request(
       RestClient::Resource.new(server)[path + build_query_string(opts)].
-      send(method, *[payload, build_headers].compact), suppress_decode)
+      send(method, *[payload, build_headers].compact), suppress_decode, start_time)
   rescue RestClient::InternalServerError => e
     post_request(e.http_body, suppress_decode)
   end
@@ -171,7 +172,8 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, suppress_decode=false
+  def post_request result, suppress_decode=false, start_time=nil
+    Rails.logger.debug "RestGraph fetch (#{(Time.now - start_time)*1000}ms) #{result.args[:url]}"
     if auto_decode && !suppress_decode
       check_error(JSON.parse(result))
     else
