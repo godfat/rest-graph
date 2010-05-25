@@ -1,5 +1,18 @@
 = rest-graph changes history
 
+== rest-graph 1.2 -- ?
+* Add error_callback option. Default behavior is raising ::RestGraph::Error.
+  You may want to pass your private controller method to do redirection.
+  Extracted from README:
+  # You may want to do redirect instead of raising exception, for example,
+  # in a Rails application, you might have this private controller method:
+  def redirect_to_authorize
+    redirect_to @rg.authorize_url(:redirect_uri => request.url)
+  end
+
+  # and you'll use that private method to do error handling:
+  @rg = RestGraph.new(:error_callback => method(:redirect_to_authorize))
+
 == rest-graph 1.1.1 -- 2010-05-21
 * Add oauth realted utilites -- authorize_url and authorize!
 * Fixed a bug that in Ruby 1.8.7-, nil =~ /regexp/ equals to false.
