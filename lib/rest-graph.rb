@@ -36,7 +36,7 @@ class RestGraph < RestGraphStruct
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
     def default_error_callback
-      lambda{ |error| raise ::RestGraph::Error.new(error.inspect) }
+      lambda{ |error| raise ::RestGraph::Error.new(error) }
     end
   end
   extend DefaultAttributes
