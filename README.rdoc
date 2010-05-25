@@ -21,7 +21,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
  require 'rest-graph'
 
- # every option is optional!!
+ # Every option is optional.
  rg = RestGraph.new(:access_token => '...',
                     :graph_server => 'https://graph.facebook.com/',
                     :fql_server   => 'https://api.facebook.com/',
@@ -31,11 +31,24 @@ by Cardinal Blue ( http://cardinalblue.com )
                     :app_id       => '123',
                     :secret       => '1829',
 
-  # this callback is only called if auto_decode is set to true,
+  # This callback is only called if auto_decode is set to true,
   # otherwise, it's ignored.
                     :error_callback =>
-                      lambda{ |hash| raise ::RestGraph::Error.new })
+                      lambda{ |hash| raise ::RestGraph::Error.new(hash) })
 
+ # You may want to do redirect instead of raising exception, for example,
+ # in a Rails application, you might have this private controller method:
+ def redirect_to_authorize
+   redirect_to @rg.authorize_url(:redirect_uri => request.url)
+ end
+
+ # and you'll use that private method to do error handling:
+ @rg = RestGraph.new(:error_callback => method(:redirect_to_authorize))
+
+ # This way, you don't have to check if the token is expired or not.
+ # If the token is expired, it will automatically do authorization again.
+
+ # Other simple API call:
  rg.get('me')       # GET https://graph.facebook.com/me?access_token=...
  rg.get('4/likes')  # GET https://graph.facebook.com/4/likes?access_token=...
 
