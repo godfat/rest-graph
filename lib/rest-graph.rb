@@ -145,10 +145,10 @@ class RestGraph < RestGraphStruct
     post_request(e.http_body, suppress_decode)
   end
 
-  def build_query_string q={}
-    query = q.merge(access_token ? {:access_token => access_token} : {})
-    return '' if query.empty?
-    return '?' + query.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
+  def build_query_string query={}
+    q = query.merge(access_token ? {:access_token => access_token} : {})
+    return '' if q.empty?
+    return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
   end
 
   def build_headers
