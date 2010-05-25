@@ -7,9 +7,12 @@ require 'cgi'
 RestGraphStruct = Struct.new(:data, :auto_decode,
                              :graph_server, :fql_server,
                              :accept, :lang,
-                             :app_id, :secret)
+                             :app_id, :secret,
+                             :error_callback)
 
 class RestGraph < RestGraphStruct
+  class Error < RuntimeError; end
+
   Attributes = RestGraphStruct.members.map(&:to_sym)
 
   # honor default attributes
@@ -32,6 +35,9 @@ class RestGraph < RestGraphStruct
     def default_lang        ; 'en-us'                      ; end
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
+    def default_error_callback
+      lambda{ |error| raise ::RestGraph::Error.new(error.inspect) }
+    end
   end
   extend DefaultAttributes
 
@@ -153,11 +159,23 @@ class RestGraph < RestGraphStruct
   end
 
   def post_request result, suppress_decode=false
-    (auto_decode && !suppress_decode) ? JSON.parse(result) : result
+    if auto_decode && !suppress_decode
+      check_error(JSON.parse(result))
+    else
+      result
+    end
   end
 
   def check_sig_and_return_data cookies
     cookies if calculate_sig(cookies) == cookies['sig']
+  end
+
+  def check_error hash
+    if error_callback && hash.kind_of?(Hash) && hash['error']
+      error_callback.call(hash)
+    else
+      hash
+    end
   end
 
   def calculate_sig cookies

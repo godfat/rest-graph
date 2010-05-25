@@ -150,7 +150,7 @@ describe RestGraph do
   end
 
   it 'would honor default attributes' do
-    RestGraph::Attributes.each{ |name|
+    TestHelper.attrs_no_callback.each{ |name|
       RestGraph.new.send(name).should ==
         RestGraph.send("default_#{name}")
 

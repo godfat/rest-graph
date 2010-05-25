@@ -29,7 +29,12 @@ by Cardinal Blue ( http://cardinalblue.com )
                     :lang         => 'en-us', # this affect search
                     :auto_decode  => true,    # decode by json
                     :app_id       => '123',
-                    :secret       => '1829')
+                    :secret       => '1829',
+
+  # this callback is only called if auto_decode is set to true,
+  # otherwise, it's ignored.
+                    :error_callback =>
+                      lambda{ |hash| raise ::RestGraph::Error.new })
 
  rg.get('me')       # GET https://graph.facebook.com/me?access_token=...
  rg.get('4/likes')  # GET https://graph.facebook.com/4/likes?access_token=...
