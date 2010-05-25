@@ -1,17 +1,5 @@
 = rest-graph todo list
 
-= 1.1
-* auto authorization?
-
-class AuthError < RuntimeError; end
-
-rg = RestGraph.new(:scope => 'publish_stream,read_friendlists',
-                   :error_callback => lambda{ |json| raise AuthError } )
-
-begin
-  rg.get('me')
-rescue AuthError
-  # ...
-end
-
-rg.error_callback = lambda{ |json| redirect request.url }
+= 1.2
+* more docs?
+* more examples?
