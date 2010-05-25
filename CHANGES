@@ -11,7 +11,9 @@
   end
 
   # and you'll use that private method to do error handling:
-  @rg = RestGraph.new(:error_callback => method(:redirect_to_authorize))
+  def setup_rest_graph
+    @rg = RestGraph.new(:error_callback => method(:redirect_to_authorize))
+  end
 
 == rest-graph 1.1.1 -- 2010-05-21
 * Add oauth realted utilites -- authorize_url and authorize!
