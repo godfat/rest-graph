@@ -8,7 +8,8 @@ RestGraphStruct = Struct.new(:data, :auto_decode,
                              :graph_server, :fql_server,
                              :accept, :lang,
                              :app_id, :secret,
-                             :error_handler) unless defined?(RestGraphStruct)
+                             :error_handler,
+                             :log_handler) unless defined?(RestGraphStruct)
 
 class RestGraph < RestGraphStruct
   class Error < RuntimeError; end
@@ -37,6 +38,9 @@ class RestGraph < RestGraphStruct
     def default_secret      ; nil                          ; end
     def default_error_handler
       lambda{ |error| raise ::RestGraph::Error.new(error) }
+    end
+    def default_log_handler
+      lambda{ |duration, url| }
     end
   end
   extend DefaultAttributes
@@ -152,11 +156,13 @@ class RestGraph < RestGraphStruct
 
   def request server, path, opts, method, payload=nil, suppress_decode=false
     start_time = Time.now
+    res = RestClient::Resource.new(server)[path + build_query_string(opts)]
     post_request(
-      RestClient::Resource.new(server)[path + build_query_string(opts)].
-      send(method, *[payload, build_headers].compact), suppress_decode, start_time)
+      res.send(method, *[payload, build_headers].compact), suppress_decode)
   rescue RestClient::InternalServerError => e
     post_request(e.http_body, suppress_decode)
+  ensure
+    log_handler.call(Time.now - start_time, res.url)
   end
 
   def build_query_string query={}
@@ -172,8 +178,7 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, suppress_decode=false, start_time=nil
-    Rails.logger.debug "RestGraph fetch (#{(Time.now - start_time)*1000}ms) #{result.args[:url]}"
+  def post_request result, suppress_decode=false
     if auto_decode && !suppress_decode
       check_error(JSON.parse(result))
     else

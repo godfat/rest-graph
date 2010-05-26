@@ -30,3 +30,27 @@ describe RestGraph do
     end
   end
 end
+
+describe RestGraph do
+  before do
+    reset_webmock
+  end
+
+  after do
+    RR.verify
+  end
+
+  it 'would log whenever doing network request' do
+    stub_request(:get, 'https://graph.facebook.com/me').
+      to_return(:body => '{}')
+
+    mock(Time).now{ 666 }
+    mock(Time).now{ 999 }
+
+    logger = []
+    rg = RestGraph.new(:log_handler => lambda{ |d, u| logger << [d, u] })
+    rg.get('me')
+
+    logger.last.should == [333, 'https://graph.facebook.com/me']
+  end
+end
