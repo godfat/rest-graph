@@ -41,7 +41,7 @@ class RestGraph < RestGraphStruct
   end
   extend DefaultAttributes
 
-  def initialize o = {}
+  def initialize o={}
     (Attributes + [:access_token]).each{ |name|
       send("#{name}=", o[name]) if o.key?(name)
     }
@@ -60,23 +60,23 @@ class RestGraph < RestGraphStruct
     !!access_token
   end
 
-  def get    path, opts = {}
+  def get    path, opts={}
     request(graph_server, path, opts, :get)
   end
 
-  def delete path, opts = {}
+  def delete path, opts={}
     request(graph_server, path, opts, :delete)
   end
 
-  def post   path, payload, opts = {}
+  def post   path, payload, opts={}
     request(graph_server, path, opts, :post, payload)
   end
 
-  def put    path, payload, opts = {}
+  def put    path, payload, opts={}
     request(graph_server, path, opts, :put,  payload)
   end
 
-  def fql query, opts = {}
+  def fql query, opts={}
     request(fql_server, 'method/fql.query',
       {:query  => query, :format => 'json'}.merge(opts), :get)
   end
