@@ -2,22 +2,22 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rest-graph}
-  s.version = "1.1.1"
+  s.version = "1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Cardinal Blue", "Lin Jen-Shin (aka godfat 真常)"]
-  s.date = %q{2010-05-25}
+  s.date = %q{2010-05-26}
   s.description = %q{ A super simple Facebook Open Graph API client}
   s.email = %q{dev (XD) cardinalblue.com}
   s.extra_rdoc_files = ["CHANGES", "LICENSE", "TODO", "rest-graph.gemspec"]
-  s.files = ["CHANGES", "LICENSE", "README.rdoc", "Rakefile", "TODO", "init.rb", "lib/rest-graph.rb", "lib/rest-graph/auto_load.rb", "lib/rest-graph/load_config.rb", "lib/rest-graph/version.rb", "rest-graph.gemspec", "test/common.rb", "test/config/rest-graph.yaml", "test/test_load_config.rb", "test/test_oauth.rb", "test/test_rest-graph.rb"]
+  s.files = ["CHANGES", "LICENSE", "README.rdoc", "Rakefile", "TODO", "init.rb", "lib/rest-graph.rb", "lib/rest-graph/auto_load.rb", "lib/rest-graph/load_config.rb", "lib/rest-graph/version.rb", "rest-graph.gemspec", "test/common.rb", "test/config/rest-graph.yaml", "test/test_cookie.rb", "test/test_default.rb", "test/test_fql.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_oauth.rb", "test/test_rest-graph.rb"]
   s.homepage = %q{http://github.com/cardinalblue/rest-graph}
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{rest-graph}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{A super simple Facebook Open Graph API client}
-  s.test_files = ["test/test_load_config.rb", "test/test_oauth.rb", "test/test_rest-graph.rb"]
+  s.test_files = ["test/test_cookie.rb", "test/test_default.rb", "test/test_fql.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_oauth.rb", "test/test_rest-graph.rb"]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION

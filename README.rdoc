@@ -1,4 +1,4 @@
-= rest-graph 1.1.1
+= rest-graph 1.2.0
 by Cardinal Blue ( http://cardinalblue.com )
 
 == LINKS:
@@ -31,10 +31,18 @@ by Cardinal Blue ( http://cardinalblue.com )
                     :app_id       => '123',
                     :secret       => '1829',
 
-  # This callback is only called if auto_decode is set to true,
+  # This handler callback is only called if auto_decode is set to true,
   # otherwise, it's ignored.
                     :error_handler =>
-                      lambda{ |hash| raise ::RestGraph::Error.new(hash) })
+                      lambda{ |hash| raise ::RestGraph::Error.new(hash) },
+
+  # You may want to do this in Rails to do debug logging:
+                    :log_handler =>
+                      lambda{ |duration, url|
+                        Rails.logger.debug("RestGraph "         \
+                                           "spent #{duration} " \
+                                           "requesting #{url}")
+                      })
 
  # You may want to do redirect instead of raising exception, for example,
  # in a Rails application, you might have this private controller method:
@@ -68,11 +76,19 @@ by Cardinal Blue ( http://cardinalblue.com )
  rg.parse_cookies!(cookies) # auto save access_token if sig checked
  rg.data['uid']             # => facebook uid
 
- # fql query, same as:
+ # FQL query, same as:
  # GET https://api.facebook.com/method/fql.query?query=
  #     SELECT+name+FROM+page+WHERE+page_id%3D%22123%22&
  #     format=json&access_token=...
  rg.fql('SELECT name FROM page WHERE page_id="123"')
+
+ # FQL multiquery, same as:
+ # GET https://api.facebook.com/method/fql.multiquery?query=
+ #     %7BSELECT+name+FROM+page+WHERE+page_id%3D%22123%22&%2C
+ #        SELECT+name+FROM+page+WHERE+page_id%3D%22456%22&%7D
+ #     format=json&access_token=...
+ rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
+              :q2 => 'SELECT name FROM page WHERE page_id="456"')
 
  # default setting:
  class RestGraph

@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.2 -- ?
+== rest-graph 1.2.0 -- ?
 * Add error_handler option. Default behavior is raising ::RestGraph::Error.
   You may want to pass your private controller method to do redirection.
   Extracted from README:
@@ -14,6 +14,17 @@
   def setup_rest_graph
     @rg = RestGraph.new(:error_handler => method(:redirect_to_authorize))
   end
+
+* Add log_handler option. Default behavior is do nothing.
+  You may want to do this in Rails:
+  RestGraph.new(:log_hanlder => lambda{ |duration, url|
+                                  Rails.logger.debug("RestGraph "         \
+                                                     "spent #{duration} " \
+                                                     "requesting #{url}")
+                                })
+
+* Add RestGraph#fql_multi to do FQL multiquery. Thanks Ethan Czahor
+  Usage: rg.fql_multi(:query1 => 'SELECT ...', :query2 => 'SELECT ...')
 
 == rest-graph 1.1.1 -- 2010-05-21
 * Add oauth realted utilites -- authorize_url and authorize!
