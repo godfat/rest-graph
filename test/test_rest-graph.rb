@@ -91,104 +91,9 @@ describe RestGraph do
     RestGraph.new.delete('123').should == []
   end
 
-  it 'would extract correct access_token or fail checking sig' do
-    access_token = '1|2-5|f.'
-    app_id       = '1829'
-    secret       = app_id.reverse
-    sig          = '398262caea8442bd8801e8fba7c55c8a'
-    fbs          = "\"access_token=#{CGI.escape(access_token)}&expires=0&" \
-                   "secret=abc&session_key=def-456&sig=#{sig}&uid=3\""
-
-    check = lambda{ |token|
-      http_cookie =
-        "__utma=123; __utmz=456.utmcsr=(d)|utmccn=(d)|utmcmd=(n); " \
-        "fbs_#{app_id}=#{fbs}"
-
-      rg  = RestGraph.new(:app_id => app_id, :secret => secret)
-      rg.parse_rack_env!('HTTP_COOKIE' => http_cookie).
-                      should.kind_of?(token ? Hash : NilClass)
-      rg.access_token.should ==  token
-
-      rg.parse_rack_env!('HTTP_COOKIE' => nil).should == nil
-      rg.data.should == {}
-
-      rg.parse_cookies!({"fbs_#{app_id}" => fbs}).
-                      should.kind_of?(token ? Hash : NilClass)
-      rg.access_token.should ==  token
-
-      rg.parse_fbs!(fbs).
-                      should.kind_of?(token ? Hash : NilClass)
-      rg.access_token.should ==  token
-    }
-    check.call(access_token)
-    fbs.chop!
-    fbs += '&inject=evil"'
-    check.call(nil)
-  end
-
   it 'would return true in authorized? if there is an access_token' do
     RestGraph.new(:access_token => '1').authorized?.should == true
     RestGraph.new(:access_token => nil).authorized?.should == false
-  end
-
-  it 'would return nil if parse error, but not when call data directly' do
-    rg = RestGraph.new
-    rg.parse_cookies!({}).should == nil
-    rg.data              .should == {}
-  end
-
-  it 'would do fql query with/without access_token' do
-    fql = 'SELECT name FROM likes where id="123"'
-    query = "format=json&query=#{CGI.escape(fql)}"
-    stub_request(:get, "https://api.facebook.com/method/fql.query?#{query}").
-      to_return(:body => '[]')
-
-    RestGraph.new.fql(fql).should == []
-
-    token = 'token'.reverse
-    stub_request(:get, "https://api.facebook.com/method/fql.query?#{query}" \
-      "&access_token=#{token}").
-      to_return(:body => '[]')
-
-    RestGraph.new(:access_token => token).fql(fql).should == []
-  end
-
-  it 'would do fql.mutilquery correctly' do
-    f0 = 'SELECT display_name FROM application WHERE app_id="233082465238"'
-    f1 = 'SELECT display_name FROM application WHERE app_id="110225210740"'
-    f0q, f1q = "\"#{f0.gsub('"', '\\"')}\"", "\"#{f1.gsub('"', '\\"')}\""
-    q = "format=json&queries=#{CGI.escape("{\"f0\":#{f0q},\"f1\":#{f1q}}")}"
-
-    stub_multi = lambda{
-      stub_request(:get,
-        "https://api.facebook.com/method/fql.multiquery?#{q}").
-        to_return(:body => '[]')
-    }
-
-    stub_multi.call
-
-    queries = {:f0 => f0, :f1 => f1}
-    RestGraph.new.fql_multi(queries).should == []
-
-    # FIXME: didn't work
-    # mock(queries).respond_to?(:json){ false }
-    # mock.proxy(queries).inject
-    def queries.respond_to? msg
-      msg == :to_json ? false : super(msg)
-    end
-
-    stub_multi.call
-    RestGraph.new.fql_multi(queries).should == []
-  end
-
-  it 'would honor default attributes' do
-    TestHelper.attrs_no_callback.each{ |name|
-      RestGraph.new.send(name).should ==
-        RestGraph.send("default_#{name}")
-
-      RestGraph.new.send(name).should ==
-        RestGraph::DefaultAttributes.send("default_#{name}")
-    }
   end
 
   it 'would convert query to string' do
@@ -196,18 +101,5 @@ describe RestGraph do
     stub_request(:get, "https://graph.facebook.com/search?q=i%20am%20mock").
       to_return(:body => 'ok')
     RestGraph.new(:auto_decode => false).get('search', :q => o).should == 'ok'
-  end
-
-  it 'could use module to override default attributes' do
-    module BlahAttributes
-      def default_app_id
-        '1829'
-      end
-    end
-
-    TestHelper.ensure_rollback{
-      RestGraph.send(:extend, BlahAttributes)
-      RestGraph.default_app_id.should == '1829'
-    }
   end
 end
