@@ -33,7 +33,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
   # This callback is only called if auto_decode is set to true,
   # otherwise, it's ignored.
-                    :error_callback =>
+                    :error_handler =>
                       lambda{ |hash| raise ::RestGraph::Error.new(hash) })
 
  # You may want to do redirect instead of raising exception, for example,
@@ -44,7 +44,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
  # and you'll use that private method to do error handling:
  def setup_rest_graph
-   @rg = RestGraph.new(:error_callback => method(:redirect_to_authorize))
+   @rg = RestGraph.new(:error_handler => method(:redirect_to_authorize))
  end
 
  # This way, you don't have to check if the token is expired or not.

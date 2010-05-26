@@ -1,7 +1,7 @@
 = rest-graph changes history
 
 == rest-graph 1.2 -- ?
-* Add error_callback option. Default behavior is raising ::RestGraph::Error.
+* Add error_handler option. Default behavior is raising ::RestGraph::Error.
   You may want to pass your private controller method to do redirection.
   Extracted from README:
   # You may want to do redirect instead of raising exception, for example,
@@ -12,7 +12,7 @@
 
   # and you'll use that private method to do error handling:
   def setup_rest_graph
-    @rg = RestGraph.new(:error_callback => method(:redirect_to_authorize))
+    @rg = RestGraph.new(:error_handler => method(:redirect_to_authorize))
   end
 
 == rest-graph 1.1.1 -- 2010-05-21

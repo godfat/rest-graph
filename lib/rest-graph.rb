@@ -8,7 +8,7 @@ RestGraphStruct = Struct.new(:data, :auto_decode,
                              :graph_server, :fql_server,
                              :accept, :lang,
                              :app_id, :secret,
-                             :error_callback) unless defined?(RestGraphStruct)
+                             :error_handler) unless defined?(RestGraphStruct)
 
 class RestGraph < RestGraphStruct
   class Error < RuntimeError; end
@@ -35,7 +35,7 @@ class RestGraph < RestGraphStruct
     def default_lang        ; 'en-us'                      ; end
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
-    def default_error_callback
+    def default_error_handler
       lambda{ |error| raise ::RestGraph::Error.new(error) }
     end
   end
@@ -184,8 +184,8 @@ class RestGraph < RestGraphStruct
   end
 
   def check_error hash
-    if error_callback && hash.kind_of?(Hash) && hash['error']
-      error_callback.call(hash)
+    if error_handler && hash.kind_of?(Hash) && hash['error']
+      error_handler.call(hash)
     else
       hash
     end

@@ -18,11 +18,11 @@ describe RestGraph do
       to_return(:body => @error)
   end
 
-  it 'would call error_callback if error occurred' do
-    RestGraph.new(:error_callback => @id).get('me').should == @error_hash
+  it 'would call error_handler if error occurred' do
+    RestGraph.new(:error_handler => @id).get('me').should == @error_hash
   end
 
-  it 'would raise ::RestGraph::Error in default error_callback' do
+  it 'would raise ::RestGraph::Error in default error_handler' do
     begin
       RestGraph.new.get('me')
     rescue ::RestGraph::Error => e
