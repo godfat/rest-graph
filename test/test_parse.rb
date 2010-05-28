@@ -48,4 +48,10 @@ describe RestGraph do
     check.call(nil)
   end
 
+  it 'would not pass if there is no secret, prevent from forgery' do
+    rg = RestGraph.new
+    rg.parse_fbs!('"feed=me&sig=bddd192cf27f22c05f61c8bea24fa4b7"').
+      should == nil
+  end
+
 end
