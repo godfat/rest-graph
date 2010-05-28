@@ -1,7 +1,23 @@
 
+# gem
 require 'rest_client'
 
+# stdlib
+require 'digest/md5'
 require 'cgi'
+
+# optional gem
+begin
+  require 'rack'
+rescue LoadError; end
+
+begin
+  require 'json'
+rescue LoadError
+  begin
+    require 'json_pure'
+  rescue LoadError; end
+end
 
 # the data structure used in RestGraph
 RestGraphStruct = Struct.new(:data, :auto_decode,
@@ -49,7 +65,6 @@ class RestGraph < RestGraphStruct
     (Attributes + [:access_token]).each{ |name|
       send("#{name}=", o[name]) if o.key?(name)
     }
-    check_arguments!
   end
 
   def access_token
@@ -135,25 +150,6 @@ class RestGraph < RestGraphStruct
   end
 
   private
-  def check_arguments!
-    if auto_decode
-      begin
-        require 'json'
-      rescue LoadError
-        require 'json_pure'
-      end
-    end
-
-    if app_id && secret # want to parse access_token in cookies
-      require 'digest/md5'
-      require 'rack'
-    elsif app_id || secret
-      raise ArgumentError.new("You may want to pass both"      \
-                              " app_id(#{app_id.inspect}) and" \
-                              " secret(#{secret.inspect})")
-    end
-  end
-
   def request server, path, opts, method, payload=nil, suppress_decode=false
     start_time = Time.now
     res = RestClient::Resource.new(server)[path + build_query_string(opts)]
