@@ -54,4 +54,17 @@ describe RestGraph do
       should == nil
   end
 
+  it 'would parse json correctly' do
+    rg = RestGraph.new
+
+    rg.parse_json!('bad json').should == nil
+    rg.parse_json!('{"no":"sig"}').should == nil
+    rg.parse_json!('{"feed":"me","sig":"bddd192cf27f22c05f61c8bea24fa4b7"}').
+      should == nil
+
+    rg = RestGraph.new(:secret => 'bread')
+    rg.parse_json!('{"feed":"me","sig":"20393e7823730308938a86ecf1c88b14"}').
+      should == {'feed' => 'me', 'sig' => "20393e7823730308938a86ecf1c88b14"}
+  end
+
 end

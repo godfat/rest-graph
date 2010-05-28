@@ -136,6 +136,12 @@ class RestGraph < RestGraphStruct
       check_sig_and_return_data(Rack::Utils.parse_query(fbs[1..-2]))
   end
 
+  def parse_json! json
+    self.data = json &&
+      check_sig_and_return_data(JSON.load(json))
+  rescue JSON::ParserError
+  end
+
   # oauth related
 
   def authorize_url opts={}
