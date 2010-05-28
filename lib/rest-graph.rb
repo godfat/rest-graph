@@ -187,7 +187,7 @@ class RestGraph < RestGraphStruct
   end
 
   def check_sig_and_return_data cookies
-    cookies if calculate_sig(cookies) == cookies['sig']
+    cookies if secret && calculate_sig(cookies) == cookies['sig']
   end
 
   def check_error hash
