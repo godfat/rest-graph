@@ -1,6 +1,13 @@
 = rest-graph changes history
 
 == rest-graph 1.2.0 -- ?
+* Add RestGraph#parse_json!
+* Add RailsController to help you integrate into Rails.
+* Simplify arguments checking and require dependency.
+* Now if there's no secret in RestGraph, sig check would always fail.
+* Now there's a Rails example.
+  http://github.com/cardinalblue/rest-graph/tree/master/example
+
 * Add error_handler option. Default behavior is raising ::RestGraph::Error.
   You may want to pass your private controller method to do redirection.
   Extracted from README:
