@@ -68,8 +68,8 @@ by Cardinal Blue ( http://cardinalblue.com )
  # GET https://graph.facebook.com/me?metadata=1&access_token=...
  rg.get('me', :metadata => '1')
 
- # POST https://graph.facebook.com/feed/me?message=bread%21&access_token=...
- rg.post('feed/me', :message => 'bread!')
+ # POST https://graph.facebook.com/me/feed?message=bread%21&access_token=...
+ rg.post('me/feed', :message => 'bread!')
 
  # for fully blown cookies hash
  rg = RestGraph.new(:app_id => '123', :secret => '1829')
