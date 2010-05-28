@@ -2,22 +2,24 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rest-graph}
-  s.version = "1.2"
+  s.version = "1.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Cardinal Blue", "Lin Jen-Shin (aka godfat 真常)"]
-  s.date = %q{2010-05-26}
-  s.description = %q{ A super simple Facebook Open Graph API client}
+  s.date = %q{2010-05-28}
+  s.description = %q{ A super simple Facebook Open Graph API client
+ If you feel SYNOPSIS is so hard to understand, please read
+ {examples}[http://github.com/cardinalblue/rest-graph/tree/master/example].}
   s.email = %q{dev (XD) cardinalblue.com}
-  s.extra_rdoc_files = ["CHANGES", "LICENSE", "TODO", "rest-graph.gemspec"]
-  s.files = ["CHANGES", "LICENSE", "README.rdoc", "Rakefile", "TODO", "init.rb", "lib/rest-graph.rb", "lib/rest-graph/auto_load.rb", "lib/rest-graph/load_config.rb", "lib/rest-graph/version.rb", "rest-graph.gemspec", "test/common.rb", "test/config/rest-graph.yaml", "test/test_cookie.rb", "test/test_default.rb", "test/test_fql.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_oauth.rb", "test/test_rest-graph.rb"]
+  s.extra_rdoc_files = ["CHANGES", "LICENSE", "TODO", "example/rails/README", "example/rails/app/views/rest-graph.erb", "example/rails/config/rest-graph.yaml", "example/rails/script/console", "example/rails/script/server", "rest-graph.gemspec"]
+  s.files = ["CHANGES", "LICENSE", "README.rdoc", "Rakefile", "TODO", "example/rails/README", "example/rails/Rakefile", "example/rails/app/controllers/application_controller.rb", "example/rails/app/views/rest-graph.erb", "example/rails/config/boot.rb", "example/rails/config/environment.rb", "example/rails/config/environments/development.rb", "example/rails/config/environments/production.rb", "example/rails/config/environments/test.rb", "example/rails/config/initializers/cookie_verification_secret.rb", "example/rails/config/initializers/new_rails_defaults.rb", "example/rails/config/initializers/session_store.rb", "example/rails/config/rest-graph.yaml", "example/rails/config/routes.rb", "example/rails/script/console", "example/rails/script/server", "init.rb", "lib/rest-graph.rb", "lib/rest-graph/auto_load.rb", "lib/rest-graph/load_config.rb", "lib/rest-graph/rails_controller.rb", "lib/rest-graph/version.rb", "rest-graph.gemspec", "test/common.rb", "test/config/rest-graph.yaml", "test/test_default.rb", "test/test_fql.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_oauth.rb", "test/test_parse.rb", "test/test_rest-graph.rb"]
   s.homepage = %q{http://github.com/cardinalblue/rest-graph}
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{rest-graph}
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{A super simple Facebook Open Graph API client}
-  s.test_files = ["test/test_cookie.rb", "test/test_default.rb", "test/test_fql.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_oauth.rb", "test/test_rest-graph.rb"]
+  s.summary = %q{A super simple Facebook Open Graph API client If you feel SYNOPSIS is so hard to understand, please read {examples}[http://github}
+  s.test_files = ["test/test_default.rb", "test/test_fql.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_oauth.rb", "test/test_parse.rb", "test/test_rest-graph.rb"]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
@@ -28,7 +30,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<json>, [">= 1.4.3"])
       s.add_development_dependency(%q<rack>, [">= 1.1.0"])
       s.add_development_dependency(%q<rr>, [">= 0.10.11"])
-      s.add_development_dependency(%q<webmock>, [">= 1.2.1"])
+      s.add_development_dependency(%q<webmock>, [">= 1.2.2"])
       s.add_development_dependency(%q<bacon>, [">= 1.1.0"])
       s.add_development_dependency(%q<bones>, [">= 3.4.3"])
     else
@@ -36,7 +38,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<json>, [">= 1.4.3"])
       s.add_dependency(%q<rack>, [">= 1.1.0"])
       s.add_dependency(%q<rr>, [">= 0.10.11"])
-      s.add_dependency(%q<webmock>, [">= 1.2.1"])
+      s.add_dependency(%q<webmock>, [">= 1.2.2"])
       s.add_dependency(%q<bacon>, [">= 1.1.0"])
       s.add_dependency(%q<bones>, [">= 3.4.3"])
     end
@@ -45,7 +47,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<json>, [">= 1.4.3"])
     s.add_dependency(%q<rack>, [">= 1.1.0"])
     s.add_dependency(%q<rr>, [">= 0.10.11"])
-    s.add_dependency(%q<webmock>, [">= 1.2.1"])
+    s.add_dependency(%q<webmock>, [">= 1.2.2"])
     s.add_dependency(%q<bacon>, [">= 1.1.0"])
     s.add_dependency(%q<bones>, [">= 3.4.3"])
   end

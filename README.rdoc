@@ -18,8 +18,9 @@ by Cardinal Blue ( http://cardinalblue.com )
 * Utility to extract access_token and check sig in cookies
 
 == SYNOPSIS:
- # If you feel this is so hard to understand, please read
- # {examples}[http://github.com/cardinalblue/rest-graph/tree/master/example].
+
+# If you feel SYNOPSIS is so hard to understand, please read
+# {examples}[http://github.com/cardinalblue/rest-graph/tree/master/example].
 
  require 'rest-graph'
 
