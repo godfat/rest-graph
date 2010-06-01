@@ -3,7 +3,7 @@ require 'erb'
 require 'yaml'
 
 require 'rest-graph'
-require 'rest-graph/rails_controller' if Object.const_defined?(:Rails)
+require 'rest-graph/rails_util' if Object.const_defined?(:Rails)
 
 module RestGraph::LoadConfig
   module_function

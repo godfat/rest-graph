@@ -1,7 +1,7 @@
 
 require 'rest-graph'
 
-module RestGraph::RailsController
+module RestGraph::RailsUtil
   module_function
   # filters for you
   def setup_iframe
