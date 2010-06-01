@@ -31,4 +31,9 @@ describe RestGraph do
     @rg.data.should == result
   end
 
+  it 'would not append access_token in authorize_url even presented' do
+    RestGraph.new(:access_token => 'do not use me').authorize_url.
+      should == 'https://graph.facebook.com/oauth/authorize'
+  end
+
 end

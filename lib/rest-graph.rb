@@ -145,7 +145,7 @@ class RestGraph < RestGraphStruct
   # oauth related
 
   def authorize_url opts={}
-    query = {:client_id => app_id}.merge(opts)
+    query = {:client_id => app_id, :access_token => nil}.merge(opts)
     "#{graph_server}oauth/authorize#{build_query_string(query)}"
   end
 
@@ -168,7 +168,8 @@ class RestGraph < RestGraphStruct
   end
 
   def build_query_string query={}
-    q = query.merge(access_token ? {:access_token => access_token} : {})
+    qq = access_token ? {:access_token => access_token}.merge(query) : query
+    q  = qq.select{ |k, v| v }
     return '' if q.empty?
     return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
   end
