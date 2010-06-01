@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
 
-  include RestGraph::RailsController
+  include RestGraph::RailsUtil
   before_filter :setup_iframe
   before_filter :setup_rest_graph
 
