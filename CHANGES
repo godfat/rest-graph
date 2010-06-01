@@ -1,5 +1,10 @@
 = rest-graph changes history
 
+== rest-graph 1.2.1 -- ?
+* Deprecated RailsController, use RailsUtil instead.
+* Fixed a bug that passing access_token in query string
+  in RestGraph#authorize_url
+
 == rest-graph 1.2.0 -- 2010-05-27
 * Add RestGraph#parse_json!
 * Add RailsController to help you integrate into Rails.
