@@ -4,6 +4,9 @@
 * Deprecated RailsController, use RailsUtil instead.
 * Fixed a bug that passing access_token in query string
   in RestGraph#authorize_url
+* Fixed a bug that Facebook changed the format (I think) of fbs_ in cookies.
+  Thanks betelgeuse, closes #1
+  http://github.com/cardinalblue/rest-graph/issues/issue/1
 
 == rest-graph 1.2.0 -- 2010-05-27
 * Add RestGraph#parse_json!
