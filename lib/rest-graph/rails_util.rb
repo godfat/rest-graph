@@ -98,3 +98,5 @@ module RestGraph::RailsUtil
         sub(/[\&\?]code=[^\&]+/, '')
   end
 end
+
+RestGraph::RailsController = RestGraph::RailsUtil
