@@ -117,12 +117,12 @@ class RestGraph < RestGraphStruct
 
   if RUBY_VERSION >= '1.9.1'
     def parse_rack_env! env
-      self.data = env['HTTP_COOKIE'] =~ /fbs_#{app_id}="(.+?)"/ &&
+      self.data = env['HTTP_COOKIE'] =~ /fbs_#{app_id}=([^\;]+)/ &&
         check_sig_and_return_data(Rack::Utils.parse_query($1))
     end
   else
     def parse_rack_env! env
-      self.data = (env['HTTP_COOKIE'] || '') =~ /fbs_#{app_id}="(.+?)"/ &&
+      self.data = (env['HTTP_COOKIE'] || '') =~ /fbs_#{app_id}=([^\;]+)/ &&
         check_sig_and_return_data(Rack::Utils.parse_query($1))
     end
   end
@@ -133,7 +133,7 @@ class RestGraph < RestGraphStruct
 
   def parse_fbs! fbs
     self.data = fbs &&
-      check_sig_and_return_data(Rack::Utils.parse_query(fbs[1..-2]))
+      check_sig_and_return_data(Rack::Utils.parse_query(fbs))
   end
 
   def parse_json! json
