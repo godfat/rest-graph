@@ -95,24 +95,6 @@ class RestGraph < RestGraphStruct
     request(graph_server, path, opts, :put,  payload)
   end
 
-  def fql query, opts={}
-    request(fql_server, 'method/fql.query',
-      {:query  => query, :format => 'json'}.merge(opts), :get)
-  end
-
-  def fql_multi queries, opts={}
-    q = if queries.respond_to?(:to_json)
-           queries.to_json
-        else
-          middle = queries.inject([]){ |r, (k, v)|
-                     r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
-                   }.join(',')
-          "{#{middle}}"
-        end
-    request(fql_server, 'method/fql.multiquery',
-      {:queries => q, :format => 'json'}.merge(opts), :get)
-  end
-
   # cookies, app_id, secrect related below
 
   if RUBY_VERSION >= '1.9.1'
@@ -153,6 +135,26 @@ class RestGraph < RestGraphStruct
     query = {:client_id => app_id, :client_secret => secret}.merge(opts)
     self.data = Rack::Utils.parse_query(
       request(graph_server, 'oauth/access_token', query, :get, nil, true))
+  end
+
+  # old rest facebook api, i will definitely love to remove them someday
+
+  def fql query, opts={}
+    request(fql_server, 'method/fql.query',
+      {:query  => query, :format => 'json'}.merge(opts), :get)
+  end
+
+  def fql_multi queries, opts={}
+    q = if queries.respond_to?(:to_json)
+           queries.to_json
+        else
+          middle = queries.inject([]){ |r, (k, v)|
+                     r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
+                   }.join(',')
+          "{#{middle}}"
+        end
+    request(fql_server, 'method/fql.multiquery',
+      {:queries => q, :format => 'json'}.merge(opts), :get)
   end
 
   private
