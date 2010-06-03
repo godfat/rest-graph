@@ -1,5 +1,11 @@
 
-development:
+development: &default
   app_id: ''
   secret: ''
   canvas: ''
+
+production:
+  *default
+
+test:
+  *default
