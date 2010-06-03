@@ -14,7 +14,6 @@ class ApplicationController < ActionController::Base
 
   def index
     me = @rg.get('me')
-    return unless me
     render :text => me.to_json
   end
 end

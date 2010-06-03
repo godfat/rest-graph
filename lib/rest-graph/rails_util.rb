@@ -2,6 +2,12 @@
 require 'rest-graph'
 
 module RestGraph::RailsUtil
+  def self.included controller
+    controller.rescue_from(::RestGraph::Error){ |exception|
+      logger.debug("DEBUG: RestGraph: action halt")
+    }
+  end
+
   module_function
   # filters for you
   def setup_iframe
@@ -66,7 +72,7 @@ module RestGraph::RailsUtil
     logger.debug("DEBUG: RestGraph: redirect to #{@authorize_url}")
 
     rest_graph_authorize_redirect
-    return false
+    raise ::RestGraph::Error.new(error)
   end
 
   # override this if you need different access scope
