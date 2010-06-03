@@ -79,20 +79,20 @@ class RestGraph < RestGraphStruct
     !!access_token
   end
 
-  def get    path, opts={}
-    request(graph_server, path, opts, :get)
+  def get    path, query={}
+    request(graph_server, path, query, :get)
   end
 
-  def delete path, opts={}
-    request(graph_server, path, opts, :delete)
+  def delete path, query={}
+    request(graph_server, path, query, :delete)
   end
 
-  def post   path, payload, opts={}
-    request(graph_server, path, opts, :post, payload)
+  def post   path, payload, query={}
+    request(graph_server, path, query, :post, payload)
   end
 
-  def put    path, payload, opts={}
-    request(graph_server, path, opts, :put,  payload)
+  def put    path, payload, query={}
+    request(graph_server, path, query, :put,  payload)
   end
 
   # cookies, app_id, secrect related below
@@ -139,22 +139,22 @@ class RestGraph < RestGraphStruct
 
   # old rest facebook api, i will definitely love to remove them someday
 
-  def fql query, opts={}
+  def fql code, query={}
     request(fql_server, 'method/fql.query',
-      {:query  => query, :format => 'json'}.merge(opts), :get)
+      {:query => code, :format => 'json'}.merge(query), :get)
   end
 
-  def fql_multi queries, opts={}
-    q = if queries.respond_to?(:to_json)
-           queries.to_json
+  def fql_multi codes, query={}
+    c = if codes.respond_to?(:to_json)
+           codes.to_json
         else
-          middle = queries.inject([]){ |r, (k, v)|
+          middle = codes.inject([]){ |r, (k, v)|
                      r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
                    }.join(',')
           "{#{middle}}"
         end
     request(fql_server, 'method/fql.multiquery',
-      {:queries => q, :format => 'json'}.merge(opts), :get)
+      {:queries => c, :format => 'json'}.merge(query), :get)
   end
 
   private
