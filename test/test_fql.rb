@@ -57,4 +57,14 @@ describe RestGraph do
     stub_multi.call
     RestGraph.new.fql_multi(queries).should == []
   end
+
+  it 'would do facebook old rest api' do
+    body = 'hate facebook inconsistent'
+    stub_request(:get,
+      'https://api.facebook.com/method/notes.create?format=json').
+      to_return(:body => body)
+
+    RestGraph.new.old_rest('notes.create', {}, :suppress_decode => true).
+      should == body
+  end
 end

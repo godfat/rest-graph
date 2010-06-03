@@ -139,10 +139,13 @@ class RestGraph < RestGraphStruct
 
   # old rest facebook api, i will definitely love to remove them someday
 
+  def old_rest path, query={}, opts={}
+    request(fql_server, "method/#{path}",
+      {:format => 'json'}.merge(query), :get, nil, opts[:suppress_decode])
+  end
+
   def fql code, query={}, opts={}
-    request(fql_server, 'method/fql.query',
-      {:query => code, :format => 'json'}.merge(query),
-      :get, opts[:suppress_decode])
+    old_rest('fql.query', {:query => code}.merge(query), opts)
   end
 
   def fql_multi codes, query={}, opts={}
@@ -154,9 +157,7 @@ class RestGraph < RestGraphStruct
                    }.join(',')
           "{#{middle}}"
         end
-    request(fql_server, 'method/fql.multiquery',
-      {:queries => c, :format => 'json'}.merge(query),
-      :get, opts[:suppress_decode])
+    old_rest('fql.multiquery', {:queries => c}.merge(query), opts)
   end
 
   private
