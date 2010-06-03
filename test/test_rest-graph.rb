@@ -75,6 +75,15 @@ describe RestGraph do
       should == '[]'
   end
 
+  it 'could suppress auto-decode in an api call' do
+    stub_request(:get, 'https://graph.facebook.com/woot').
+      to_return(:body => 'bad json')
+
+    rg = RestGraph.new(:auto_decode => true)
+    rg.get('woot', {}, :suppress_decode => true).should == 'bad json'
+    rg.auto_decode.should == true
+  end
+
   it 'would call post_request after request' do
     stub_request(:put, 'https://graph.facebook.com/feed/me').
       with(:body => 'message=hi%20there').to_return(:body => '[]')
