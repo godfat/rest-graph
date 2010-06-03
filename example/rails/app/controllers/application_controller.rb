@@ -9,11 +9,34 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
 
   include RestGraph::RailsUtil
-  before_filter :setup_iframe
-  before_filter :setup_rest_graph
+
+  # ---
+
+  before_filter :rest_graph_setup, :only => [:index]
 
   def index
-    me = @rg.get('me')
-    render :text => me.to_json
+    render :text => rest_graph.get('me').to_json
+  end
+
+  # ---
+
+  before_filter lambda{ |controller|
+    controller.rest_graph_setup(:iframe => true,
+                                :scope  => 'publish_stream')
+
+  }, :only => [:iframe]
+
+  alias_method :iframe, :index
+
+  # ---
+
+  before_filter lambda{ |controller|
+    controller.rest_graph_setup(:auto_redirect => false)
+  }, :only => [:no_redirect]
+
+  def no_redirect
+    rest_graph.get('me')
+  rescue RestGraph::Error
+    render :text => 'XD'
   end
 end

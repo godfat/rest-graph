@@ -1,8 +1,8 @@
 
 development: &default
-  app_id: ''
-  secret: ''
-  canvas: ''
+  app_id: '123'
+  secret: '456'
+  canvas: '789'
 
 production:
   *default
