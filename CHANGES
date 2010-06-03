@@ -9,6 +9,9 @@
   e.g. rg.get('bad/json', {:query => 'string'}, :suppress_decode => true)
   This is for Facebook who didn't always return JSON in response.
 
+* Big and fat refactoring in RailsUtil, see example for detail:
+  http://github.com/cardinalblue/rest-graph/tree/bb11250e377736c6425666587906a66644c9415e/example
+
 == rest-graph 1.2.1 -- 2010-06-02
 * Deprecated RailsController, use RailsUtil instead.
 * Fixed a bug that passing access_token in query string
