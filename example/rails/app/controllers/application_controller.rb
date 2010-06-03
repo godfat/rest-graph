@@ -10,33 +10,29 @@ class ApplicationController < ActionController::Base
 
   include RestGraph::RailsUtil
 
-  # ---
-
-  before_filter :rest_graph_setup, :only => [:index]
+  before_filter :rest_graph_setup,       :only => [:index]
+  before_filter :filter_for_iframe,      :only => [:iframe]
+  before_filter :filter_for_no_redirect, :only => [:no_redirect]
 
   def index
     render :text => rest_graph.get('me').to_json
   end
 
-  # ---
-
-  before_filter lambda{ |controller|
-    controller.rest_graph_setup(:iframe => true,
-                                :scope  => 'publish_stream')
-
-  }, :only => [:iframe]
-
   alias_method :iframe, :index
-
-  # ---
-
-  before_filter lambda{ |controller|
-    controller.rest_graph_setup(:auto_redirect => false)
-  }, :only => [:no_redirect]
 
   def no_redirect
     rest_graph.get('me')
   rescue RestGraph::Error
     render :text => 'XD'
+  end
+
+  private
+  def filter_for_iframe
+    rest_graph_setup(:iframe => true,
+                     :scope  => 'publish_stream')
+  end
+
+  def filter_for_no_redirect
+    rest_graph_setup(:auto_redirect => false)
   end
 end
