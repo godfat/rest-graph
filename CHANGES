@@ -1,5 +1,14 @@
 = rest-graph changes history
 
+== rest-graph 1.2.2 -- ?
+* Added RestGraph#old_rest, see:
+  http://developers.facebook.com/docs/reference/rest/
+
+* Now all API request accept an additional options argument,
+  you may pass :suppress_decode => true to turn off auto-decode this time.
+  e.g. rg.get('bad/json', {:query => 'string'}, :suppress_decode => true)
+  This is for Facebook who didn't always return JSON in response.
+
 == rest-graph 1.2.1 -- 2010-06-02
 * Deprecated RailsController, use RailsUtil instead.
 * Fixed a bug that passing access_token in query string
