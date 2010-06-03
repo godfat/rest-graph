@@ -79,20 +79,20 @@ class RestGraph < RestGraphStruct
     !!access_token
   end
 
-  def get    path, query={}
-    request(graph_server, path, query, :get)
+  def get    path, query={}, opts={}
+    request(graph_server, path, query, :get,    nil,   opts[:suppress_decode])
   end
 
-  def delete path, query={}
-    request(graph_server, path, query, :delete)
+  def delete path, query={}, opts={}
+    request(graph_server, path, query, :delete, nil,   opts[:suppress_decode])
   end
 
-  def post   path, payload, query={}
-    request(graph_server, path, query, :post, payload)
+  def post   path, payload, query={}, opts={}
+    request(graph_server, path, query, :post, payload, opts[:suppress_decode])
   end
 
-  def put    path, payload, query={}
-    request(graph_server, path, query, :put,  payload)
+  def put    path, payload, query={}, opts={}
+    request(graph_server, path, query, :put,  payload, opts[:suppress_decode])
   end
 
   # cookies, app_id, secrect related below
@@ -139,12 +139,13 @@ class RestGraph < RestGraphStruct
 
   # old rest facebook api, i will definitely love to remove them someday
 
-  def fql code, query={}
+  def fql code, query={}, opts={}
     request(fql_server, 'method/fql.query',
-      {:query => code, :format => 'json'}.merge(query), :get)
+      {:query => code, :format => 'json'}.merge(query),
+      :get, opts[:suppress_decode])
   end
 
-  def fql_multi codes, query={}
+  def fql_multi codes, query={}, opts={}
     c = if codes.respond_to?(:to_json)
            codes.to_json
         else
@@ -154,11 +155,12 @@ class RestGraph < RestGraphStruct
           "{#{middle}}"
         end
     request(fql_server, 'method/fql.multiquery',
-      {:queries => c, :format => 'json'}.merge(query), :get)
+      {:queries => c, :format => 'json'}.merge(query),
+      :get, opts[:suppress_decode])
   end
 
   private
-  def request server, path, opts, method, payload=nil, suppress_decode=false
+  def request server, path, opts, method, payload=nil, suppress_decode=nil
     start_time = Time.now
     res = RestClient::Resource.new(server)[path + build_query_string(opts)]
     post_request(
@@ -183,7 +185,7 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, suppress_decode=false
+  def post_request result, suppress_decode=nil
     if auto_decode && !suppress_decode
       check_error(JSON.parse(result))
     else
