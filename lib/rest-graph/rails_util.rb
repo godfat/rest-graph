@@ -88,7 +88,7 @@ module RestGraph::RailsUtil
       <html>
         <head>
         <script type="text/javascript">
-          window.top.location.href = '<%= @authorize_url %>'
+          window.top.location.href = '<%= @rest_graph_authorize_url %>'
         </script>
         <noscript>
           <meta http-equiv="refresh" content="0;url=<%= h @rest_graph_authorize_url %>" />
