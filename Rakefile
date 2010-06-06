@@ -41,3 +41,7 @@ task :default do
   Rake.application.options.show_task_pattern = /./
   Rake.application.display_tasks_and_comments
 end
+
+task :test do
+  sh 'cd example/rails; rake test'
+end
