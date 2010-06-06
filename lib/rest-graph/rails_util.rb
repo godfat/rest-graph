@@ -78,7 +78,7 @@ module RestGraph::RailsUtil
 
   # override this if you want the simple redirect_to
   def rest_graph_authorize_redirect
-    if !@fb_sig_in_iframe && !rest_graph_options[:iframe]
+    if !rest_graph_options[:iframe] && !@fb_sig_in_iframe
       redirect_to @rest_graph_authorize_url
 
     else
@@ -108,7 +108,7 @@ module RestGraph::RailsUtil
   end
 
   def normalized_request_uri
-    if @fb_sig_in_iframe
+    if rest_graph_options[:iframe] || @fb_sig_in_iframe
       "http://apps.facebook.com/" \
       "#{RestGraph.default_canvas}#{request.request_uri}"
     else
