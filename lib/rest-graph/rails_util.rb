@@ -20,9 +20,10 @@ module RestGraph::RailsUtil
     # exchange the code with access_token
     if params[:code]
       rest_graph.authorize!(:code => params[:code],
-                            :redirect_uri => normalized_request_uri)
+                            :redirect_uri => rest_graph_normalized_request_uri)
       logger.debug(
-        "DEBUG: RestGraph: detected code with #{normalized_request_uri}, " \
+        "DEBUG: RestGraph: detected code with "  \
+        "#{rest_graph_normalized_request_uri}, " \
         "parsed: #{rest_graph.data.inspect}")
     end
 
@@ -66,7 +67,7 @@ module RestGraph::RailsUtil
     logger.warn("WARN: RestGraph: #{error.inspect}") if error
 
     @rest_graph_authorize_url = rest_graph.authorize_url(
-      {:redirect_uri => normalized_request_uri,
+      {:redirect_uri => rest_graph_normalized_request_uri,
        :scope        => rest_graph_options[:scope]}.
       merge(rest_graph_options[:authorize_options]))
 
@@ -107,7 +108,7 @@ module RestGraph::RailsUtil
     logger.debug("DEBUG: RestGraph: spent #{duration} requesting #{url}")
   end
 
-  def normalized_request_uri
+  def rest_graph_normalized_request_uri
     if rest_graph_in_iframe?
       "http://apps.facebook.com/" \
       "#{RestGraph.default_canvas}#{request.request_uri}"
