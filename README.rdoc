@@ -106,7 +106,6 @@ by Cardinal Blue ( http://cardinalblue.com )
  RestGraph.send(:extend, MyDefaults)
 
  # auto load config
- require 'rest-graph'
  require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
  RestGraph.new                   # all default options would honor config
  RestGraph.new(:app_id => '123') # default could be override as well
@@ -127,6 +126,9 @@ by Cardinal Blue ( http://cardinalblue.com )
  rg.authorize!(:redirect_uri => '...', :code => 'zzz')
  rg.access_token    # your access_token is now available
  rg.data['expires'] # other values as well
+
+ # exchange old session key for access token:
+ rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
 
 == REQUIREMENTS:
 
