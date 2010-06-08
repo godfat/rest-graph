@@ -94,15 +94,16 @@ by Cardinal Blue ( http://cardinalblue.com )
               :q2 => 'SELECT name FROM page WHERE page_id="456"')
 
  # default setting:
- class RestGraph
-   def self.default_app_id
+ module MyDefaults
+   def default_app_id
      '456'
    end
 
-   def self.default_secret
+   def default_secret
      'category theory'
    end
  end
+ RestGraph.send(:extend, MyDefaults)
 
  # auto load config
  require 'rest-graph'
