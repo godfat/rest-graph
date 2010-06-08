@@ -72,4 +72,17 @@ describe RestGraph do
     RestGraph.new.old_rest('notes.create', {}, :suppress_decode => true).
       should == body
   end
+
+  it 'would exchange sessions for access token' do
+    stub_request(:post,
+      'https://graph.facebook.com/oauth/exchange_sessions?'     \
+              'type=client_cred&client_id=id&client_secret=di&' \
+              'sessions=bad%20bed').
+      to_return(:body => '[{"access_token":"bogus"}]')
+
+    RestGraph.new(:app_id => 'id',
+                  :secret => 'di').
+      exchange_sessions(:sessions => 'bad bed').
+      first['access_token'].should == 'bogus'
+  end
 end

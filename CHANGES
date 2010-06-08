@@ -1,6 +1,8 @@
 = rest-graph changes history
 
 == rest-graph 1.2.2 -- ?
+* Added RestGraph#exchange_sessions to exchange old sessions to access tokens.
+
 * Added RestGraph#old_rest, see:
   http://developers.facebook.com/docs/reference/rest/
 

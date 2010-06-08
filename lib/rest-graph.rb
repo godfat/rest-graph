@@ -144,6 +144,12 @@ class RestGraph < RestGraphStruct
       {:format => 'json'}.merge(query), :get, nil, opts[:suppress_decode])
   end
 
+  def exchange_sessions opts={}
+    query = {:client_id => app_id, :client_secret => secret,
+             :type => 'client_cred'}.merge(opts)
+    request(graph_server, 'oauth/exchange_sessions', query, :post)
+  end
+
   def fql code, query={}, opts={}
     old_rest('fql.query', {:query => code}.merge(query), opts)
   end
