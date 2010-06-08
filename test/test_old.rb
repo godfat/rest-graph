@@ -35,10 +35,15 @@ describe RestGraph do
     f1 = 'SELECT display_name FROM application WHERE app_id="110225210740"'
     f0q, f1q = "\"#{f0.gsub('"', '\\"')}\"", "\"#{f1.gsub('"', '\\"')}\""
     q = "format=json&queries=#{CGI.escape("{\"f0\":#{f0q},\"f1\":#{f1q}}")}"
+    p = "format=json&queries=#{CGI.escape("{\"f1\":#{f1q},\"f0\":#{f0q}}")}"
 
     stub_multi = lambda{
       stub_request(:get,
         "https://api.facebook.com/method/fql.multiquery?#{q}").
+        to_return(:body => '[]')
+
+      stub_request(:get,
+        "https://api.facebook.com/method/fql.multiquery?#{p}").
         to_return(:body => '[]')
     }
 
