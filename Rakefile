@@ -43,5 +43,5 @@ task :default do
 end
 
 task :test do
-  sh 'cd example/rails; rake test'
+  sh "cd example/rails; #{Gem.ruby} -S rake test"
 end
