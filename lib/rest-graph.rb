@@ -21,7 +21,7 @@ end
 
 # the data structure used in RestGraph
 RestGraphStruct = Struct.new(:data, :auto_decode,
-                             :graph_server, :fql_server,
+                             :graph_server, :old_server,
                              :accept, :lang,
                              :app_id, :secret,
                              :error_handler,
@@ -47,7 +47,7 @@ class RestGraph < RestGraphStruct
     def default_data        ; {}                           ; end
     def default_auto_decode ; true                         ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
-    def default_fql_server  ; 'https://api.facebook.com/'  ; end
+    def default_old_server  ; 'https://api.facebook.com/'  ; end
     def default_accept      ; 'text/javascript'            ; end
     def default_lang        ; 'en-us'                      ; end
     def default_app_id      ; nil                          ; end
@@ -140,7 +140,7 @@ class RestGraph < RestGraphStruct
   # old rest facebook api, i will definitely love to remove them someday
 
   def old_rest path, query={}, opts={}
-    request(fql_server, "method/#{path}",
+    request(old_server, "method/#{path}",
       {:format => 'json'}.merge(query), :get, nil, opts[:suppress_decode])
   end
 
