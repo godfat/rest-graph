@@ -42,4 +42,9 @@ class ApplicationControllerTest < ActionController::TestCase
     get(:no_redirect)
     assert_response :success, 'XD'
   end
+
+  def test_app_id
+    get(:app_id)
+    assert_response :success, 'zzz'
+  end
 end

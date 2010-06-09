@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   before_filter :rest_graph_setup,       :only => [:index]
   before_filter :filter_for_iframe,      :only => [:iframe]
   before_filter :filter_for_no_redirect, :only => [:no_redirect]
+  before_filter :filter_for_diff_app_id, :only => [:app_id]
 
   def index
     render :text => rest_graph.get('me').to_json
@@ -26,6 +27,10 @@ class ApplicationController < ActionController::Base
     render :text => 'XD'
   end
 
+  def app_id
+    render :text => rest_graph.app_id
+  end
+
   private
   def filter_for_iframe
     rest_graph_setup(:iframe => true,
@@ -34,5 +39,9 @@ class ApplicationController < ActionController::Base
 
   def filter_for_no_redirect
     rest_graph_setup(:auto_redirect => false)
+  end
+
+  def filter_for_diff_app_id
+    rest_graph_setup(:app_id => 'zzz')
   end
 end
