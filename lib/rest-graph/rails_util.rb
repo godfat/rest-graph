@@ -14,8 +14,15 @@ module RestGraph::RailsUtil
        :scope => 'offline_access,publish_stream,read_friendlists'}
   end
 
+  def rest_graph_options_new
+    @rest_graph_options_new ||=
+      {:error_handler => method(:rest_graph_authorize),
+         :log_handler => method(:rest_graph_log)}
+  end
+
   def rest_graph_setup options={}
-    rest_graph_options.merge!(options)
+    rest_graph_options    .merge!(rest_graph_extract_options(options, :reject))
+    rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
     # exchange the code with access_token
     if params[:code]
@@ -58,9 +65,7 @@ module RestGraph::RailsUtil
 
   # override this if you need different app_id and secret
   def rest_graph
-    @rest_graph ||= RestGraph.new(
-      :error_handler => method(:rest_graph_authorize),
-        :log_handler => method(:rest_graph_log))
+    @rest_graph ||= RestGraph.new(rest_graph_options_new)
   end
 
   def rest_graph_authorize error=nil
@@ -121,6 +126,17 @@ module RestGraph::RailsUtil
   def rest_graph_in_iframe?
     rest_graph_options[:iframe] || @fb_sig_in_iframe
   end
+
+  if RUBY_VERSION >= '1.9.1'
+    def rest_graph_extract_options options, method
+      options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }
+    end
+  else
+    def rest_graph_extract_options options, method
+      Hash[options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }]
+    end
+  end
+
 end
 
 RestGraph::RailsController = RestGraph::RailsUtil
