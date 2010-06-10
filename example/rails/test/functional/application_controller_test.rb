@@ -51,31 +51,39 @@ class ApplicationControllerTest < ActionController::TestCase
 
   def test_no_auto
     get(:no_auto)
-    assert_response :success, 'XD'
+    assert_response :success
+    assert_equal 'XD', @response.body
   end
 
   def test_app_id
     get(:app_id)
-    assert_response :success, 'zzz'
+    assert_response :success
+    assert_equal 'zzz', @response.body
   end
 
   def test_url_for_canvas
     get(:url_for_canvas)
-    assert_response :success, 'http://apps.facebook.com/789/application/index'
+    assert_response :success
+    assert_equal 'http://apps.facebook.com/789/',
+      @response.body
   end
 
   def test_url_for_standalone
     get(:url_for_standalone)
-    assert_response :success, '/application/index'
+    assert_response :success
+    assert_equal 'http://test.host/', @response.body
   end
 
   def test_url_for_view_canvas
     get(:url_for_view_canvas)
-    assert_response :success, 'http://apps.facebook.com/789/application/index'
+    assert_response :success
+    assert_equal 'http://apps.facebook.com/789/',
+      @response.body
   end
 
   def test_url_for_view_stand
     get(:url_for_view_stand)
-    assert_response :success, '/application/index'
+    assert_response :success
+    assert_equal '/', @response.body
   end
 end
