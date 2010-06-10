@@ -21,7 +21,7 @@ describe RestGraph do
     fbs          = "access_token=#{CGI.escape(access_token)}&expires=0&" \
                    "secret=abc&session_key=def-456&sig=#{sig}&uid=3"
 
-    check = lambda{ |token|
+    check = lambda{ |token, fbs|
       http_cookie =
         "__utma=123; __utmz=456.utmcsr=(d)|utmccn=(d)|utmcmd=(n); " \
         "fbs_#{app_id}=#{fbs}"
@@ -42,10 +42,11 @@ describe RestGraph do
                       should.kind_of?(token ? Hash : NilClass)
       rg.access_token.should ==  token
     }
-    check.call(access_token)
-    fbs.chop!
-    fbs += '&inject=evil"'
-    check.call(nil)
+    check.call(access_token, fbs)
+    check.call(access_token, "\"#{fbs}\"")
+    fbs << '&inject=evil"'
+    check.call(nil, fbs)
+    check.call(nil, "\"#{fbs}\"")
   end
 
   it 'would not pass if there is no secret, prevent from forgery' do

@@ -98,17 +98,18 @@ class RestGraph < RestGraphStruct
   # cookies, app_id, secrect related below
 
   def parse_rack_env! env
-    self.data = env['HTTP_COOKIE'].to_s =~ /fbs_#{app_id}=([^\;]+)/ &&
-      check_sig_and_return_data(Rack::Utils.parse_query($1))
+    env['HTTP_COOKIE'].to_s =~ /fbs_#{app_id}=([^\;]+)/
+    self.data = parse_fbs!($1)
   end
 
   def parse_cookies! cookies
+    # take out facebook sometimes there but sometimes not quotes in cookies
     self.data = parse_fbs!(cookies["fbs_#{app_id}"])
   end
 
   def parse_fbs! fbs
-    self.data = fbs &&
-      check_sig_and_return_data(Rack::Utils.parse_query(fbs))
+    self.data = check_sig_and_return_data(
+      Rack::Utils.parse_query(fbs.to_s.gsub('"', '')))
   end
 
   def parse_json! json
