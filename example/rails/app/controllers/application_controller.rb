@@ -12,10 +12,12 @@ class ApplicationController < ActionController::Base
 
   before_filter :rest_graph_setup,   :only => [:index,  :url_for_standalone,
                                                         :url_for_view_stand,
-                                                        :link_to_stand]
+                                                        :link_to_stand,
+                                                        :redirect_stand]
   before_filter :filter_canvas,      :only => [:canvas, :url_for_canvas,
                                                         :url_for_view_canvas,
-                                                        :link_to_canvas]
+                                                        :link_to_canvas,
+                                                        :redirect_canvas]
   before_filter :filter_options,     :only => [:options]
   before_filter :filter_no_auto,     :only => [:no_auto]
   before_filter :filter_diff_app_id, :only => [:app_id]
@@ -50,6 +52,11 @@ class ApplicationController < ActionController::Base
     render :inline => '<%= link_to("test", :action => "index") %>'
   end
   alias_method :link_to_canvas, :link_to_stand
+
+  def redirect_stand
+    redirect_to :action => 'index'
+  end
+  alias_method :redirect_canvas, :redirect_stand
 
   private
   def filter_canvas

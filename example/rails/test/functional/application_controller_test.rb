@@ -99,4 +99,16 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal '<a href="http://apps.facebook.com/789/">test</a>',
       @response.body
   end
+
+  def test_redirect_stand
+    get(:redirect_stand)
+    assert_response :redirect
+    assert_redirected_to '/'
+  end
+
+  def test_redirect_canvas
+    get(:redirect_canvas)
+    assert_response :redirect
+    assert_redirected_to 'http://apps.facebook.com/789/'
+  end
 end
