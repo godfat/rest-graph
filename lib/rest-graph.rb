@@ -11,13 +11,14 @@ begin
   require 'rack'
 rescue LoadError; end
 
-begin
-  require 'json'
-rescue LoadError
+# pick a json gem if available
+%w[ yajl/json_gem json json_pure ].each{ |json|
   begin
-    require 'json_pure'
-  rescue LoadError; end
-end
+    require json
+    break
+  rescue LoadError
+  end
+}
 
 # the data structure used in RestGraph
 RestGraphStruct = Struct.new(:data, :auto_decode,
