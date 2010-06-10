@@ -9,7 +9,7 @@ module RestGraph::RailsUtil
   end
 
   def url_for options
-    if rest_graph_in_iframe?
+    if rest_graph_in_canvas?
       super({:host => "apps.facebook.com/#{RestGraph.default_canvas}"}.
             merge(options))
     else
@@ -19,7 +19,7 @@ module RestGraph::RailsUtil
 
   def rest_graph_options
     @rest_graph_options ||=
-      {:auto_redirect => true, :iframe => false, :authorize_options => {},
+      {:auto_redirect => true, :canvas => false, :authorize_options => {},
        :scope => 'offline_access,publish_stream,read_friendlists'}
   end
 
@@ -46,20 +46,20 @@ module RestGraph::RailsUtil
     # if the code is bad or not existed,
     # check if there's one in session,
     # meanwhile, there the sig and access_token is correct,
-    # that means we're in the context of iframe
+    # that means we're in the context of canvas
     if !rest_graph.authorized? && params[:session]
       rest_graph.parse_json!(params[:session])
       logger.debug("DEBUG: RestGraph: detected session, parsed:" \
                    " #{rest_graph.data.inspect}")
 
       if rest_graph.authorized?
-        @fb_sig_in_iframe = true
+        @fb_sig_in_canvas = true
       else
         logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
       end
     end
 
-    # if we're not in iframe nor code passed,
+    # if we're not in canvas nor code passed,
     # we could check out cookies as well.
     if !rest_graph.authorized?
       rest_graph.parse_cookies!(cookies)
@@ -93,7 +93,7 @@ module RestGraph::RailsUtil
 
   # override this if you want the simple redirect_to
   def rest_graph_authorize_redirect
-    if !rest_graph_in_iframe?
+    if !rest_graph_in_canvas?
       redirect_to @rest_graph_authorize_url
 
     else
@@ -123,7 +123,7 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_normalized_request_uri
-    if rest_graph_in_iframe?
+    if rest_graph_in_canvas?
       "http://apps.facebook.com/" \
       "#{RestGraph.default_canvas}#{request.request_uri}"
     else
@@ -132,8 +132,8 @@ module RestGraph::RailsUtil
         sub(/[\&\?]code=[^\&]+/, '')
   end
 
-  def rest_graph_in_iframe?
-    rest_graph_options[:iframe] || @fb_sig_in_iframe
+  def rest_graph_in_canvas?
+    rest_graph_options[:canvas] || @fb_sig_in_canvas
   end
 
   def rest_graph_extract_options options, method

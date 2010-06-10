@@ -27,14 +27,14 @@ class ApplicationControllerTest < ActionController::TestCase
       normalize_url(assigns(:rest_graph_authorize_url)))
   end
 
-  def test_iframe
-    get(:iframe)
+  def test_canvas
+    get(:canvas)
     assert_response :success
     assert_equal(
       normalize_url(
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \
         'scope=publish_stream&'                                     \
-        'redirect_uri=http%3A%2F%2Fapps.facebook.com%2F789%2Fiframe'),
+        'redirect_uri=http%3A%2F%2Fapps.facebook.com%2F789%2Fcanvas'),
       normalize_url((assigns(:rest_graph_authorize_url))))
   end
 

@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   include RestGraph::RailsUtil
 
   before_filter :rest_graph_setup,       :only => [:index, :url_for_standalone]
-  before_filter :filter_for_iframe,      :only => [:iframe, :url_for_canvas]
+  before_filter :filter_for_canvas,      :only => [:canvas,:url_for_canvas]
   before_filter :filter_for_no_redirect, :only => [:no_redirect]
   before_filter :filter_for_diff_app_id, :only => [:app_id]
 
@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
     render :text => rest_graph.get('me').to_json
   end
 
-  alias_method :iframe, :index
+  alias_method :canvas, :index
 
   def no_redirect
     rest_graph.get('me')
@@ -38,8 +38,8 @@ class ApplicationController < ActionController::Base
   alias_method :url_for_standalone, :url_for_canvas
 
   private
-  def filter_for_iframe
-    rest_graph_setup(:iframe => true,
+  def filter_for_canvas
+    rest_graph_setup(:canvas => true,
                      :scope  => 'publish_stream')
   end
 
