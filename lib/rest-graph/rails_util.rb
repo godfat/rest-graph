@@ -127,21 +127,11 @@ module RestGraph::RailsUtil
     rest_graph_options[:iframe] || @fb_sig_in_iframe
   end
 
-  if RUBY_VERSION >= '1.9.1'
-    def rest_graph_extract_options options, method
-      options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }
-    end
-  elsif RUBY_VERSION >= '1.8.7'
-    def rest_graph_extract_options options, method
-      Hash[options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }]
-    end
-  else # RUBY_VERSION == '1.8.6
-    def rest_graph_extract_options options, method
-      options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }.
-        inject({}){ |r, (k, v)| r[k] = v; r }
-    end
+  def rest_graph_extract_options options, method
+    r = options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }
+    return r if r.kind_of?(Hash) # RUBY_VERSION >= 1.9.1
+    r.inject({}){ |r, (k, v)| r[k] = v; r }
   end
-
 end
 
 RestGraph::RailsController = RestGraph::RailsUtil
