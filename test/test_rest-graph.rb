@@ -93,11 +93,13 @@ describe RestGraph do
       should == []
   end
 
-  it 'would not raise exception when encountering 500' do
-    stub_request(:delete, 'https://graph.facebook.com/123').to_return(
-      :body => '[]', :status => 500)
+  it 'would not raise exception when encountering error' do
+    [500, 401, 402, 403].each{ |status|
+      stub_request(:delete, 'https://graph.facebook.com/123').to_return(
+        :body => '[]', :status => status)
 
-    RestGraph.new.delete('123').should == []
+      RestGraph.new.delete('123').should == []
+    }
   end
 
   it 'would return true in authorized? if there is an access_token' do

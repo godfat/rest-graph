@@ -167,7 +167,7 @@ class RestGraph < RestGraphStruct
     res = RestClient::Resource.new(server)[path + build_query_string(opts)]
     post_request(
       res.send(method, *[payload, build_headers].compact), suppress_decode)
-  rescue RestClient::InternalServerError => e
+  rescue RestClient::Exception => e
     post_request(e.http_body, suppress_decode)
   ensure
     log_handler.call(Time.now - start_time, res.url)
