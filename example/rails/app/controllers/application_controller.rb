@@ -11,9 +11,11 @@ class ApplicationController < ActionController::Base
   include RestGraph::RailsUtil
 
   before_filter :rest_graph_setup,   :only => [:index,  :url_for_standalone,
-                                                        :url_for_view_stand]
+                                                        :url_for_view_stand,
+                                                        :link_to_stand]
   before_filter :filter_canvas,      :only => [:canvas, :url_for_canvas,
-                                                        :url_for_view_canvas]
+                                                        :url_for_view_canvas,
+                                                        :link_to_canvas]
   before_filter :filter_options,     :only => [:options]
   before_filter :filter_no_auto,     :only => [:no_auto]
   before_filter :filter_diff_app_id, :only => [:app_id]
@@ -21,7 +23,6 @@ class ApplicationController < ActionController::Base
   def index
     render :text => rest_graph.get('me').to_json
   end
-
   alias_method :canvas,  :index
   alias_method :options, :index
 
@@ -38,14 +39,17 @@ class ApplicationController < ActionController::Base
   def url_for_canvas
     render :text => url_for(:action => 'index')
   end
-
   alias_method :url_for_standalone, :url_for_canvas
 
   def url_for_view_canvas
     render :inline => '<%= url_for(:action => "index") %>'
   end
-
   alias_method :url_for_view_stand, :url_for_view_canvas
+
+  def link_to_stand
+    render :inline => '<%= link_to("test", :action => "index") %>'
+  end
+  alias_method :link_to_canvas, :link_to_stand
 
   private
   def filter_canvas

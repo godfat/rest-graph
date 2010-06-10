@@ -86,4 +86,17 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal '/', @response.body
   end
+
+  def test_link_to_canvas
+    get(:link_to_canvas)
+    assert_response :success
+    assert_equal '<a href="http://apps.facebook.com/789/">test</a>',
+      @response.body
+  end
+
+  def test_link_to_stand
+    get(:link_to_stand)
+    assert_response :success
+    assert_equal '<a href="/">test</a>', @response.body
+  end
 end
