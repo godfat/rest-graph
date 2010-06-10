@@ -10,10 +10,10 @@ class ApplicationController < ActionController::Base
 
   include RestGraph::RailsUtil
 
-  before_filter :rest_graph_setup,       :only => [:index, :url_for_standalone]
-  before_filter :filter_for_canvas,      :only => [:canvas,:url_for_canvas]
-  before_filter :filter_for_no_auto,     :only => [:no_auto]
-  before_filter :filter_for_diff_app_id, :only => [:app_id]
+  before_filter :rest_graph_setup,   :only => [:index,  :url_for_standalone]
+  before_filter :filter_canvas,      :only => [:canvas, :url_for_canvas]
+  before_filter :filter_no_auto,     :only => [:no_auto]
+  before_filter :filter_diff_app_id, :only => [:app_id]
 
   def index
     render :text => rest_graph.get('me').to_json
@@ -38,16 +38,16 @@ class ApplicationController < ActionController::Base
   alias_method :url_for_standalone, :url_for_canvas
 
   private
-  def filter_for_canvas
+  def filter_canvas
     rest_graph_setup(:canvas => true,
                      :auto_authorize_scope => 'publish_stream')
   end
 
-  def filter_for_no_auto
+  def filter_no_auto
     rest_graph_setup(:auto_authorize => false)
   end
 
-  def filter_for_diff_app_id
+  def filter_diff_app_id
     rest_graph_setup(:app_id => 'zzz')
   end
 end
