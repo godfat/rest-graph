@@ -42,6 +42,6 @@ task :default do
   Rake.application.display_tasks_and_comments
 end
 
-task :test => 'gem:install' do
+task :test_all => ['test', 'gem:install'] do
   sh "cd example/rails; #{Gem.ruby} -S rake test"
 end
