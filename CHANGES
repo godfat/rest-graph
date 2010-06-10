@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.2.2 -- ?
+== rest-graph 1.3.0 -- ?
 * Added RestGraph#exchange_sessions to exchange old sessions to access tokens.
 
 * Added RestGraph#old_rest, see:
