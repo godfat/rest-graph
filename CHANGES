@@ -11,8 +11,12 @@
   e.g. rg.get('bad/json', {:query => 'string'}, :suppress_decode => true)
   This is for Facebook who didn't always return JSON in response.
 
+* Renamed fql_server to old_server.
+* Favor yaji/json_gem first, then falls back to json, and json_pure.
+* Fixed a bug that cookie format from Facebook varies. No idea why.
+
 * Big and fat refactoring in RailsUtil, see example for detail:
-  http://github.com/cardinalblue/rest-graph/tree/bb11250e377736c6425666587906a66644c9415e/example
+  http://github.com/cardinalblue/rest-graph/tree/rest-graph-1.3.0/example
 
 == rest-graph 1.2.1 -- 2010-06-02
 * Deprecated RailsController, use RailsUtil instead.
