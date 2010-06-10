@@ -68,4 +68,14 @@ class ApplicationControllerTest < ActionController::TestCase
     get(:url_for_standalone)
     assert_response :success, '/application/index'
   end
+
+  def test_url_for_view_canvas
+    get(:url_for_view_canvas)
+    assert_response :success, 'http://apps.facebook.com/789/application/index'
+  end
+
+  def test_url_for_view_stand
+    get(:url_for_view_stand)
+    assert_response :success, '/application/index'
+  end
 end

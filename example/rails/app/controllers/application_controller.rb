@@ -10,9 +10,11 @@ class ApplicationController < ActionController::Base
 
   include RestGraph::RailsUtil
 
-  before_filter :rest_graph_setup,   :only => [:index,  :url_for_standalone]
+  before_filter :rest_graph_setup,   :only => [:index,  :url_for_standalone,
+                                                        :url_for_view_stand]
+  before_filter :filter_canvas,      :only => [:canvas, :url_for_canvas,
+                                                        :url_for_view_canvas]
   before_filter :filter_options,     :only => [:options]
-  before_filter :filter_canvas,      :only => [:canvas, :url_for_canvas]
   before_filter :filter_no_auto,     :only => [:no_auto]
   before_filter :filter_diff_app_id, :only => [:app_id]
 
@@ -38,6 +40,12 @@ class ApplicationController < ActionController::Base
   end
 
   alias_method :url_for_standalone, :url_for_canvas
+
+  def url_for_view_canvas
+    render :inline => '<%= url_for(:action => "index") %>'
+  end
+
+  alias_method :url_for_view_stand, :url_for_view_canvas
 
   private
   def filter_canvas
