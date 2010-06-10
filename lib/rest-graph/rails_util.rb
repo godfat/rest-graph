@@ -8,6 +8,15 @@ module RestGraph::RailsUtil
     }
   end
 
+  def url_for options
+    if rest_graph_in_iframe?
+      super({:host => "apps.facebook.com/#{RestGraph.default_canvas}"}.
+            merge(options))
+    else
+      super(options)
+    end
+  end
+
   def rest_graph_options
     @rest_graph_options ||=
       {:auto_redirect => true, :iframe => false, :authorize_options => {},

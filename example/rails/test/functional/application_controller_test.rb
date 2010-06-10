@@ -47,4 +47,14 @@ class ApplicationControllerTest < ActionController::TestCase
     get(:app_id)
     assert_response :success, 'zzz'
   end
+
+  def test_url_for_canvas
+    get(:url_for_canvas)
+    assert_response :success, 'http://apps.facebook.com/789/application/index'
+  end
+
+  def test_url_for_standalone
+    get(:url_for_standalone)
+    assert_response :success, '/application/index'
+  end
 end

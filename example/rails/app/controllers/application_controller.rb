@@ -10,8 +10,8 @@ class ApplicationController < ActionController::Base
 
   include RestGraph::RailsUtil
 
-  before_filter :rest_graph_setup,       :only => [:index]
-  before_filter :filter_for_iframe,      :only => [:iframe]
+  before_filter :rest_graph_setup,       :only => [:index, :url_for_standalone]
+  before_filter :filter_for_iframe,      :only => [:iframe, :url_for_canvas]
   before_filter :filter_for_no_redirect, :only => [:no_redirect]
   before_filter :filter_for_diff_app_id, :only => [:app_id]
 
@@ -30,6 +30,12 @@ class ApplicationController < ActionController::Base
   def app_id
     render :text => rest_graph.app_id
   end
+
+  def url_for_canvas
+    render :text => url_for(:action => 'index')
+  end
+
+  alias_method :url_for_standalone, :url_for_canvas
 
   private
   def filter_for_iframe
