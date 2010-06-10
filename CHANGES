@@ -15,8 +15,11 @@
 * Favor yaji/json_gem first, then falls back to json, and json_pure.
 * Fixed a bug that cookie format from Facebook varies. No idea why.
 
+for RailsUtil:
+
 * Big and fat refactoring in RailsUtil, see example for detail:
   http://github.com/cardinalblue/rest-graph/tree/rest-graph-1.3.0/example
+* url_for and link_to would auto pass :host option if it's inside canvas.
 
 == rest-graph 1.2.1 -- 2010-06-02
 * Deprecated RailsController, use RailsUtil instead.
