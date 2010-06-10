@@ -11,6 +11,7 @@ class ApplicationController < ActionController::Base
   include RestGraph::RailsUtil
 
   before_filter :rest_graph_setup,   :only => [:index,  :url_for_standalone]
+  before_filter :filter_options,     :only => [:options]
   before_filter :filter_canvas,      :only => [:canvas, :url_for_canvas]
   before_filter :filter_no_auto,     :only => [:no_auto]
   before_filter :filter_diff_app_id, :only => [:app_id]
@@ -19,7 +20,8 @@ class ApplicationController < ActionController::Base
     render :text => rest_graph.get('me').to_json
   end
 
-  alias_method :canvas, :index
+  alias_method :canvas,  :index
+  alias_method :options, :index
 
   def no_auto
     rest_graph.get('me')
@@ -49,5 +51,9 @@ class ApplicationController < ActionController::Base
 
   def filter_diff_app_id
     rest_graph_setup(:app_id => 'zzz')
+  end
+
+  def filter_options
+    rest_graph_setup(:auto_authorize_options => {:scope => 'bogus'})
   end
 end
