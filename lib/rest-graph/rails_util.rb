@@ -131,9 +131,14 @@ module RestGraph::RailsUtil
     def rest_graph_extract_options options, method
       options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }
     end
-  else
+  elsif RUBY_VERSION >= '1.8.7'
     def rest_graph_extract_options options, method
       Hash[options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }]
+    end
+  else # RUBY_VERSION == '1.8.6
+    def rest_graph_extract_options options, method
+      options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }.
+        inject({}){ |r, (k, v)| r[k] = v; r }
     end
   end
 
