@@ -103,12 +103,12 @@ class RestGraph < RestGraphStruct
   end
 
   def parse_cookies! cookies
-    # take out facebook sometimes there but sometimes not quotes in cookies
     self.data = parse_fbs!(cookies["fbs_#{app_id}"])
   end
 
   def parse_fbs! fbs
     self.data = check_sig_and_return_data(
+      # take out facebook sometimes there but sometimes not quotes in cookies
       Rack::Utils.parse_query(fbs.to_s.gsub('"', '')))
   end
 
