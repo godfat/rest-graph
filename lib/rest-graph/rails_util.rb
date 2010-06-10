@@ -133,5 +133,3 @@ module RestGraph::RailsUtil
     result.inject({}){ |r, (k, v)| r[k] = v; r }
   end
 end
-
-RestGraph::RailsController = RestGraph::RailsUtil
