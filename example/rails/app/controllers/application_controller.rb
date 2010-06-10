@@ -36,15 +36,15 @@ class ApplicationController < ActionController::Base
     render :text => rest_graph.app_id
   end
 
-  def url_for_canvas
+  def url_for_standalone
     render :text => url_for(:action => 'index')
   end
-  alias_method :url_for_standalone, :url_for_canvas
+  alias_method :url_for_canvas, :url_for_standalone
 
-  def url_for_view_canvas
+  def url_for_view_stand
     render :inline => '<%= url_for(:action => "index") %>'
   end
-  alias_method :url_for_view_stand, :url_for_view_canvas
+  alias_method :url_for_view_canvas, :url_for_view_stand
 
   def link_to_stand
     render :inline => '<%= link_to("test", :action => "index") %>'

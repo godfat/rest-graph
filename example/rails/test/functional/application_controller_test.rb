@@ -61,21 +61,14 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal 'zzz', @response.body
   end
 
-  def test_url_for_canvas
-    get(:url_for_canvas)
-    assert_response :success
-    assert_equal 'http://apps.facebook.com/789/',
-      @response.body
-  end
-
   def test_url_for_standalone
     get(:url_for_standalone)
     assert_response :success
     assert_equal 'http://test.host/', @response.body
   end
 
-  def test_url_for_view_canvas
-    get(:url_for_view_canvas)
+  def test_url_for_canvas
+    get(:url_for_canvas)
     assert_response :success
     assert_equal 'http://apps.facebook.com/789/',
       @response.body
@@ -87,10 +80,10 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal '/', @response.body
   end
 
-  def test_link_to_canvas
-    get(:link_to_canvas)
+  def test_url_for_view_canvas
+    get(:url_for_view_canvas)
     assert_response :success
-    assert_equal '<a href="http://apps.facebook.com/789/">test</a>',
+    assert_equal 'http://apps.facebook.com/789/',
       @response.body
   end
 
@@ -98,5 +91,12 @@ class ApplicationControllerTest < ActionController::TestCase
     get(:link_to_stand)
     assert_response :success
     assert_equal '<a href="/">test</a>', @response.body
+  end
+
+  def test_link_to_canvas
+    get(:link_to_canvas)
+    assert_response :success
+    assert_equal '<a href="http://apps.facebook.com/789/">test</a>',
+      @response.body
   end
 end
