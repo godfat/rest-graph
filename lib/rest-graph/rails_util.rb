@@ -5,7 +5,7 @@ module RestGraph::RailsUtil
   module Helper
     def url_for options
       caller = respond_to?(:controller) ? controller : self
-      if caller.rest_graph_in_canvas?
+      if caller.rest_graph_in_canvas? && options.kind_of?(Hash)
         super({:host => "apps.facebook.com/#{RestGraph.default_canvas}"}.
               merge(options))
       else
