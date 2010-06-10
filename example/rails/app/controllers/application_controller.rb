@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :rest_graph_setup,       :only => [:index, :url_for_standalone]
   before_filter :filter_for_canvas,      :only => [:canvas,:url_for_canvas]
-  before_filter :filter_for_no_redirect, :only => [:no_redirect]
+  before_filter :filter_for_no_auto,     :only => [:no_auto]
   before_filter :filter_for_diff_app_id, :only => [:app_id]
 
   def index
@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 
   alias_method :canvas, :index
 
-  def no_redirect
+  def no_auto
     rest_graph.get('me')
   rescue RestGraph::Error
     render :text => 'XD'
@@ -40,11 +40,11 @@ class ApplicationController < ActionController::Base
   private
   def filter_for_canvas
     rest_graph_setup(:canvas => true,
-                     :scope  => 'publish_stream')
+                     :auto_authorize_scope => 'publish_stream')
   end
 
-  def filter_for_no_redirect
-    rest_graph_setup(:auto_redirect => false)
+  def filter_for_no_auto
+    rest_graph_setup(:auto_authorize => false)
   end
 
   def filter_for_diff_app_id

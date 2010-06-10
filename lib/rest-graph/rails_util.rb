@@ -19,8 +19,11 @@ module RestGraph::RailsUtil
 
   def rest_graph_options
     @rest_graph_options ||=
-      {:auto_redirect => true, :canvas => false, :authorize_options => {},
-       :scope => 'offline_access,publish_stream,read_friendlists'}
+      {:canvas                 => false,
+       :auto_authorize         => true,
+       :auto_authorize_options => {},
+       :auto_authorize_scope   =>
+         'offline_access,publish_stream,read_friendlists'}
   end
 
   def rest_graph_options_new
@@ -77,17 +80,17 @@ module RestGraph::RailsUtil
     @rest_graph ||= RestGraph.new(rest_graph_options_new)
   end
 
-  def rest_graph_authorize error=nil
-    logger.warn("WARN: RestGraph: #{error.inspect}") if error
+  def rest_graph_authorize error
+    logger.warn("WARN: RestGraph: #{error.inspect}")
 
     @rest_graph_authorize_url = rest_graph.authorize_url(
       {:redirect_uri => rest_graph_normalized_request_uri,
-       :scope        => rest_graph_options[:scope]}.
-      merge(rest_graph_options[:authorize_options]))
+       :scope        => rest_graph_options[:auto_authorize_scope]}.
+      merge(            rest_graph_options[:auto_authorize_options]))
 
-    logger.debug("DEBUG: RestGraph: redirect to #{@authorize_url}")
+    logger.debug("DEBUG: RestGraph: redirect to #{@rest_graph_authorize_url}")
 
-    rest_graph_authorize_redirect if rest_graph_options[:auto_redirect]
+    rest_graph_authorize_redirect if rest_graph_options[:auto_authorize]
     raise ::RestGraph::Error.new(error)
   end
 

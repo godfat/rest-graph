@@ -38,8 +38,8 @@ class ApplicationControllerTest < ActionController::TestCase
       normalize_url((assigns(:rest_graph_authorize_url))))
   end
 
-  def test_no_redirect
-    get(:no_redirect)
+  def test_no_auto
+    get(:no_auto)
     assert_response :success, 'XD'
   end
 
