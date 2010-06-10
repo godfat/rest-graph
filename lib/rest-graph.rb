@@ -114,7 +114,7 @@ class RestGraph < RestGraphStruct
 
   def parse_json! json
     self.data = json &&
-      check_sig_and_return_data(JSON.load(json))
+      check_sig_and_return_data(JSON.parse(json))
   rescue JSON::ParserError
   end
 
