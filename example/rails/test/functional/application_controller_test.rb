@@ -34,7 +34,7 @@ class ApplicationControllerTest < ActionController::TestCase
       normalize_url(
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \
         'scope=publish_stream&'                                     \
-        'redirect_uri=http%3A%2F%2Fapps.facebook.com%2F789%2Fcanvas'),
+        'redirect_uri=http%3A%2F%2Fapps.facebook.com%2Fcan%2Fcanvas'),
       normalize_url((assigns(:rest_graph_authorize_url))))
   end
 
@@ -70,7 +70,7 @@ class ApplicationControllerTest < ActionController::TestCase
   def test_url_for_canvas
     get(:url_for_canvas)
     assert_response :success
-    assert_equal 'http://apps.facebook.com/789/',
+    assert_equal 'http://apps.facebook.com/can/',
       @response.body
   end
 
@@ -83,7 +83,7 @@ class ApplicationControllerTest < ActionController::TestCase
   def test_url_for_view_canvas
     get(:url_for_view_canvas)
     assert_response :success
-    assert_equal 'http://apps.facebook.com/789/',
+    assert_equal 'http://apps.facebook.com/can/',
       @response.body
   end
 
@@ -96,7 +96,7 @@ class ApplicationControllerTest < ActionController::TestCase
   def test_link_to_canvas
     get(:link_to_canvas)
     assert_response :success
-    assert_equal '<a href="http://apps.facebook.com/789/">test</a>',
+    assert_equal '<a href="http://apps.facebook.com/can/">test</a>',
       @response.body
   end
 
@@ -109,6 +109,6 @@ class ApplicationControllerTest < ActionController::TestCase
   def test_redirect_canvas
     get(:redirect_canvas)
     assert_response :redirect
-    assert_redirected_to 'http://apps.facebook.com/789/'
+    assert_redirected_to 'http://apps.facebook.com/can/'
   end
 end

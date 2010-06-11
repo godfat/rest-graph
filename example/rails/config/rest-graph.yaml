@@ -2,7 +2,7 @@
 development: &default
   app_id: '123'
   secret: '456'
-  canvas: '789'
+  canvas: 'can'
 
 production:
   *default
