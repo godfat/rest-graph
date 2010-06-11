@@ -6,6 +6,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 * {github}[http://github.com/cardinalblue/rest-graph]
 * {rubygems}[http://rubygems.org/gems/rest-graph]
 * {rdoc}[http://rdoc.info/projects/cardinalblue/rest-graph]
+* {mailing list}[http://groups.google.com/group/rest-graph/topics]
 
 == DESCRIPTION:
 
