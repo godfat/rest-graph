@@ -130,7 +130,7 @@ by Cardinal Blue ( http://cardinalblue.com )
  rg.data['expires'] # other values as well
 
  # Exchange old session key for access token:
- # https://graph.facebook.com/oauth/exchange_sessions?sessions=...
+ # https://graph.facebook.com/oauth/exchange_sessions?sessions=sess
  rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
 
  # Call Facebook's old REST API:
