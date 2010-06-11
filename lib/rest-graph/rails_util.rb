@@ -25,7 +25,7 @@ module RestGraph::RailsUtil
   def rest_graph_options
     @rest_graph_options ||=
       {:canvas                 => false,
-       :auto_authorize         => true,
+       :auto_authorize         => false,
        :auto_authorize_options => {},
        :auto_authorize_scope   =>
          'offline_access,publish_stream,read_friendlists'}

@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
 
   include RestGraph::RailsUtil
 
-  before_filter :rest_graph_setup,   :only => [:index,  :url_for_standalone,
+  before_filter :filter_common,      :only => [:index,  :url_for_standalone,
                                                         :url_for_view_stand,
                                                         :link_to_stand,
                                                         :redirect_stand]
@@ -59,8 +59,13 @@ class ApplicationController < ActionController::Base
   alias_method :redirect_canvas, :redirect_stand
 
   private
+  def filter_common
+    rest_graph_setup(:auto_authorize => true)
+  end
+
   def filter_canvas
     rest_graph_setup(:canvas => true,
+                     :auto_authorize => true,
                      :auto_authorize_scope => 'publish_stream')
   end
 
@@ -69,10 +74,12 @@ class ApplicationController < ActionController::Base
   end
 
   def filter_diff_app_id
-    rest_graph_setup(:app_id => 'zzz')
+    rest_graph_setup(:app_id => 'zzz',
+                     :auto_authorize => true)
   end
 
   def filter_options
-    rest_graph_setup(:auto_authorize_options => {:scope => 'bogus'})
+    rest_graph_setup(:auto_authorize => true,
+                     :auto_authorize_options => {:scope => 'bogus'})
   end
 end
