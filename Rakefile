@@ -28,11 +28,11 @@ Bones{
   authors ['Cardinal Blue', 'Lin Jen-Shin (aka godfat 真常)']
   email   'dev (XD) cardinalblue.com'
 
-  history_file 'CHANGES'
-   readme_file 'README'
-   ignore_file '.gitignore'
-  rdoc.include ['\w+']
-  rdoc.exclude ['test', 'doc', 'Rakefile']
+  history_file   'CHANGES'
+   readme_file   'README.rdoc'
+   ignore_file   '.gitignore'
+  rdoc.include   ['\w+']
+  rdoc.exclude   ['test', 'doc', 'Rakefile']
 }
 
 CLEAN.include Dir['**/*.rbc']
