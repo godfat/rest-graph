@@ -25,21 +25,21 @@ by Cardinal Blue ( http://cardinalblue.com )
  require 'rest-graph'
 
  # Every option is optional.
- rg = RestGraph.new(:access_token => '...',
+ rg = RestGraph.new(:access_token => 'tok',
                     :graph_server => 'https://graph.facebook.com/',
                     :old_server   => 'https://api.facebook.com/',
                     :accept       => 'text/javascript',
                     :lang         => 'en-us', # this affect search
-                    :auto_decode  => true,    # decode by json
-                    :app_id       => '123',
-                    :secret       => '1829',
+                    :auto_decode  =>  true  , # decode by json
+                    :app_id       => '123'  ,
+                    :secret       => '1829' ,
 
   # This handler callback is only called if auto_decode is set to true,
   # otherwise, it's ignored.
                     :error_handler =>
                       lambda{ |hash| raise ::RestGraph::Error.new(hash) },
 
-  # You may want to do this in Rails to do debug logging:
+  # You might want to do this in Rails to do debug logging:
                     :log_handler =>
                       lambda{ |duration, url|
                         Rails.logger.debug("RestGraph "         \
@@ -47,34 +47,35 @@ by Cardinal Blue ( http://cardinalblue.com )
                                            "requesting #{url}")
                       })
 
- # You may want to do redirect instead of raising exception, for example,
- # in a Rails application, you might have this private controller method:
- def redirect_to_authorize error = nil
-   redirect_to @rg.authorize_url(:redirect_uri => request.url)
+ # You might want to do redirect instead of raising an exception,
+ # that is automatically redirect the user to authorization page
+ # if the access token is unavailable. This way, you don't have to
+ # check if the token is expired or not. If the token is expired,
+ # it will automatically do authorization again. For that purpose,
+ # you might want to include RestGraph::RailsUtil in your Rails'
+ # controller. For example:
+ class UserController < ApplicationController
+   include RestGraph::RailsUtil
+   before_filter :rest_graph_setup
  end
-
- # and you'll use that private method to do error handling:
- def setup_rest_graph
-   @rg = RestGraph.new(:error_handler => method(:redirect_to_authorize))
- end
-
- # This way, you don't have to check if the token is expired or not.
- # If the token is expired, it will automatically do authorization again.
+ # Please read:
+ # {examples}[http://github.com/cardinalblue/rest-graph/tree/master/example].
+ # for more detail, and other frameworks utils wanted!
 
  # Other simple API call:
- rg.get('me')       # GET https://graph.facebook.com/me?access_token=...
- rg.get('4/likes')  # GET https://graph.facebook.com/4/likes?access_token=...
+ rg.get('me')       # GET https://graph.facebook.com/me?access_token=tok
+ rg.get('4/likes')  # GET https://graph.facebook.com/4/likes?access_token=tok
 
- # GET https://graph.facebook.com/search?q=taiwan&access_token=...
+ # GET https://graph.facebook.com/search?q=taiwan&access_token=tok
  rg.get('search', :q => 'taiwan')
 
- # GET https://graph.facebook.com/me?metadata=1&access_token=...
+ # GET https://graph.facebook.com/me?metadata=1&access_token=tok
  rg.get('me', :metadata => '1')
 
- # POST https://graph.facebook.com/me/feed?message=bread%21&access_token=...
+ # POST https://graph.facebook.com/me/feed?message=bread%21&access_token=tok
  rg.post('me/feed', :message => 'bread!')
 
- # for fully blown cookies hash
+ # For fully blown cookies hash
  rg = RestGraph.new(:app_id => '123', :secret => '1829')
  rg.parse_cookies!(cookies) # auto save access_token if sig checked
  rg.data['uid']             # => facebook uid
@@ -93,7 +94,7 @@ by Cardinal Blue ( http://cardinalblue.com )
  rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
               :q2 => 'SELECT name FROM page WHERE page_id="456"')
 
- # default setting:
+ # Setup default settings:
  module MyDefaults
    def default_app_id
      '456'
@@ -105,30 +106,48 @@ by Cardinal Blue ( http://cardinalblue.com )
  end
  RestGraph.send(:extend, MyDefaults)
 
- # auto load config
+ # Automatically load config:
  require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
  RestGraph.new                   # all default options would honor config
  RestGraph.new(:app_id => '123') # default could be override as well
 
- # manually load config
+ # Manually load config:
  require 'rest-graph/load_config'
  RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
 
- # see test/config/rest-graph.yaml for an example for config
+ # See test/config/rest-graph.yaml for an example for config.
 
- # oauth utilites:
- # https://graph.facebook.com/oauth/authorize?client_id=...&
- RestGraph.new.authorize_url(:redirect_uri => '...')
+ # OAuth utilites:
+ # https://graph.facebook.com/oauth/authorize?client_id=123&
+ RestGraph.new.authorize_url(:redirect_uri => 'http://w3.org/')
 
- # get access token by:
- # https://graph.facebook.com/oauth/access_token?code=...&
+ # Get access token by:
+ # https://graph.facebook.com/oauth/access_token?code=edoc&
  rg = RestGraph.new
- rg.authorize!(:redirect_uri => '...', :code => 'zzz')
+ rg.authorize!(:redirect_uri => 'http://w3.org/', :code => 'edoc')
  rg.access_token    # your access_token is now available
  rg.data['expires'] # other values as well
 
- # exchange old session key for access token:
+ # Exchange old session key for access token:
+ # https://graph.facebook.com/oauth/exchange_sessions?sessions=...
  rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
+
+ # Call Facebook's old REST API:
+ rg.old_rest(
+   'stream.publish',
+   { :message    => 'Greetings',
+     :attachment => {:name => 'Wikipedia',
+                     :href => 'http://wikipedia.org/',
+                     :caption => 'Wikipedia says hi.',
+                     :media => [{:type => 'image',
+                                 :src  => 'http://wikipedia.org/favicon.ico',
+                                 :href => 'http://wikipedia.org/'}]
+                    }.to_json,
+     :action_links => [{:text => 'Go to Wikipedia',
+                        :href => 'http://wikipedia.org/'}
+                      ].to_json
+   },
+   :suppress_decode => true)
 
 == REQUIREMENTS:
 
