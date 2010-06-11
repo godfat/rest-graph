@@ -20,9 +20,6 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 == SYNOPSIS:
 
-# If you feel SYNOPSIS is so hard to understand, please read
-# {examples}[http://github.com/cardinalblue/rest-graph/tree/master/example].
-
  require 'rest-graph'
 
  # Every option is optional.
@@ -35,12 +32,12 @@ by Cardinal Blue ( http://cardinalblue.com )
                     :app_id       => '123'  ,
                     :secret       => '1829' ,
 
-  # This handler callback is only called if auto_decode is set to true,
-  # otherwise, it's ignored.
+ # This handler callback is only called if auto_decode is set to true,
+ # otherwise, it's ignored.
                     :error_handler =>
                       lambda{ |hash| raise ::RestGraph::Error.new(hash) },
 
-  # You might want to do this in Rails to do debug logging:
+ # You might want to do this in Rails to do debug logging:
                     :log_handler =>
                       lambda{ |duration, url|
                         Rails.logger.debug("RestGraph "         \
@@ -48,22 +45,7 @@ by Cardinal Blue ( http://cardinalblue.com )
                                            "requesting #{url}")
                       })
 
- # You might want to do redirect instead of raising an exception,
- # that is automatically redirect the user to authorization page
- # if the access token is unavailable. This way, you don't have to
- # check if the token is expired or not. If the token is expired,
- # it will automatically do authorization again. For that purpose,
- # you might want to include RestGraph::RailsUtil in your Rails'
- # controller. For example:
- class UserController < ApplicationController
-   include RestGraph::RailsUtil
-   before_filter :rest_graph_setup
- end
- # Please read:
- # {examples}[http://github.com/cardinalblue/rest-graph/tree/master/example].
- # for more detail, and other frameworks utils wanted!
-
- # Other simple API call:
+ # API call:
  rg.get('me')       # GET https://graph.facebook.com/me?access_token=tok
  rg.get('4/likes')  # GET https://graph.facebook.com/4/likes?access_token=tok
 
@@ -77,61 +59,40 @@ by Cardinal Blue ( http://cardinalblue.com )
  rg.post('me/feed', :message => 'bread!')
 
  # For fully blown cookies hash
- rg = RestGraph.new(:app_id => '123', :secret => '1829')
  rg.parse_cookies!(cookies) # auto save access_token if sig checked
  rg.data['uid']             # => facebook uid
 
- # FQL query, same as:
- # GET https://api.facebook.com/method/fql.query?query=
- #     SELECT+name+FROM+page+WHERE+page_id%3D%22123%22&
- #     format=json&access_token=...
- rg.fql('SELECT name FROM page WHERE page_id="123"')
-
- # FQL multiquery, same as:
- # GET https://api.facebook.com/method/fql.multiquery?query=
- #     %7BSELECT+name+FROM+page+WHERE+page_id%3D%22123%22&%2C
- #        SELECT+name+FROM+page+WHERE+page_id%3D%22456%22&%7D
- #     format=json&access_token=...
- rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
-              :q2 => 'SELECT name FROM page WHERE page_id="456"')
-
- # Setup default settings:
- module MyDefaults
-   def default_app_id
-     '456'
-   end
-
-   def default_secret
-     'category theory'
-   end
- end
- RestGraph.send(:extend, MyDefaults)
-
- # Automatically load config:
- require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
- RestGraph.new                   # all default options would honor config
- RestGraph.new(:app_id => '123') # default could be override as well
-
- # Manually load config:
- require 'rest-graph/load_config'
- RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
-
- # See test/config/rest-graph.yaml for an example for config.
-
  # OAuth utilites:
  # https://graph.facebook.com/oauth/authorize?client_id=123&
- RestGraph.new.authorize_url(:redirect_uri => 'http://w3.org/')
+ #         redirect_uri=http%3A%2F%2Fw3.org%2F
+ rg.authorize_url(:redirect_uri => 'http://w3.org/')
 
  # Get access token by:
  # https://graph.facebook.com/oauth/access_token?code=edoc&
- rg = RestGraph.new
+ #         client_id=123&redirect_uri=http%3A%2F%2Fw3.org%2F&
+ #         client_secret=1829
  rg.authorize!(:redirect_uri => 'http://w3.org/', :code => 'edoc')
  rg.access_token    # your access_token is now available
  rg.data['expires'] # other values as well
 
  # Exchange old session key for access token:
  # https://graph.facebook.com/oauth/exchange_sessions?sessions=sess
+ params[:fb_sig_session_key] # => sess
  rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
+
+ # FQL query, same as:
+ # GET https://api.facebook.com/method/fql.query?query=
+ #             SELECT+name+FROM+page+WHERE+page_id%3D%22123%22&
+ #             format=json&access_token=tok
+ rg.fql('SELECT name FROM page WHERE page_id="123"')
+
+ # FQL multiquery, same as:
+ # GET https://api.facebook.com/method/fql.multiquery?query=
+ #            %7BSELECT+name+FROM+page+WHERE+page_id%3D%22123%22&%2C
+ #            SELECT+name+FROM+page+WHERE+page_id%3D%22456%22&%7D
+ #            format=json&access_token=tok
+ rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
+              :q2 => 'SELECT name FROM page WHERE page_id="456"')
 
  # Call Facebook's old REST API:
  rg.old_rest(
@@ -149,6 +110,51 @@ by Cardinal Blue ( http://cardinalblue.com )
                       ].to_json
    },
    :suppress_decode => true)
+
+ # Setup default settings:
+ module MyDefaults
+   def default_app_id
+     '456'
+   end
+
+   def default_secret
+     'category theory'
+   end
+ end
+ RestGraph.send(:extend, MyDefaults)
+
+ # Or load defaults from a config file:
+ require 'rest-graph/load_config'
+ RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'development')
+
+ RestGraph.new                   # app_id would be 456
+ RestGraph.new(:app_id => '123') # default could be overridden
+
+ # Or load config automatically
+ require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
+
+ # Please read:
+{rest-graph.yaml}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
+ # for an example of config file.
+
+ # You might want to do redirect instead of raising an exception
+ # when encountering an authorization problem, that is automatically
+ # redirect the user to authorization page if the access token is
+ # unavailable. This way, you don't have to check if the token is
+ # expired or not. If the token is expired, it will automatically
+ # do authorization again. For that purpose, you might want to
+ # include RestGraph::RailsUtil in your Rails' controller. For example:
+ class UserController < ApplicationController
+   include RestGraph::RailsUtil
+   before_filter :filter_rest_graph_setup
+   private
+   def filter_rest_graph_setup
+     rest_graph_setup(:auto_authorize => true)
+   end
+ end
+ # Please read:
+{example}[http://github.com/cardinalblue/rest-graph/tree/master/example]
+ # for more detail, and other frameworks utils wanted!
 
 == REQUIREMENTS:
 
