@@ -98,8 +98,24 @@ class RestGraph < RestGraphStruct
 
   # request by eventmachine (em-http)
 
-  def eget path, query={}, opts={}
-    multi([:get, path, query, opts]){ |results| yield(results.first) }
+  def eget    path, query={}, opts={}
+    multi([:get,    path, query, opts]){ |results| yield(results.first) }
+  end
+
+  def edelete path, query={}, opts={}
+    multi([:delete, path, query, opts]){ |results| yield(results.first) }
+  end
+
+  def epost   path, payload, query={}, opts={}
+    multi([:post,   post, query, {:body => payload}.merge(opts)]){ |results|
+      yield(results.first)
+    }
+  end
+
+  def eput    path, payload, query={}, opts={}
+    multi([:put,    post, query, {:body => payload}.merge(opts)]){ |results|
+      yield(results.first)
+    }
   end
 
   def multi *requests
