@@ -41,3 +41,11 @@ task :default do
   Rake.application.options.show_task_pattern = /./
   Rake.application.display_tasks_and_comments
 end
+
+desc 'Run example tests'
+task 'test:example' => ['gem:install'] do
+  sh "cd example/rails; #{Gem.ruby} -S rake test"
+end
+
+desc 'Run all tests'
+task 'test:all' => ['test', 'test:example']

@@ -1,6 +1,4 @@
 
 require 'rest-graph'
 
-class RestGraph < RestGraphStruct
-  VERSION = '1.1.0'
-end
+RestGraph::VERSION = '1.3.0'

@@ -6,7 +6,75 @@
   event loop and install em-http. (And you may want async-rack if you're
   doing rack application too.)
 
-== rest-graph 1.1.0 -- ?
+== rest-graph 1.3.0 -- 2010-06-11
+* Now rest-graph is rescuing all exceptions from rest-client.
+* Added RestGraph#exchange_sessions to exchange old sessions to access tokens.
+
+* Added RestGraph#old_rest, see:
+  http://developers.facebook.com/docs/reference/rest/
+
+* Now all API request accept an additional options argument,
+  you may pass :suppress_decode => true to turn off auto-decode this time.
+  e.g. rg.get('bad/json', {:query => 'string'}, :suppress_decode => true)
+  This is for Facebook who didn't always return JSON in response.
+
+* Renamed fql_server to old_server.
+* Favor yaji/json_gem first, then falls back to json, and json_pure.
+* Fixed a bug that cookie format from Facebook varies. No idea why.
+
+for RailsUtil:
+
+* Big and fat refactoring in RailsUtil, see example for detail:
+  http://github.com/cardinalblue/rest-graph/tree/rest-graph-1.3.0/example
+* url_for and link_to would auto pass :host option if it's inside canvas.
+
+== rest-graph 1.2.1 -- 2010-06-02
+* Deprecated RailsController, use RailsUtil instead.
+* Fixed a bug that passing access_token in query string
+  in RestGraph#authorize_url
+* Fixed a bug that Facebook changed the format (I think) of fbs_ in cookies.
+  Thanks betelgeuse, closes #1
+  http://github.com/cardinalblue/rest-graph/issues/issue/1
+
+== rest-graph 1.2.0 -- 2010-05-27
+* Add RestGraph#parse_json!
+* Add RailsController to help you integrate into Rails.
+* Simplify arguments checking and require dependency.
+* Now if there's no secret in RestGraph, sig check would always fail.
+* Now there's a Rails example.
+  http://github.com/cardinalblue/rest-graph/tree/master/example
+
+* Add error_handler option. Default behavior is raising ::RestGraph::Error.
+  You may want to pass your private controller method to do redirection.
+  Extracted from README:
+  # You may want to do redirect instead of raising exception, for example,
+  # in a Rails application, you might have this private controller method:
+  def redirect_to_authorize error = nil
+    redirect_to @rg.authorize_url(:redirect_uri => request.url)
+  end
+
+  # and you'll use that private method to do error handling:
+  def setup_rest_graph
+    @rg = RestGraph.new(:error_handler => method(:redirect_to_authorize))
+  end
+
+* Add log_handler option. Default behavior is do nothing.
+  You may want to do this in Rails:
+  RestGraph.new(:log_hanlder => lambda{ |duration, url|
+                                  Rails.logger.debug("RestGraph "         \
+                                                     "spent #{duration} " \
+                                                     "requesting #{url}")
+                                })
+
+* Add RestGraph#fql_multi to do FQL multiquery. Thanks Ethan Czahor
+  Usage: rg.fql_multi(:query1 => 'SELECT ...', :query2 => 'SELECT ...')
+
+== rest-graph 1.1.1 -- 2010-05-21
+* Add oauth realted utilites -- authorize_url and authorize!
+* Fixed a bug that in Ruby 1.8.7-, nil =~ /regexp/ equals to false.
+  It is nil as expected in Ruby 1.9.1+
+
+== rest-graph 1.1.0 -- 2010-05-13
 * Main repository was moved to http://github.com/cardinalblue/rest-graph
   Sorry for the inconvenience. I'll keep pushing to both repositories until
   I am too lazy to do that.
@@ -18,8 +86,8 @@
   if you're using rails plugin, we do require 'rest-graph/auto_load'
   for you.
 
-* Config could be load manually as well. require 'rest-graph/load_config' and
-  RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
+* Config could be loaded manually as well. require 'rest-graph/load_config'
+  and RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
 
 == rest-graph 1.0.0 -- 2010-05-06
 * now access_token is saved in data attributes.

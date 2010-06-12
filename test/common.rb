@@ -20,9 +20,23 @@ module TestHelper
   ensure # the defaults should remain the same!
     RestGraph.send(:extend, RestGraph::DefaultAttributes.dup)
 
-    RestGraph::Attributes.each{ |name|
+    TestHelper.attrs_no_callback.each{ |name|
       RestGraph.new.send(name).should ==
         RestGraph::DefaultAttributes.send("default_#{name}")
+    }
+  end
+
+  def normalize_query query
+    '?' + query[1..-1].split('&').sort.join('&')
+  end
+
+  def normalize_url url
+    url.sub(/\?.+/){ |query| TestHelper.normalize_query(query) }
+  end
+
+  def attrs_no_callback
+    RestGraph::Attributes.reject{ |attr|
+      attr.to_s =~ /_handler/
     }
   end
 end

@@ -9,6 +9,10 @@ require 'rest-graph/load_config'
 
 describe RestGraph::LoadConfig do
 
+  after do
+    RR.verify
+  end
+
   it 'would honor rails config' do
     ::Rails = Object.new
     mock(Rails).env { 'test' }
