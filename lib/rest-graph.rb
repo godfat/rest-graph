@@ -96,6 +96,20 @@ class RestGraph < RestGraphStruct
     request(graph_server, path, query, :put,  payload, opts[:suppress_decode])
   end
 
+  # request by eventmachine (em-http)
+
+  def multi requests
+    m = EM::MultiRequest.new
+    requests.each{ |(method, path, opts)|
+      m.add(EM::HttpRequest.new(graph_server + path).
+      send(method, :query => opts))
+    }
+    m.callback{
+      yield(m.responses[:succeeded].map(&:response).
+            map(&method(:post_request)))
+    }
+  end
+
   # cookies, app_id, secrect related below
 
   def parse_rack_env! env
@@ -111,19 +125,6 @@ class RestGraph < RestGraphStruct
     self.data = check_sig_and_return_data(
       # take out facebook sometimes there but sometimes not quotes in cookies
       Rack::Utils.parse_query(fbs.to_s.gsub('"', '')))
-  end
-
-  # multi-request by eventmachine (em-http)
-  def multi requests
-    m = EM::MultiRequest.new
-    requests.each{ |(method, path, opts)|
-      m.add(EM::HttpRequest.new(graph_server + path).
-      send(method, :query => opts))
-    }
-    m.callback{
-      yield(m.responses[:succeeded].map(&:response).
-            map(&method(:post_request)))
-    }
   end
 
   def parse_json! json
