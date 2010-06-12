@@ -99,15 +99,16 @@ class RestGraph < RestGraphStruct
   # request by eventmachine (em-http)
 
   def eget path, query={}, opts={}
-    multi([:get, path, query]){ |results| yield(results.first) }
+    multi([:get, path, query, opts]){ |results| yield(results.first) }
   end
 
   def multi *requests
     start_time = Time.now
     m = EM::MultiRequest.new
-    requests.each{ |(method, path, query)|
+    requests.each{ |(method, path, query, opts)|
+      query ||= {}; opts ||= {}
       m.add(EM::HttpRequest.new(graph_server + path).
-        send(method, :query => query))
+        send(method, {:query => query}.merge(opts)))
     }
     m.callback{
       yield(m.responses.values.flatten.map(&:response).
