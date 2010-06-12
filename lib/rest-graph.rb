@@ -98,16 +98,24 @@ class RestGraph < RestGraphStruct
 
   # request by eventmachine (em-http)
 
-  def multi requests
+  def eget path, query={}, opts={}
+    multi([:get, path, query]){ |results| yield(results.first) }
+  end
+
+  def multi *requests
+    start_time = Time.now
     m = EM::MultiRequest.new
-    requests.each{ |(method, path, opts)|
+    requests.each{ |(method, path, query)|
       m.add(EM::HttpRequest.new(graph_server + path).
-      send(method, :query => opts))
+        send(method, :query => query))
     }
     m.callback{
-      yield(m.responses[:succeeded].map(&:response).
-            map(&method(:post_request)))
+      yield(m.responses.values.flatten.map(&:response).
+              map(&method(:post_request)))
     }
+  ensure
+    log_handler.call(Time.now - start_time,
+      m.responses.values.flatten.map(&:uri).map(&:to_s))
   end
 
   # cookies, app_id, secrect related below

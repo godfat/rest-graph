@@ -13,7 +13,7 @@ use Reloader
 run Builder.new{
   map('/async'){
     run lambda{ |env|
-      RestGraph.new.multi([[:get, id]]*times){ |r|
+      RestGraph.new.multi(*([[:get, id]]*times)){ |r|
         env['async.callback'].call [200, {}, r.map(&:inspect)]
       }
       throw :async
