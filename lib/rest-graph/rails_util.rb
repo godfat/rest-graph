@@ -2,24 +2,10 @@
 require 'rest-graph'
 
 module RestGraph::RailsUtil
-  # module Helper
-  #   def url_for options
-  #     caller = respond_to?(:controller) ? controller : self
-  #     if caller.rest_graph_in_canvas? && options.kind_of?(Hash)
-  #       super({:host => "apps.facebook.com/#{RestGraph.default_canvas}"}.
-  #             merge(options))
-  #     else
-  #       super(options)
-  #     end
-  #   end
-  # end
-
   def self.included controller
     controller.rescue_from(::RestGraph::Error){ |exception|
       logger.debug("DEBUG: RestGraph: action halt")
     }
-    # controller.send(:include, ::RestGraph::RailsUtil::Helper)
-    # controller.helper(::RestGraph::RailsUtil::Helper)
   end
 
   def rest_graph_options
