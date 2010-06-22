@@ -35,6 +35,8 @@ module RestGraph::RailsUtil
         "DEBUG: RestGraph: detected code with "  \
         "#{rest_graph_normalized_request_uri}, " \
         "parsed: #{rest_graph.data.inspect}")
+
+      rest_graph_write_cookie
     end
 
     # if the code is bad or not existed,
@@ -51,6 +53,8 @@ module RestGraph::RailsUtil
       else
         logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
       end
+
+      rest_graph_write_cookie
     end
 
     # if we're not in canvas nor code passed,
@@ -110,6 +114,13 @@ module RestGraph::RailsUtil
       </html>
       HTML
     end
+  end
+
+  def rest_graph_write_cookie
+    fbs = rest_graph.data.to_a.map{ |k_v| k_v.join('=') }.join('&')
+    cookies["fbs_#{rest_graph.app_id}"] = fbs
+    logger.debug("DEBUG: RestGraph: wrote cookie: " \
+                 "fbs_#{rest_graph.app_id} => #{fbs}")
   end
 
   def rest_graph_log duration, url
