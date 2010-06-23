@@ -60,7 +60,7 @@ module RestGraph::RailsUtil
   def rest_graph_authorize error
     logger.warn("WARN: RestGraph: #{error.inspect}")
 
-    if rest_graph_options[:auto_authorize]
+    if rest_graph_auto_authorize?
       @rest_graph_authorize_url = rest_graph.authorize_url(
         {:redirect_uri => rest_graph_normalized_request_uri,
          :scope        => rest_graph_options[:auto_authorize_scope]}.
@@ -168,6 +168,12 @@ module RestGraph::RailsUtil
 
   def rest_graph_in_canvas?
     rest_graph_options[:canvas] || @fb_sig_in_canvas
+  end
+
+  def rest_graph_auto_authorize?
+    !rest_graph_options[:auto_authorize_scope  ].empty? ||
+    !rest_graph_options[:auto_authorize_options].empty? ||
+     rest_graph_options[:auto_authorize]
   end
 
   def rest_graph_extract_options options, method
