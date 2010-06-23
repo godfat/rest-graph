@@ -27,53 +27,23 @@ module RestGraph::RailsUtil
     rest_graph_options    .merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
-    # exchange the code with access_token
-    if params[:code]
-      rest_graph.authorize!(:code => params[:code],
-                            :redirect_uri => rest_graph_normalized_request_uri)
-      logger.debug(
-        "DEBUG: RestGraph: detected code with "  \
-        "#{rest_graph_normalized_request_uri}, " \
-        "parsed: #{rest_graph.data.inspect}")
+    rest_graph_check_code           if !rest_graph.authorized? &&
+                                        params[:code]
 
-      rest_graph_write_session
-    end
+    rest_graph_check_params_session if !rest_graph.authorized? &&
+                                        params[:session]
 
-    # if the code is bad or not existed,
-    # check if there's one in session,
-    # meanwhile, there the sig and access_token is correct,
-    # that means we're in the context of canvas
-    if !rest_graph.authorized? && params[:session]
-      rest_graph.parse_json!(params[:session])
-      logger.debug("DEBUG: RestGraph: detected session, parsed:" \
-                   " #{rest_graph.data.inspect}")
-
-      if rest_graph.authorized?
-        @fb_sig_in_canvas = true
-      else
-        logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
-      end
-
-      rest_graph_write_session
-    end
-
-    # if we're not in canvas nor code passed,
-    # we could check out cookies as well.
-    if !rest_graph.authorized?
-      rest_graph.parse_cookies!(cookies)
-      logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
-                   " #{rest_graph.data.inspect}")
-    end
-
-    if !rest_graph.authorized?
-      rest_graph.parse_fbs!(session['fbs'])
-      logger.debug("DEBUG: RestGraph: detected session, parsed:" \
-                   " #{rest_graph.data.inspect}")
-    end
+    rest_graph_check_cookie         if !rest_graph.authorized? &&
+                                        cookies["fbs_#{rest_graph.app_id}"]
 
     # there are above 3 ways to check the user identity!
     # if nor of them passed, then we can suppose the user
-    # didn't authorize for us
+    # didn't authorize for us, but we can check if user has authorized
+    # before, in that case, the fbs would be inside session,
+    # as we just saved it there
+
+    rest_graph_check_session        if !rest_graph.authorized? &&
+                                        session['fbs']
   end
 
   # override this if you need different app_id and secret
@@ -123,6 +93,51 @@ module RestGraph::RailsUtil
       </html>
       HTML
     end
+  end
+
+  private
+  # exchange the code with access_token
+  def rest_graph_check_code
+    rest_graph.authorize!(:code => params[:code],
+                          :redirect_uri => rest_graph_normalized_request_uri)
+    logger.debug(
+      "DEBUG: RestGraph: detected code with "  \
+      "#{rest_graph_normalized_request_uri}, " \
+      "parsed: #{rest_graph.data.inspect}")
+
+    rest_graph_write_session
+  end
+
+  # if the code is bad or not existed,
+  # check if there's one in session,
+  # meanwhile, there the sig and access_token is correct,
+  # that means we're in the context of canvas
+  def rest_graph_check_params_session
+    rest_graph.parse_json!(params[:session])
+    logger.debug("DEBUG: RestGraph: detected session, parsed:" \
+                 " #{rest_graph.data.inspect}")
+
+    if rest_graph.authorized?
+      @fb_sig_in_canvas = true
+    else
+      logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
+    end
+
+    rest_graph_write_session
+  end
+
+  # if we're not in canvas nor code passed,
+  # we could check out cookies as well.
+  def rest_graph_check_cookie
+    rest_graph.parse_cookies!(cookies)
+    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
+                 " #{rest_graph.data.inspect}")
+  end
+
+  def rest_graph_check_session
+    rest_graph.parse_fbs!(session['fbs'])
+    logger.debug("DEBUG: RestGraph: detected session, parsed:" \
+                 " #{rest_graph.data.inspect}")
   end
 
   def rest_graph_write_session
