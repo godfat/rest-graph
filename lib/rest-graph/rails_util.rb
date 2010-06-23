@@ -84,14 +84,17 @@ module RestGraph::RailsUtil
   def rest_graph_authorize error
     logger.warn("WARN: RestGraph: #{error.inspect}")
 
-    @rest_graph_authorize_url = rest_graph.authorize_url(
-      {:redirect_uri => rest_graph_normalized_request_uri,
-       :scope        => rest_graph_options[:auto_authorize_scope]}.
-      merge(            rest_graph_options[:auto_authorize_options]))
+    if rest_graph_options[:auto_authorize]
+      @rest_graph_authorize_url = rest_graph.authorize_url(
+        {:redirect_uri => rest_graph_normalized_request_uri,
+         :scope        => rest_graph_options[:auto_authorize_scope]}.
+        merge(            rest_graph_options[:auto_authorize_options]))
 
-    logger.debug("DEBUG: RestGraph: redirect to #{@rest_graph_authorize_url}")
+      logger.debug("DEBUG: RestGraph: redirect to #{@rest_graph_authorize_url}")
 
-    rest_graph_authorize_redirect if rest_graph_options[:auto_authorize]
+      rest_graph_authorize_redirect
+    end
+
     raise ::RestGraph::Error.new(error)
   end
 
