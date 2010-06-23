@@ -22,7 +22,7 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal(
       normalize_url(
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \
-        'scope=offline_access%2Cpublish_stream%2Cread_friendlists&' \
+        'scope=&' \
         'redirect_uri=http%3A%2F%2Ftest.host%2F'),
       normalize_url(assigns(:rest_graph_authorize_url)))
   end

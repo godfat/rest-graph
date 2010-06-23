@@ -20,8 +20,7 @@ module RestGraph::RailsUtil
       {:canvas                 => false,
        :auto_authorize         => false,
        :auto_authorize_options => {},
-       :auto_authorize_scope   =>
-         'offline_access,publish_stream,read_friendlists'}
+       :auto_authorize_scope   => ''}
   end
 
   def rest_graph_options_new
