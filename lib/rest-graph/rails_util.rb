@@ -2,10 +2,17 @@
 require 'rest-graph'
 
 module RestGraph::RailsUtil
+  module Helper
+    def rest_graph
+      controller.rest_graph
+    end
+  end
+
   def self.included controller
     controller.rescue_from(::RestGraph::Error){ |exception|
       logger.debug("DEBUG: RestGraph: action halt")
     }
+    controller.helper(::RestGraph::RailsUtil::Helper)
   end
 
   def rest_graph_options
