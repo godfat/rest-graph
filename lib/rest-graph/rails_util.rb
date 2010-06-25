@@ -101,7 +101,7 @@ module RestGraph::RailsUtil
     end
   end
 
-  private
+  module_function
   # exchange the code with access_token
   def rest_graph_check_code
     rest_graph.authorize!(:code => params[:code],
