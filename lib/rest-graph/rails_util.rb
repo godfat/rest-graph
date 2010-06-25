@@ -57,10 +57,10 @@ module RestGraph::RailsUtil
     @rest_graph ||= RestGraph.new(rest_graph_options_new)
   end
 
-  def rest_graph_authorize error
+  def rest_graph_authorize error=nil, redirect=false
     logger.warn("WARN: RestGraph: #{error.inspect}")
 
-    if rest_graph_auto_authorize?
+    if redirect || rest_graph_auto_authorize?
       @rest_graph_authorize_url = rest_graph.authorize_url(
         {:redirect_uri => rest_graph_normalized_request_uri,
          :scope        => rest_graph_options[:auto_authorize_scope]}.
