@@ -20,31 +20,31 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 == QUICK START:
 
- # in typical use, here's how you use RestGraph.  Note that the syntax follows closely to the Graph API URL syntax, making it easy to use. 
- # first, suppose that you already have an access_token, represented by TOKEN 
+ # in typical use, here's how you use RestGraph.  Note that the syntax follows closely to the Graph API URL syntax, making it easy to use.
+ # first, suppose that you already have an access_token, represented by TOKEN
 
  require 'rest-graph'
  rg = RestGraph.new(:access_token => TOKEN)
 
  # GET https://graph.facebook.com/me?access_token=TOKEN
- rg.get('me')          
- 
+ rg.get('me')
+
  # GET https://graph.facebook.com/me/likes?access_token=TOKEN
- rg.get('me/likes')  
- 
+ rg.get('me/likes')
+
  # GET https://graph.facebook.com/search?q=taiwan&access_token=TOKEN
- rg.get('search', :q => 'taiwan')    
+ rg.get('search', :q => 'taiwan')
 
 
  # Next, we explain how to use RestGraph to obtain the access token
 
  # If you are using Rails, we recommend that you include a module
- # called RailsUtil into your controllers, which will configure RestGraph.  
+ # called RailsUtil into your controllers, which will configure RestGraph.
  # (Your code contributions for other Ruby frameworks would be appreciated!)
  # There is an option in RailsUtil called "auto_authorize" which will cause RestGraph
  # to automatically redirect the user to the authorization page if the access token is
  # unavailable or has expired.  (This way, you don't have to check if the token is
- # expired or not.) 
+ # expired or not.)
 
  # Here is an example:
 
@@ -52,7 +52,7 @@ by Cardinal Blue ( http://cardinalblue.com )
    include RestGraph::RailsUtil
    before_filter :filter_rest_graph_setup
 
-   # your code 
+   # your code
 
    private
    def filter_rest_graph_setup
@@ -65,7 +65,7 @@ by Cardinal Blue ( http://cardinalblue.com )
  # Here are ALL the available options for new instance of RestGraph.  All options are optional:
 
  rg = RestGraph.new(:access_token => TOKEN,
-                    :graph_server => 'https://graph.facebook.com/', 
+                    :graph_server => 'https://graph.facebook.com/',
                     :old_server   => 'https://api.facebook.com/',
                     :accept       => 'text/javascript',
                     :lang         => 'en-us', # this affect search
@@ -90,8 +90,8 @@ by Cardinal Blue ( http://cardinalblue.com )
  # API calls:
 
  # GET https://graph.facebook.com/me?access_token=TOKEN
- rg.get('me')       
- 
+ rg.get('me')
+
  # GET https://graph.facebook.com/me?metadata=1&access_token=TOKEN
  rg.get('me', :metadata => '1')
 
@@ -157,10 +157,10 @@ by Cardinal Blue ( http://cardinalblue.com )
 
  # Here are 3 possible ways to set up the default settings:
 
- # (1) set it directly 
+ # (1) set it directly
  module MyDefaults
    def default_app_id
-     '456'  
+     '456'
    end
 
    def default_secret
