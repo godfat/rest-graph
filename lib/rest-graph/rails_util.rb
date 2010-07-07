@@ -33,14 +33,14 @@ module RestGraph::RailsUtil
     rest_graph_options    .merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
-    rest_graph_check_code           if !rest_graph.authorized? &&
-                                        params[:code]
+    rest_graph_check_cookie         if !rest_graph.authorized? &&
+                                        cookies["fbs_#{rest_graph.app_id}"]
 
     rest_graph_check_params_session if !rest_graph.authorized? &&
                                         params[:session]
 
-    rest_graph_check_cookie         if !rest_graph.authorized? &&
-                                        cookies["fbs_#{rest_graph.app_id}"]
+    rest_graph_check_code           if !rest_graph.authorized? &&
+                                        params[:code]
 
     # there are above 3 ways to check the user identity!
     # if nor of them passed, then we can suppose the user
