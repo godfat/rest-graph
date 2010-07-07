@@ -20,7 +20,8 @@ module RestGraph::RailsUtil
       {:canvas                 => false,
        :auto_authorize         => false,
        :auto_authorize_options => {},
-       :auto_authorize_scope   => ''}
+       :auto_authorize_scope   => '',
+       :write_session          => false}
   end
 
   def rest_graph_options_new
@@ -155,6 +156,8 @@ module RestGraph::RailsUtil
   # ==================== others ====================
 
   def rest_graph_write_session
+    return if !rest_graph.authorized? || !rest_graph_options[:write_session]
+
     fbs = rest_graph.data.to_a.map{ |k_v| k_v.join('=') }.join('&')
     session['fbs'] = fbs
     logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
