@@ -33,14 +33,9 @@ module RestGraph::RailsUtil
     rest_graph_options    .merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
-    rest_graph_check_cookie         if !rest_graph.authorized? &&
-                                        cookies["fbs_#{rest_graph.app_id}"]
-
-    rest_graph_check_params_session if !rest_graph.authorized? &&
-                                        params[:session]
-
-    rest_graph_check_code           if !rest_graph.authorized? &&
-                                        params[:code]
+    rest_graph_check_cookie
+    rest_graph_check_params_session
+    rest_graph_check_code
 
     # there are above 3 ways to check the user identity!
     # if nor of them passed, then we can suppose the user
@@ -48,8 +43,7 @@ module RestGraph::RailsUtil
     # before, in that case, the fbs would be inside session,
     # as we just saved it there
 
-    rest_graph_check_session        if !rest_graph.authorized? &&
-                                        session['fbs']
+    rest_graph_check_session
   end
 
   # override this if you need different app_id and secret
@@ -104,6 +98,8 @@ module RestGraph::RailsUtil
   module_function
   # exchange the code with access_token
   def rest_graph_check_code
+    return if rest_graph.authorized? || !params[:code]
+
     rest_graph.authorize!(:code => params[:code],
                           :redirect_uri => rest_graph_normalized_request_uri)
     logger.debug(
@@ -119,6 +115,8 @@ module RestGraph::RailsUtil
   # meanwhile, there the sig and access_token is correct,
   # that means we're in the context of canvas
   def rest_graph_check_params_session
+     return if rest_graph.authorized? || !params[:session]
+
     rest_graph.parse_json!(params[:session])
     logger.debug("DEBUG: RestGraph: detected session, parsed:" \
                  " #{rest_graph.data.inspect}")
@@ -135,12 +133,17 @@ module RestGraph::RailsUtil
   # if we're not in canvas nor code passed,
   # we could check out cookies as well.
   def rest_graph_check_cookie
+    return if rest_graph.authorized? ||
+              !cookies["fbs_#{rest_graph.app_id}"]
+
     rest_graph.parse_cookies!(cookies)
     logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
 
   def rest_graph_check_session
+    return if rest_graph.authorized? || !session['fbs']
+
     rest_graph.parse_fbs!(session['fbs'])
     logger.debug("DEBUG: RestGraph: detected session, parsed:" \
                  " #{rest_graph.data.inspect}")
