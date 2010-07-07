@@ -96,18 +96,18 @@ module RestGraph::RailsUtil
   end
 
   module_function
-  # exchange the code with access_token
-  def rest_graph_check_code
-    return if rest_graph.authorized? || !params[:code]
 
-    rest_graph.authorize!(:code => params[:code],
-                          :redirect_uri => rest_graph_normalized_request_uri)
-    logger.debug(
-      "DEBUG: RestGraph: detected code with "  \
-      "#{rest_graph_normalized_request_uri}, " \
-      "parsed: #{rest_graph.data.inspect}")
+  # ==================== checking utility ====================
 
-    rest_graph_write_session
+  # if we're not in canvas nor code passed,
+  # we could check out cookies as well.
+  def rest_graph_check_cookie
+    return if rest_graph.authorized? ||
+              !cookies["fbs_#{rest_graph.app_id}"]
+
+    rest_graph.parse_cookies!(cookies)
+    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
+                 " #{rest_graph.data.inspect}")
   end
 
   # if the code is bad or not existed,
@@ -130,15 +130,18 @@ module RestGraph::RailsUtil
     rest_graph_write_session
   end
 
-  # if we're not in canvas nor code passed,
-  # we could check out cookies as well.
-  def rest_graph_check_cookie
-    return if rest_graph.authorized? ||
-              !cookies["fbs_#{rest_graph.app_id}"]
+  # exchange the code with access_token
+  def rest_graph_check_code
+    return if rest_graph.authorized? || !params[:code]
 
-    rest_graph.parse_cookies!(cookies)
-    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
-                 " #{rest_graph.data.inspect}")
+    rest_graph.authorize!(:code => params[:code],
+                          :redirect_uri => rest_graph_normalized_request_uri)
+    logger.debug(
+      "DEBUG: RestGraph: detected code with "  \
+      "#{rest_graph_normalized_request_uri}, " \
+      "parsed: #{rest_graph.data.inspect}")
+
+    rest_graph_write_session
   end
 
   def rest_graph_check_session
@@ -148,6 +151,8 @@ module RestGraph::RailsUtil
     logger.debug("DEBUG: RestGraph: detected session, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
+
+  # ==================== others ====================
 
   def rest_graph_write_session
     fbs = rest_graph.data.to_a.map{ |k_v| k_v.join('=') }.join('&')
