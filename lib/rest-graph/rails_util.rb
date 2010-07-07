@@ -43,7 +43,7 @@ module RestGraph::RailsUtil
     # before, in that case, the fbs would be inside session,
     # as we just saved it there
 
-    rest_graph_check_session
+    rest_graph_check_rails_session
   end
 
   # override this if you need different app_id and secret
@@ -144,7 +144,7 @@ module RestGraph::RailsUtil
     rest_graph_write_session
   end
 
-  def rest_graph_check_session
+  def rest_graph_check_rails_session
     return if rest_graph.authorized? || !session['fbs']
 
     rest_graph.parse_fbs!(session['fbs'])
