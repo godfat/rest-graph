@@ -65,7 +65,7 @@ by Cardinal Blue ( http://cardinalblue.com )
  # You might wonder how do we setup app_id, secret, and other stuffs?
  # You could pass them in rest_graph_setup(:app_id => 1234), or setup
  # in a config YAML file. Here's a config example:
- {rest-graph.yaml}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
+{rest-graph.yaml}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
  # For a QUICK START, we recommend that put this config file under
  # config/rest-graph.yaml and require 'rest-graph/auto_load' to automatically
  # load the config to setup default values for RestGraph in your application.
@@ -80,6 +80,8 @@ by Cardinal Blue ( http://cardinalblue.com )
 == SYNOPSIS:
 
  # Here are ALL the available options for new instance of RestGraph.
+ # Setup function rest_graph_setup in module RestGraph::RailsUtil
+ # has similar options with RestGraph.new.
  # All options are optional:
 
  rg = RestGraph.new(:access_token => TOKEN,
@@ -90,6 +92,7 @@ by Cardinal Blue ( http://cardinalblue.com )
                     :auto_decode  =>  true  , # decode by json
                     :app_id       => '123'  ,
                     :secret       => '1829' ,
+                    :auto_authorize_scope => 'publish_stream,email',
 
  # This handler callback is only called if auto_decode is set to true,
  # otherwise, it's ignored.
@@ -242,3 +245,4 @@ by Cardinal Blue ( http://cardinalblue.com )
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
+
