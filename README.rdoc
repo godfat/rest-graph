@@ -139,9 +139,6 @@ by Cardinal Blue ( http://cardinalblue.com )
  # The following method yields the redirect URL for authorizing
  # https://graph.facebook.com/oauth/authorize?client_id=123&
  #         redirect_uri=http%3A%2F%2Fw3.org%2F
- rg.authorize_url(:redirect_uri => 'http://w3.org/')
-
- # It is available to specify scope when authorizing
  rg.authorize_url(:redirect_uri => 'http://w3.org/', :scope => 'email')
 
  # The following method makes a call to Facebook to convert
@@ -253,4 +250,3 @@ by Cardinal Blue ( http://cardinalblue.com )
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
