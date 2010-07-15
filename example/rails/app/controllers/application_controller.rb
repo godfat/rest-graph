@@ -53,7 +53,6 @@ class ApplicationController < ActionController::Base
   end
 
   def filter_options
-    rest_graph_setup(:auto_authorize => true,
-                     :auto_authorize_options => {:scope => 'bogus'})
+    rest_graph_setup(:auto_authorize_options => {:scope => 'bogus'})
   end
 end
