@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
 
   def filter_diff_canvas
     rest_graph_setup(:canvas               => 'ToT',
-                     :auto_authorize_scope => 'publish_stream')
+                     :auto_authorize_scope => 'email')
   end
 
   def filter_no_auto
