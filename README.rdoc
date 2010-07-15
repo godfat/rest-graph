@@ -62,10 +62,9 @@ by Cardinal Blue ( http://cardinalblue.com )
 
    private
    def filter_rest_graph_setup
-     # Other authorization related options are provided:
-     # :auto_authorize_scope => 'publish_stream,email'
-     # :redirect_uri => 'http://w3.org/'
-     rest_graph_setup(:auto_authorize => true)
+     # Please see RestGraph::RailsUtil#rest_graph_options for all options.
+     rest_graph_setup(:auto_authorize_scope => 'publish_stream,email',
+                      :app_id               => '123')
    end
  end
 
