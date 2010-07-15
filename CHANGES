@@ -1,5 +1,20 @@
 = rest-graph changes history
 
+== rest-graph 1.4.0 -- ?
+
+for RailsUtil:
+
+* Internal code rearrangement.
+* Removed url_for helper, it's too hard to do it right.
+* Removed @fb_sig_in_canvas hack.
+* Added rest_graph method in helper.
+* Fixed a bug that logging redirect but not really do direct.
+* Now passing :auto_authorize_scope implies :auto_authorize => true.
+* Now :canvas option takes the name of canvas, instead of a boolean.
+* Now :auto_authorize default to false.
+* Now :auto_authorize_scope default to nothing.
+* Now there's :write_session option to save fbs in session, default to false.
+
 == rest-graph 1.3.0 -- 2010-06-11
 * Now rest-graph is rescuing all exceptions from rest-client.
 * Added RestGraph#exchange_sessions to exchange old sessions to access tokens.
