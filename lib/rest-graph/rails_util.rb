@@ -17,7 +17,7 @@ module RestGraph::RailsUtil
 
   def rest_graph_options
     @rest_graph_options ||=
-      {:canvas                 => false,
+      {:canvas                 => '',
        :auto_authorize         => false,
        :auto_authorize_options => {},
        :auto_authorize_scope   => '',
@@ -170,7 +170,7 @@ module RestGraph::RailsUtil
   def rest_graph_normalized_request_uri
     if rest_graph_in_canvas?
       "http://apps.facebook.com/" \
-      "#{RestGraph.default_canvas}#{request.request_uri}"
+      "#{rest_graph_canvas}#{request.request_uri}"
     else
       request.url
     end.sub(/[\&\?]session=[^\&]+/, '').
@@ -178,7 +178,15 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_in_canvas?
-    rest_graph_options[:canvas] || @fb_sig_in_canvas
+    !rest_graph_options[:canvas].empty? || @fb_sig_in_canvas
+  end
+
+  def rest_graph_canvas
+    if rest_graph_options[:canvas].empty?
+      RestGraph.try(:default_canvas).to_s
+    else
+      rest_graph_options[:canvas]
+    end
   end
 
   def rest_graph_auto_authorize?

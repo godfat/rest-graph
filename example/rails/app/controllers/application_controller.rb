@@ -38,8 +38,7 @@ class ApplicationController < ActionController::Base
   end
 
   def filter_canvas
-    rest_graph_setup(:canvas => true,
-                     :auto_authorize => true,
+    rest_graph_setup(:canvas               => RestGraph.default_canvas,
                      :auto_authorize_scope => 'publish_stream')
   end
 
