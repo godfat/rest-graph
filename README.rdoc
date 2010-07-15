@@ -53,10 +53,18 @@ by Cardinal Blue ( http://cardinalblue.com )
    include RestGraph::RailsUtil
    before_filter :filter_rest_graph_setup
 
+   def index
+     # rest_graph_setup provides rest_graph as a RestGraph instance
+     @profile = rest_graph.get('me')
+   end
+
    # your code
 
    private
    def filter_rest_graph_setup
+     # Other authorization related options are provided:
+     # :auto_authorize_scope => 'publish_stream,email'
+     # :redirect_uri => 'http://w3.org/'
      rest_graph_setup(:auto_authorize => true)
    end
  end
@@ -80,8 +88,6 @@ by Cardinal Blue ( http://cardinalblue.com )
 == SYNOPSIS:
 
  # Here are ALL the available options for new instance of RestGraph.
- # Setup function rest_graph_setup in module RestGraph::RailsUtil
- # has similar options with RestGraph.new.
  # All options are optional:
 
  rg = RestGraph.new(:access_token => TOKEN,
@@ -92,7 +98,6 @@ by Cardinal Blue ( http://cardinalblue.com )
                     :auto_decode  =>  true  , # decode by json
                     :app_id       => '123'  ,
                     :secret       => '1829' ,
-                    :auto_authorize_scope => 'publish_stream,email',
 
  # This handler callback is only called if auto_decode is set to true,
  # otherwise, it's ignored.
@@ -135,6 +140,9 @@ by Cardinal Blue ( http://cardinalblue.com )
  # https://graph.facebook.com/oauth/authorize?client_id=123&
  #         redirect_uri=http%3A%2F%2Fw3.org%2F
  rg.authorize_url(:redirect_uri => 'http://w3.org/')
+
+ # It is available to specify scope when authorizing
+ rg.authorize_url(:redirect_uri => 'http://w3.org/', :scope => 'email')
 
  # The following method makes a call to Facebook to convert
  # the authorization "code" into an access token:
