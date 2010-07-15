@@ -14,13 +14,15 @@ class ApplicationController < ActionController::Base
   before_filter :filter_canvas,      :only => [:canvas]
   before_filter :filter_options,     :only => [:options]
   before_filter :filter_no_auto,     :only => [:no_auto]
-  before_filter :filter_diff_app_id, :only => [:app_id]
+  before_filter :filter_diff_app_id, :only => [:diff_app_id]
+  before_filter :filter_diff_canvas, :only => [:diff_canvas]
 
   def index
     render :text => rest_graph.get('me').to_json
   end
-  alias_method :canvas,  :index
-  alias_method :options, :index
+  alias_method :canvas     , :index
+  alias_method :options    , :index
+  alias_method :diff_canvas, :index
 
   def no_auto
     rest_graph.get('me')
@@ -28,7 +30,7 @@ class ApplicationController < ActionController::Base
     render :text => 'XD'
   end
 
-  def app_id
+  def diff_app_id
     render :text => rest_graph.app_id
   end
 
@@ -39,6 +41,11 @@ class ApplicationController < ActionController::Base
 
   def filter_canvas
     rest_graph_setup(:canvas               => RestGraph.default_canvas,
+                     :auto_authorize_scope => 'publish_stream')
+  end
+
+  def filter_diff_canvas
+    rest_graph_setup(:canvas               => 'ToT',
                      :auto_authorize_scope => 'publish_stream')
   end
 

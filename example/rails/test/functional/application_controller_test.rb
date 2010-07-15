@@ -38,6 +38,17 @@ class ApplicationControllerTest < ActionController::TestCase
       normalize_url((assigns(:rest_graph_authorize_url))))
   end
 
+  def test_diff_canvas
+    get(:diff_canvas)
+    assert_response :success
+    assert_equal(
+      normalize_url(
+        'https://graph.facebook.com/oauth/authorize?client_id=123&' \
+        'scope=publish_stream&'                                     \
+        'redirect_uri=http%3A%2F%2Fapps.facebook.com%2FToT%2Fdiff_canvas'),
+      normalize_url((assigns(:rest_graph_authorize_url))))
+  end
+
   def test_options
     get(:options)
     assert_response :redirect
@@ -56,7 +67,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_app_id
-    get(:app_id)
+    get(:diff_app_id)
     assert_response :success
     assert_equal 'zzz', @response.body
   end
