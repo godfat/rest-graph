@@ -178,7 +178,7 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_in_canvas?
-    !rest_graph_options[:canvas].empty? || @fb_sig_in_canvas
+    !rest_graph_options[:canvas].empty?
   end
 
   def rest_graph_canvas
