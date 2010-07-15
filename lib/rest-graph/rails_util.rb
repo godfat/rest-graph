@@ -1,6 +1,12 @@
 
 require 'rest-graph'
 
+module RestGraph::DefaultAttributes
+  def default_canvas
+    ''
+  end
+end
+
 module RestGraph::RailsUtil
   module Helper
     def rest_graph
@@ -183,7 +189,7 @@ module RestGraph::RailsUtil
 
   def rest_graph_canvas
     if rest_graph_options[:canvas].empty?
-      RestGraph.try(:default_canvas).to_s
+      RestGraph.default_canvas
     else
       rest_graph_options[:canvas]
     end

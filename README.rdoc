@@ -64,7 +64,8 @@ by Cardinal Blue ( http://cardinalblue.com )
    def filter_rest_graph_setup
      # Please see RestGraph::RailsUtil#rest_graph_options for all options.
      rest_graph_setup(:auto_authorize_scope => 'publish_stream,email',
-                      :app_id               => '123')
+                      :app_id               => '123',
+                      :canvas               => RestGraph.default_canvas)
    end
  end
 
