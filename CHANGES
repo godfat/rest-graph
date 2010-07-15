@@ -2,7 +2,7 @@
 
 == rest-graph 1.4.0 -- ?
 
-for RailsUtil:
+Changes only for RailsUtil, the core (rest-graph.rb) is pretty stable for now.
 
 * Internal code rearrangement.
 * Removed url_for helper, it's too hard to do it right.
