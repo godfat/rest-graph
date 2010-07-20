@@ -221,7 +221,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 == REQUIREMENTS:
 
-* Tested with MRI 1.8.7 and 1.9.1
+* Tested with MRI 1.8.7 and 1.9.1 and Rubinius HEAD
 * gem install rest-client
 * gem install json      (optional)
 * gem install json_pure (optional)
