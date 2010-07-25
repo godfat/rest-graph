@@ -41,10 +41,11 @@ module RestGraph::RailsUtil
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
     rest_graph_check_cookie
+    rest_graph_check_params_signed_request
     rest_graph_check_params_session
     rest_graph_check_code
 
-    # there are above 3 ways to check the user identity!
+    # there are above 4 ways to check the user identity!
     # if nor of them passed, then we can suppose the user
     # didn't authorize for us, but we can check if user has authorized
     # before, in that case, the fbs would be inside session,
@@ -115,6 +116,21 @@ module RestGraph::RailsUtil
     rest_graph.parse_cookies!(cookies)
     logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
                  " #{rest_graph.data.inspect}")
+  end
+
+  def rest_graph_check_params_signed_request
+    return if rest_graph.authorized? || !params[:signed_request]
+
+    rest_graph.parse_signed_request!(params[:signed_request])
+    logger.debug("DEBUG: RestGraph: detected signed_request, parsed:" \
+                 " #{rest_graph.data.inspect}")
+
+    if rest_graph.authorized?
+      rest_graph_write_session
+    else
+      logger.warn(
+        "WARN: RestGraph: bad signed_request: #{params[:signed_request]}")
+    end
   end
 
   # if the code is bad or not existed,
