@@ -122,19 +122,17 @@ module RestGraph::RailsUtil
   # meanwhile, there the sig and access_token is correct,
   # that means we're in the context of canvas
   def rest_graph_check_params_session
-     return if rest_graph.authorized? || !params[:session]
+    return if rest_graph.authorized? || !params[:session]
 
     rest_graph.parse_json!(params[:session])
     logger.debug("DEBUG: RestGraph: detected session, parsed:" \
                  " #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
-      @fb_sig_in_canvas = true
+      rest_graph_write_session
     else
       logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
     end
-
-    rest_graph_write_session
   end
 
   # exchange the code with access_token
@@ -148,7 +146,7 @@ module RestGraph::RailsUtil
       "#{rest_graph_normalized_request_uri}, " \
       "parsed: #{rest_graph.data.inspect}")
 
-    rest_graph_write_session
+    rest_graph_write_session if rest_graph.authorized?
   end
 
   def rest_graph_check_rails_session
@@ -162,7 +160,7 @@ module RestGraph::RailsUtil
   # ==================== others ====================
 
   def rest_graph_write_session
-    return if !rest_graph.authorized? || !rest_graph_options[:write_session]
+    return if !rest_graph_options[:write_session]
 
     fbs = rest_graph.data.to_a.map{ |k_v| k_v.join('=') }.join('&')
     session['fbs'] = fbs
