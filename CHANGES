@@ -3,6 +3,7 @@
 == rest-graph 1.4.1 -- ?
 
 * Add RestGraph#parse_signed_request!
+* [RailsUtil] Favor signed_request over session in rest_graph_setup
 
 == rest-graph 1.4.0 -- 2010-07-15
 
