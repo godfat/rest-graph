@@ -4,6 +4,8 @@ require 'rest_client'
 
 # stdlib
 require 'digest/md5'
+require 'openssl'
+
 require 'cgi'
 
 # optional gem
@@ -116,6 +118,18 @@ class RestGraph < RestGraphStruct
   def parse_json! json
     self.data = json &&
       check_sig_and_return_data(JSON.parse(json))
+  rescue JSON::ParserError
+  end
+
+  # facebook's new signed_request...
+
+  def parse_signed_request! request
+    sig_encoded, json_encoded = request.split('.')
+    sig,  json = [sig_encoded, json_encoded].map{ |str|
+      "#{str.tr('-_', '+/')}==".unpack('m').first
+    }
+    self.data = JSON.parse(json) if
+      secret && OpenSSL::HMAC.digest('sha256', secret, json_encoded) == sig
   rescue JSON::ParserError
   end
 
