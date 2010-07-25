@@ -1,4 +1,4 @@
 
 require 'rest-graph'
 
-RestGraph::VERSION = '1.4.0'
+RestGraph::VERSION = '1.4.1'

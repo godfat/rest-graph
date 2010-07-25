@@ -1,5 +1,9 @@
 = rest-graph changes history
 
+== rest-graph 1.4.1 -- ?
+
+* Add RestGraph#parse_signed_request!
+
 == rest-graph 1.4.0 -- 2010-07-15
 
 Changes only for RailsUtil, the core (rest-graph.rb) is pretty stable for now.
