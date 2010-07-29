@@ -42,6 +42,13 @@ describe RestGraph do
       should == '?message=hi%21%21&subject=%28%26oh%26%29'
   end
 
+  it 'would generate correct url' do
+    TestHelper.normalize_url(
+    RestGraph.new(:access_token => 'awesome').url('path', :query => 'string')).
+      should ==
+        'https://graph.facebook.com/path?access_token=awesome&query=string'
+  end
+
   it 'would request to correct server' do
     stub_request(:get, 'http://nothing.godfat.org/me').with(
       :headers => {'Accept'          => 'text/plain',

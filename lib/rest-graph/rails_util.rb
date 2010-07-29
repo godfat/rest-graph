@@ -1,16 +1,16 @@
 
 require 'rest-graph'
 
+module RestGraph::DefaultAttributes
+  def default_canvas
+    ''
+  end
+end
+
 module RestGraph::RailsUtil
   module Helper
-    def url_for options
-      caller = respond_to?(:controller) ? controller : self
-      if caller.rest_graph_in_canvas? && options.kind_of?(Hash)
-        super({:host => "apps.facebook.com/#{RestGraph.default_canvas}"}.
-              merge(options))
-      else
-        super(options)
-      end
+    def rest_graph
+      controller.rest_graph
     end
   end
 
@@ -18,17 +18,16 @@ module RestGraph::RailsUtil
     controller.rescue_from(::RestGraph::Error){ |exception|
       logger.debug("DEBUG: RestGraph: action halt")
     }
-    controller.send(:include, ::RestGraph::RailsUtil::Helper)
     controller.helper(::RestGraph::RailsUtil::Helper)
   end
 
   def rest_graph_options
     @rest_graph_options ||=
-      {:canvas                 => false,
+      {:canvas                 => '',
        :auto_authorize         => false,
        :auto_authorize_options => {},
-       :auto_authorize_scope   =>
-         'offline_access,publish_stream,read_friendlists'}
+       :auto_authorize_scope   => '',
+       :write_session          => false}
   end
 
   def rest_graph_options_new
@@ -41,43 +40,18 @@ module RestGraph::RailsUtil
     rest_graph_options    .merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
-    # exchange the code with access_token
-    if params[:code]
-      rest_graph.authorize!(:code => params[:code],
-                            :redirect_uri => rest_graph_normalized_request_uri)
-      logger.debug(
-        "DEBUG: RestGraph: detected code with "  \
-        "#{rest_graph_normalized_request_uri}, " \
-        "parsed: #{rest_graph.data.inspect}")
-    end
+    rest_graph_check_cookie
+    rest_graph_check_params_signed_request
+    rest_graph_check_params_session
+    rest_graph_check_code
 
-    # if the code is bad or not existed,
-    # check if there's one in session,
-    # meanwhile, there the sig and access_token is correct,
-    # that means we're in the context of canvas
-    if !rest_graph.authorized? && params[:session]
-      rest_graph.parse_json!(params[:session])
-      logger.debug("DEBUG: RestGraph: detected session, parsed:" \
-                   " #{rest_graph.data.inspect}")
-
-      if rest_graph.authorized?
-        @fb_sig_in_canvas = true
-      else
-        logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
-      end
-    end
-
-    # if we're not in canvas nor code passed,
-    # we could check out cookies as well.
-    if !rest_graph.authorized?
-      rest_graph.parse_cookies!(cookies)
-      logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
-                   " #{rest_graph.data.inspect}")
-    end
-
-    # there are above 3 ways to check the user identity!
+    # there are above 4 ways to check the user identity!
     # if nor of them passed, then we can suppose the user
-    # didn't authorize for us
+    # didn't authorize for us, but we can check if user has authorized
+    # before, in that case, the fbs would be inside session,
+    # as we just saved it there
+
+    rest_graph_check_rails_session
   end
 
   # override this if you need different app_id and secret
@@ -85,17 +59,20 @@ module RestGraph::RailsUtil
     @rest_graph ||= RestGraph.new(rest_graph_options_new)
   end
 
-  def rest_graph_authorize error
+  def rest_graph_authorize error=nil, redirect=false
     logger.warn("WARN: RestGraph: #{error.inspect}")
 
-    @rest_graph_authorize_url = rest_graph.authorize_url(
-      {:redirect_uri => rest_graph_normalized_request_uri,
-       :scope        => rest_graph_options[:auto_authorize_scope]}.
-      merge(            rest_graph_options[:auto_authorize_options]))
+    if redirect || rest_graph_auto_authorize?
+      @rest_graph_authorize_url = rest_graph.authorize_url(
+        {:redirect_uri => rest_graph_normalized_request_uri,
+         :scope        => rest_graph_options[:auto_authorize_scope]}.
+        merge(            rest_graph_options[:auto_authorize_options]))
 
-    logger.debug("DEBUG: RestGraph: redirect to #{@rest_graph_authorize_url}")
+      logger.debug("DEBUG: RestGraph: redirect to #{@rest_graph_authorize_url}")
 
-    rest_graph_authorize_redirect if rest_graph_options[:auto_authorize]
+      rest_graph_authorize_redirect
+    end
+
     raise ::RestGraph::Error.new(error)
   end
 
@@ -126,6 +103,86 @@ module RestGraph::RailsUtil
     end
   end
 
+  module_function
+
+  # ==================== checking utility ====================
+
+  # if we're not in canvas nor code passed,
+  # we could check out cookies as well.
+  def rest_graph_check_cookie
+    return if rest_graph.authorized? ||
+              !cookies["fbs_#{rest_graph.app_id}"]
+
+    rest_graph.parse_cookies!(cookies)
+    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
+                 " #{rest_graph.data.inspect}")
+  end
+
+  def rest_graph_check_params_signed_request
+    return if rest_graph.authorized? || !params[:signed_request]
+
+    rest_graph.parse_signed_request!(params[:signed_request])
+    logger.debug("DEBUG: RestGraph: detected signed_request, parsed:" \
+                 " #{rest_graph.data.inspect}")
+
+    if rest_graph.authorized?
+      rest_graph_write_session
+    else
+      logger.warn(
+        "WARN: RestGraph: bad signed_request: #{params[:signed_request]}")
+    end
+  end
+
+  # if the code is bad or not existed,
+  # check if there's one in session,
+  # meanwhile, there the sig and access_token is correct,
+  # that means we're in the context of canvas
+  def rest_graph_check_params_session
+    return if rest_graph.authorized? || !params[:session]
+
+    rest_graph.parse_json!(params[:session])
+    logger.debug("DEBUG: RestGraph: detected session, parsed:" \
+                 " #{rest_graph.data.inspect}")
+
+    if rest_graph.authorized?
+      rest_graph_write_session
+    else
+      logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
+    end
+  end
+
+  # exchange the code with access_token
+  def rest_graph_check_code
+    return if rest_graph.authorized? || !params[:code]
+
+    rest_graph.authorize!(:code => params[:code],
+                          :redirect_uri => rest_graph_normalized_request_uri)
+    logger.debug(
+      "DEBUG: RestGraph: detected code with "  \
+      "#{rest_graph_normalized_request_uri}, " \
+      "parsed: #{rest_graph.data.inspect}")
+
+    rest_graph_write_session if rest_graph.authorized?
+  end
+
+  def rest_graph_check_rails_session
+    return if rest_graph.authorized? || !session['fbs']
+
+    rest_graph.parse_fbs!(session['fbs'])
+    logger.debug("DEBUG: RestGraph: detected session, parsed:" \
+                 " #{rest_graph.data.inspect}")
+  end
+
+  # ==================== others ====================
+
+  def rest_graph_write_session
+    return if !rest_graph_options[:write_session]
+
+    fbs = rest_graph.data.to_a.map{ |k_v| k_v.join('=') }.join('&')
+    session['fbs'] = fbs
+    logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
+  end
+
   def rest_graph_log duration, url
     logger.debug("DEBUG: RestGraph: spent #{duration} requesting #{url}")
   end
@@ -133,7 +190,7 @@ module RestGraph::RailsUtil
   def rest_graph_normalized_request_uri
     if rest_graph_in_canvas?
       "http://apps.facebook.com/" \
-      "#{RestGraph.default_canvas}#{request.request_uri}"
+      "#{rest_graph_canvas}#{request.request_uri}"
     else
       request.url
     end.sub(/[\&\?]session=[^\&]+/, '').
@@ -141,7 +198,21 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_in_canvas?
-    rest_graph_options[:canvas] || @fb_sig_in_canvas
+    !rest_graph_options[:canvas].empty?
+  end
+
+  def rest_graph_canvas
+    if rest_graph_options[:canvas].empty?
+      RestGraph.default_canvas
+    else
+      rest_graph_options[:canvas]
+    end
+  end
+
+  def rest_graph_auto_authorize?
+    !rest_graph_options[:auto_authorize_scope  ].empty? ||
+    !rest_graph_options[:auto_authorize_options].empty? ||
+     rest_graph_options[:auto_authorize]
   end
 
   def rest_graph_extract_options options, method

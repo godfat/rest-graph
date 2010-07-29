@@ -68,4 +68,23 @@ describe RestGraph do
       should == {'feed' => 'me', 'sig' => "20393e7823730308938a86ecf1c88b14"}
   end
 
+  it 'would parse signed_request' do
+    secret = 'aloha'
+    json   = {'ooh' => 'dir', 'moo' => 'bar'}.to_json
+    encode = lambda{ |str|
+      [str].pack('m').tr("\n=", '').tr('+/', '-_')
+    }
+    json_encoded = encode[json]
+    sig = OpenSSL::HMAC.digest('sha256', secret, json_encoded)
+    signed_request = "#{encode[sig]}.#{json_encoded}"
+
+    rg = RestGraph.new(:secret => secret)
+    rg.parse_signed_request!(signed_request)
+    rg.data['ooh'].should == 'dir'
+    rg.data['moo'].should == 'bar'
+
+    signed_request = "#{encode[sig[0..-4]+'bad']}.#{json_encoded}"
+    rg.parse_signed_request!(signed_request).should == nil
+  end
+
 end
