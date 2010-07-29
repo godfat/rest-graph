@@ -2,7 +2,12 @@
 
 == rest-graph 1.4.1 -- ?
 
-* Add RestGraph#parse_signed_request!
+* Added RestGraph#parse_signed_request!
+
+* Added RestGraph#url to generate desired API request URL,
+  in case you'll want to use different HTTP client, such as em-http-request,
+  or pass the API request to different process of data fetcher.
+
 * [RailsUtil] Favor signed_request over session in rest_graph_setup
 
 == rest-graph 1.4.0 -- 2010-07-15
