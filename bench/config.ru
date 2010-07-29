@@ -2,7 +2,8 @@
 id = 'spellbook'
 times = 10
 require 'open-uri'
-require 'em-http'
+
+require 'em-http-request'
 require 'async-rack'
 
 require 'rest-graph'
