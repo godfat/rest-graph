@@ -82,20 +82,24 @@ class RestGraph < RestGraphStruct
     !!access_token
   end
 
+  def url path, query={}, server=graph_server
+    "#{server}#{path}#{build_query_string(query)}"
+  end
+
   def get    path, query={}, opts={}
-    request(graph_server, path, query, :get,    nil,   opts[:suppress_decode])
+    request(:get   , url(path, query, graph_server), opts)
   end
 
   def delete path, query={}, opts={}
-    request(graph_server, path, query, :delete, nil,   opts[:suppress_decode])
+    request(:delete, url(path, query, graph_server), opts)
   end
 
   def post   path, payload, query={}, opts={}
-    request(graph_server, path, query, :post, payload, opts[:suppress_decode])
+    request(:post  , url(path, query, graph_server), opts, payload)
   end
 
   def put    path, payload, query={}, opts={}
-    request(graph_server, path, query, :put,  payload, opts[:suppress_decode])
+    request(:put   , url(path, query, graph_server), opts, payload)
   end
 
   # cookies, app_id, secrect related below
@@ -143,20 +147,23 @@ class RestGraph < RestGraphStruct
   def authorize! opts={}
     query = {:client_id => app_id, :client_secret => secret}.merge(opts)
     self.data = Rack::Utils.parse_query(
-      request(graph_server, 'oauth/access_token', query, :get, nil, true))
+                  request(:get, url('oauth/access_token', query),
+                          :suppress_decode => true))
   end
 
   # old rest facebook api, i will definitely love to remove them someday
 
   def old_rest path, query={}, opts={}
-    request(old_server, "method/#{path}",
-      {:format => 'json'}.merge(query), :get, nil, opts[:suppress_decode])
+    request(
+      :get,
+      url("method/#{path}", {:format => 'json'}.merge(query), old_server),
+      opts)
   end
 
   def exchange_sessions opts={}
     query = {:client_id => app_id, :client_secret => secret,
              :type => 'client_cred'}.merge(opts)
-    request(graph_server, 'oauth/exchange_sessions', query, :post)
+    request(:post, url('oauth/exchange_sessions', query))
   end
 
   def fql code, query={}, opts={}
@@ -176,15 +183,16 @@ class RestGraph < RestGraphStruct
   end
 
   private
-  def request server, path, opts, method, payload=nil, suppress_decode=nil
+  def request meth, uri, opts={}, payload=nil
     start_time = Time.now
-    res = RestClient::Resource.new(server)[path + build_query_string(opts)]
-    post_request(
-      res.send(method, *[payload, build_headers].compact), suppress_decode)
+    post_request(RestClient::Request.execute(:method => meth, :url => uri,
+                                             :headers => build_headers,
+                                             :payload => payload),
+                 opts[:suppress_decode])
   rescue RestClient::Exception => e
-    post_request(e.http_body, suppress_decode)
+    post_request(e.http_body, opts[:suppress_decode])
   ensure
-    log_handler.call(Time.now - start_time, res.url)
+    log_handler.call(Time.now - start_time, uri)
   end
 
   def build_query_string query={}
