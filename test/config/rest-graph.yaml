@@ -4,3 +4,4 @@ test:
   secret: <%= 'r41829'.reverse %>
   auto_decode: false
   lang: zh-tw
+  auto_authorize_scope: 'publish_stream'

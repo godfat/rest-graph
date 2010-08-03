@@ -98,6 +98,7 @@ by Cardinal Blue ( http://cardinalblue.com )
                     :auto_decode  =>  true  , # decode by json
                     :app_id       => '123'  ,
                     :secret       => '1829' ,
+                    :cache        => {}     , # a cache for the same API call
 
  # This handler callback is only called if auto_decode is set to true,
  # otherwise, it's ignored.
@@ -215,9 +216,9 @@ by Cardinal Blue ( http://cardinalblue.com )
  # or (3) Load config automatically
  require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
 
- # Please read:
+ # Please read: for an example of config file.
+ # Note that :auto_authorize_scope and friends is only for RailsUtil.
 {rest-graph.yaml}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
- # for an example of config file.
 
 == REQUIREMENTS:
 
