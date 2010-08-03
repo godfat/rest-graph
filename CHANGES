@@ -8,7 +8,14 @@
   in case you'll want to use different HTTP client, such as em-http-request,
   or pass the API request to different process of data fetcher.
 
+* Added an :cache option that allow you to pass a cache object,
+  which should respond to [] and []= for reading and writing.
+  The cache key would be MD5 hexdigest from the URL being called.
+  pass :cache => Rails.cache to rest_graph_setup when using RailsUtil.
+
+* [RailsUtil] Pass :cache => Rails.cache to rest_graph_setup to enable cache.
 * [RailsUtil] Favor signed_request over session in rest_graph_setup
+* [RailsUtil] Now it's possible to setup all options in rest-graph.yaml.
 
 == rest-graph 1.4.0 -- 2010-07-15
 
