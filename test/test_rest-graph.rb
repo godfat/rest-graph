@@ -120,4 +120,17 @@ describe RestGraph do
       to_return(:body => 'ok')
     RestGraph.new(:auto_decode => false).get('search', :q => o).should == 'ok'
   end
+
+  it 'would enable cache if passing cache' do
+    url, body = "https://graph.facebook.com/cache", '{"message":"ok"}'
+    stub_request(:get, url).to_return(:body => body)
+
+    cache = {}
+    rg = RestGraph.new(:cache => cache, :auto_decode => false)
+    3.times{
+      rg.get('cache').should == body
+      reset_webmock
+    }
+    cache.should == {rg.send(:cache_key, url) => body}
+  end
 end

@@ -48,7 +48,8 @@ describe RestGraph do
     mock(Time).now{ 999 }
 
     logger = []
-    rg = RestGraph.new(:log_handler => lambda{ |d, u| logger << [d, u] })
+    rg = RestGraph.new(:log_handler => lambda{ |e|
+                                         logger << [e.duration, e.url] })
     rg.get('me')
 
     logger.last.should == [333, 'https://graph.facebook.com/me']

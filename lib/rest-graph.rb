@@ -23,15 +23,19 @@ rescue LoadError; end
 }
 
 # the data structure used in RestGraph
-RestGraphStruct = Struct.new(:data, :auto_decode,
+RestGraphStruct = Struct.new(:auto_decode,
                              :graph_server, :old_server,
                              :accept, :lang,
                              :app_id, :secret,
+                             :data, :cache,
                              :error_handler,
                              :log_handler) unless defined?(RestGraphStruct)
 
 class RestGraph < RestGraphStruct
   class Error < RuntimeError; end
+  class Event < Struct.new(:duration, :url); end
+  class Event::Requested < Event; end
+  class Event::CacheHit  < Event; end
 
   Attributes = RestGraphStruct.members.map(&:to_sym)
 
@@ -47,7 +51,6 @@ class RestGraph < RestGraphStruct
   # setup defaults
   module DefaultAttributes
     extend self
-    def default_data        ; {}                           ; end
     def default_auto_decode ; true                         ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
     def default_old_server  ; 'https://api.facebook.com/'  ; end
@@ -55,11 +58,13 @@ class RestGraph < RestGraphStruct
     def default_lang        ; 'en-us'                      ; end
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
+    def default_data        ; {}                           ; end
+    def default_cache       ; nil                          ; end
     def default_error_handler
       lambda{ |error| raise ::RestGraph::Error.new(error) }
     end
     def default_log_handler
-      lambda{ |duration, url| }
+      lambda{ |event| }
     end
   end
   extend DefaultAttributes
@@ -185,14 +190,12 @@ class RestGraph < RestGraphStruct
   private
   def request meth, uri, opts={}, payload=nil
     start_time = Time.now
-    post_request(RestClient::Request.execute(:method => meth, :url => uri,
-                                             :headers => build_headers,
-                                             :payload => payload),
+    post_request(cache_get(uri) || fetch(meth, uri, payload),
                  opts[:suppress_decode])
   rescue RestClient::Exception => e
     post_request(e.http_body, opts[:suppress_decode])
   ensure
-    log_handler.call(Time.now - start_time, uri)
+    log_handler.call(Event::Requested.new(Time.now - start_time, uri))
   end
 
   def build_query_string query={}
@@ -234,5 +237,27 @@ class RestGraph < RestGraphStruct
       map{ |a| a.join('=') }.join
 
     Digest::MD5.hexdigest(args + secret)
+  end
+
+  def cache_key uri
+    Digest::MD5.hexdigest(uri)
+  end
+
+  def cache_get uri
+    return unless cache
+    start_time = Time.now
+    cache[cache_key(uri)].tap{ |result|
+      log_handler.call(Event::CacheHit.new(Time.now - start_time, uri)) if
+        result
+    }
+  end
+
+  def fetch meth, uri, payload
+    RestClient::Request.execute(:method => meth, :url => uri,
+                                :headers => build_headers,
+                                :payload => payload).
+      tap{ |result|
+        cache[cache_key(uri)] = result if cache
+      }
   end
 end

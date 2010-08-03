@@ -1,11 +1,20 @@
 
 require 'rest-graph'
 
-module RestGraph::DefaultAttributes
-  def default_canvas
-    ''
+class RestGraph
+  module DefaultAttributes
+    def default_canvas
+      ''
+    end
+  end
+
+  module RailsCache
+    def []  key       ;  read(key)       ; end
+    def []= key, value; write(key, value); end
   end
 end
+
+::ActiveSupport::Cache::Store.send(:include, ::RestGraph::RailsCache)
 
 module RestGraph::RailsUtil
   module Helper
@@ -183,8 +192,15 @@ module RestGraph::RailsUtil
     logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
   end
 
-  def rest_graph_log duration, url
-    logger.debug("DEBUG: RestGraph: spent #{duration} requesting #{url}")
+  def rest_graph_log event
+    message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
+    case event
+      when RestGraph::Event::Requested
+        logger.debug(message + "requesting #{event.url}")
+
+      when RestGraph::Event::CacheHit
+        logger.debug(message + "cache hit' #{event.url}")
+    end
   end
 
   def rest_graph_normalized_request_uri

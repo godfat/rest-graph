@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   before_filter :filter_no_auto,     :only => [:no_auto]
   before_filter :filter_diff_app_id, :only => [:diff_app_id]
   before_filter :filter_diff_canvas, :only => [:diff_canvas]
+  before_filter :filter_cache,       :only => [:cache]
 
   def index
     render :text => rest_graph.get('me').to_json
@@ -32,6 +33,13 @@ class ApplicationController < ActionController::Base
 
   def diff_app_id
     render :text => rest_graph.app_id
+  end
+
+  def cache
+    url = rest_graph.url('cache')
+    rest_graph.get('cache')
+    rest_graph.get('cache')
+    render :text => Rails.cache.read(Digest::MD5.hexdigest(url))
   end
 
   private
@@ -60,5 +68,9 @@ class ApplicationController < ActionController::Base
 
   def filter_options
     rest_graph_setup(:auto_authorize_options => {:scope => 'bogus'})
+  end
+
+  def filter_cache
+    rest_graph_setup(:cache => Rails.cache)
   end
 end

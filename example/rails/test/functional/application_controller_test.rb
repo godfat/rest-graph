@@ -71,4 +71,13 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal 'zzz', @response.body
   end
+
+  def test_cache
+    stub_request(:get, 'https://graph.facebook.com/cache').
+      to_return(:body => '{"message":"ok"}')
+
+    get(:cache)
+    assert_response :success
+    assert_equal '{"message":"ok"}', @response.body
+  end
 end
