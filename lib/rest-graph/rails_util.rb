@@ -3,9 +3,11 @@ require 'rest-graph'
 
 class RestGraph
   module DefaultAttributes
-    def default_canvas
-      ''
-    end
+    def default_canvas                ; ''   ; end
+    def default_auto_authorize        ; false; end
+    def default_auto_authorize_options; {}   ; end
+    def default_auto_authorize_scope  ; ''   ; end
+    def default_write_session         ; false; end
   end
 
   module RailsCache
@@ -30,23 +32,8 @@ module RestGraph::RailsUtil
     controller.helper(::RestGraph::RailsUtil::Helper)
   end
 
-  def rest_graph_options
-    @rest_graph_options ||=
-      {:canvas                 => '',
-       :auto_authorize         => false,
-       :auto_authorize_options => {},
-       :auto_authorize_scope   => '',
-       :write_session          => false}
-  end
-
-  def rest_graph_options_new
-    @rest_graph_options_new ||=
-      {:error_handler => method(:rest_graph_authorize),
-         :log_handler => method(:rest_graph_log)}
-  end
-
   def rest_graph_setup options={}
-    rest_graph_options    .merge!(rest_graph_extract_options(options, :reject))
+    rest_graph_options_ctl.merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
     rest_graph_check_cookie
@@ -74,8 +61,8 @@ module RestGraph::RailsUtil
     if redirect || rest_graph_auto_authorize?
       @rest_graph_authorize_url = rest_graph.authorize_url(
         {:redirect_uri => rest_graph_normalized_request_uri,
-         :scope        => rest_graph_options[:auto_authorize_scope]}.
-        merge(            rest_graph_options[:auto_authorize_options]))
+         :scope        => rest_graph_oget(:auto_authorize_scope)}.
+        merge(rest_graph_oget(:auto_authorize_options)))
 
       logger.debug("DEBUG: RestGraph: redirect to #{@rest_graph_authorize_url}")
 
@@ -89,7 +76,6 @@ module RestGraph::RailsUtil
   def rest_graph_authorize_redirect
     if !rest_graph_in_canvas?
       redirect_to @rest_graph_authorize_url
-
     else
       render :inline => <<-HTML
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -114,7 +100,27 @@ module RestGraph::RailsUtil
 
   module_function
 
-  # ==================== checking utility ====================
+  # ==================== options utility =======================
+
+  def rest_graph_oget key
+    if rest_graph_options_ctl.has_key?(key)
+      rest_graph_options_ctl[key]
+    else
+      RestGraph.send("default_#{key}")
+    end
+  end
+
+  def rest_graph_options_ctl
+    @rest_graph_options_ctl ||= {}
+  end
+
+  def rest_graph_options_new
+    @rest_graph_options_new ||=
+      {:error_handler => method(:rest_graph_authorize),
+         :log_handler => method(:rest_graph_log)}
+  end
+
+  # ==================== checking utility ======================
 
   # if we're not in canvas nor code passed,
   # we could check out cookies as well.
@@ -182,10 +188,10 @@ module RestGraph::RailsUtil
                  " #{rest_graph.data.inspect}")
   end
 
-  # ==================== others ====================
+  # ==================== others ================================
 
   def rest_graph_write_session
-    return if !rest_graph_options[:write_session]
+    return if !rest_graph_oget(:write_session)
 
     fbs = rest_graph.data.to_a.map{ |k_v| k_v.join('=') }.join('&')
     session['fbs'] = fbs
@@ -206,7 +212,7 @@ module RestGraph::RailsUtil
   def rest_graph_normalized_request_uri
     if rest_graph_in_canvas?
       "http://apps.facebook.com/" \
-      "#{rest_graph_canvas}#{request.request_uri}"
+      "#{rest_graph_oget(:canvas)}#{request.request_uri}"
     else
       request.url
     end.sub(/[\&\?]session=[^\&]+/, '').
@@ -214,21 +220,13 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_in_canvas?
-    !rest_graph_options[:canvas].empty?
-  end
-
-  def rest_graph_canvas
-    if rest_graph_options[:canvas].empty?
-      RestGraph.default_canvas
-    else
-      rest_graph_options[:canvas]
-    end
+    !rest_graph_oget(:canvas).blank?
   end
 
   def rest_graph_auto_authorize?
-    !rest_graph_options[:auto_authorize_scope  ].empty? ||
-    !rest_graph_options[:auto_authorize_options].empty? ||
-     rest_graph_options[:auto_authorize]
+    !rest_graph_oget(:auto_authorize_scope)  .blank? ||
+    !rest_graph_oget(:auto_authorize_options).blank? ||
+     rest_graph_oget(:auto_authorize)
   end
 
   def rest_graph_extract_options options, method

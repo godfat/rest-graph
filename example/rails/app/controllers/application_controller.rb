@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
 
   private
   def filter_common
-    rest_graph_setup(:auto_authorize => true)
+    rest_graph_setup(:auto_authorize => true, :canvas => '')
   end
 
   def filter_canvas
@@ -67,7 +67,8 @@ class ApplicationController < ActionController::Base
   end
 
   def filter_options
-    rest_graph_setup(:auto_authorize_options => {:scope => 'bogus'})
+    rest_graph_setup(:auto_authorize_options => {:scope => 'bogus'},
+                     :canvas => nil)
   end
 
   def filter_cache
