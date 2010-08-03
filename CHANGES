@@ -13,7 +13,7 @@
   The cache key would be MD5 hexdigest from the URL being called.
   pass :cache => Rails.cache to rest_graph_setup when using RailsUtil.
 
-* [RailsUtil] Pass :cache => Rails.cache to rest_graph_setup to enable cache.
+* [RailsUtil] Pass :cache => Rails.cache to rest_graph_setup to enable caching.
 * [RailsUtil] Favor signed_request over session in rest_graph_setup
 * [RailsUtil] Now it's possible to setup all options in rest-graph.yaml.
 
