@@ -225,7 +225,7 @@ class RestGraph < RestGraphStruct
   end
 
   def check_error hash
-    if error_handler && hash.kind_of?(Hash) && hash['error']
+    if error_handler && hash.kind_of?(Hash) && (hash['error'] || hash['error_code'])
       error_handler.call(hash)
     else
       hash

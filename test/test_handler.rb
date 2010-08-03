@@ -8,25 +8,56 @@ end
 require 'json'
 
 describe RestGraph do
-  before do
-    @id    = lambda{ |obj| obj }
-    @error = '{"error":{"type":"Exception","message":"(#2500)"}}'
-    @error_hash = JSON.parse(@error)
+  describe 'with Graph API' do
+    before do
+      @id    = lambda{ |obj| obj }
+      @error = '{"error":{"type":"Exception","message":"(#2500)"}}'
+      @error_hash = JSON.parse(@error)
 
-    reset_webmock
-    stub_request(:get, 'https://graph.facebook.com/me').
-      to_return(:body => @error)
+      reset_webmock
+      stub_request(:get, 'https://graph.facebook.com/me').
+        to_return(:body => @error)
+    end
+    
+    it 'would call error_handler if error occurred' do
+      RestGraph.new(:error_handler => @id).get('me').should == @error_hash
+    end
+
+    it 'would raise ::RestGraph::Error in default error_handler' do
+      begin
+        RestGraph.new.get('me')
+      rescue ::RestGraph::Error => e
+        e.message.should == @error_hash
+      end
+    end
   end
 
-  it 'would call error_handler if error occurred' do
-    RestGraph.new(:error_handler => @id).get('me').should == @error_hash
-  end
+  describe 'with FQL API' do
+    # Example of an actual response
+    # {"error_code":603,"error_msg":"Unknown table: bad_table","request_args":[{"key":"method","value":"fql.query"},{"key":"format","value":"json"},{"key":"query","value":"SELECT name FROM bad_table WHERE uid=12345"}]}
+    before do
+      @id             = lambda{ |obj| obj }
+      @fql_error      = '{"error_code":603, "error_msg":"Unknown table: permission"}'
+      @fql_error_hash = JSON.parse(@fql_error)
+      
+      @bad_fql_query  = 'SELECT name FROM bad_table WHERE uid="12345"'
+      bad_fql_request = "https://api.facebook.com/method/fql.query?format=json&query=#{CGI.escape(@bad_fql_query)}"
+      
+      reset_webmock
+      stub_request(:get, bad_fql_request).
+        to_return(:body => @fql_error)
+    end
+    
+    it 'would call error_handler if error occurred' do
+      RestGraph.new(:error_handler => @id).fql(@bad_fql_query).should == @fql_error_hash
+    end
 
-  it 'would raise ::RestGraph::Error in default error_handler' do
-    begin
-      RestGraph.new.get('me')
-    rescue ::RestGraph::Error => e
-      e.message.should == @error_hash
+    it 'would raise ::RestGraph::Error in default error_handler' do
+      begin
+        RestGraph.new.fql(@bad_fql_query)
+      rescue ::RestGraph::Error => e
+        e.message.should == @fql_error_hash
+      end
     end
   end
 end
