@@ -2,14 +2,14 @@
 
 == rest-graph 1.4.1 -- ?
 
-* Added RestGraph#parse_signed_request!
+* [RestGraph] Added RestGraph#parse_signed_request!
 
-* Added RestGraph#url to generate desired API request URL,
+* [RestGraph] Added RestGraph#url to generate desired API request URL,
   in case you'll want to use different HTTP client, such as em-http-request,
   or pass the API request to different process of data fetcher.
 
-* Added an :cache option that allow you to pass a cache object,
-  which should respond to [] and []= for reading and writing.
+* [RestGraph] Added an :cache option that allow you to pass a cache
+  object, which should respond to [] and []= for reading and writing.
   The cache key would be MD5 hexdigest from the URL being called.
   pass :cache => Rails.cache to rest_graph_setup when using RailsUtil.
 
