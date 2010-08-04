@@ -1,6 +1,9 @@
 = rest-graph changes history
 
-== rest-graph 1.4.1 -- ?
+== rest-graph 1.4.1 -- 2010-08-04
+
+* [RestGraph] Call error_handler when response contains error_code as well,
+  which came from FQL response. Thanks Florent.
 
 * [RestGraph] Added RestGraph#parse_signed_request!
 
