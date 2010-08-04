@@ -130,6 +130,10 @@ class RestGraph < RestGraphStruct
   rescue JSON::ParserError
   end
 
+  def fbs
+    "#{fbs_without_sig(data)}&sig=#{calculate_sig(data)}"
+  end
+
   # facebook's new signed_request...
 
   def parse_signed_request! request
@@ -235,10 +239,12 @@ class RestGraph < RestGraphStruct
   end
 
   def calculate_sig cookies
-    args = cookies.reject{ |(k, v)| k == 'sig' }.sort.
-      map{ |a| a.join('=') }.join
+    Digest::MD5.hexdigest(fbs_without_sig(cookies) + secret)
+  end
 
-    Digest::MD5.hexdigest(args + secret)
+  def fbs_without_sig cookies
+    cookies.reject{ |(k, v)| k == 'sig' }.sort.
+      map{ |a| a.join('=') }.join
   end
 
   def cache_key uri

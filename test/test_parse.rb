@@ -87,4 +87,15 @@ describe RestGraph do
     rg.parse_signed_request!(signed_request).should == nil
   end
 
+  it 'would generate correct fbs with correct sig' do
+    RestGraph.new(:access_token => 'fake', :secret => 's').fbs.should ==
+      "access_token=fake&sig=#{Digest::MD5.hexdigest('access_token=fakes')}"
+  end
+
+  it 'could parse fbs from facebook response which lacks sig...' do
+    rg = RestGraph.new(:access_token => 'a', :secret => 'z')
+    rg.parse_fbs!(rg.fbs)                           .should.kind_of?(Hash)
+    rg.parse_fbs!(rg.fbs.sub(/sig\=\w+/, 'sig=abc')).should == nil
+  end
+
 end
