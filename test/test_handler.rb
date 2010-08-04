@@ -8,13 +8,17 @@ end
 require 'json'
 
 describe RestGraph do
+  after do
+    reset_webmock
+    RR.verify
+  end
+
   describe 'with Graph API' do
     before do
       @id    = lambda{ |obj| obj }
       @error = '{"error":{"type":"Exception","message":"(#2500)"}}'
       @error_hash = JSON.parse(@error)
 
-      reset_webmock
       stub_request(:get, 'https://graph.facebook.com/me').
         to_return(:body => @error)
     end

@@ -6,11 +6,8 @@ else
 end
 
 describe RestGraph do
-  before do
-    reset_webmock
-  end
-
   after do
+    reset_webmock
     RR.verify
   end
 

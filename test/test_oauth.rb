@@ -7,9 +7,12 @@ end
 
 describe RestGraph do
   before do
-    reset_webmock
     @rg  = RestGraph.new(:app_id => '29', :secret => '18')
     @uri = 'http://zzz.tw'
+  end
+
+  after do
+    reset_webmock
   end
 
   it 'would return correct oauth url' do
