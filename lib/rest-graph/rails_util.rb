@@ -9,6 +9,7 @@ class RestGraph
     def default_auto_authorize_options; {}   ; end
     def default_auto_authorize_scope  ; ''   ; end
     def default_write_session         ; false; end
+    def default_write_cookies         ; false; end
   end
 
   module RailsCache
@@ -37,10 +38,10 @@ module RestGraph::RailsUtil
     rest_graph_options_ctl.merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
-    rest_graph_check_cookie
-    rest_graph_check_params_signed_request
-    rest_graph_check_params_session
-    rest_graph_check_code
+    rest_graph_check_cookie                # for javascript sdk (canvas or not)
+    rest_graph_check_params_signed_request # canvas
+    rest_graph_check_params_session        # i think it would be deprecated
+    rest_graph_check_code                  # oauth api
 
     # there are above 4 ways to check the user identity!
     # if nor of them passed, then we can suppose the user
@@ -48,7 +49,8 @@ module RestGraph::RailsUtil
     # before, in that case, the fbs would be inside session,
     # as we just saved it there
 
-    rest_graph_check_rails_session
+    rest_graph_check_rails_session # prefered way to store fbs
+    rest_graph_check_rails_cookies # in canvas, session might not work..
   end
 
   # override this if you need different app_id and secret
@@ -143,6 +145,7 @@ module RestGraph::RailsUtil
 
     if rest_graph.authorized?
       rest_graph_write_session
+      rest_graph_write_cookies
     else
       logger.warn(
         "WARN: RestGraph: bad signed_request: #{params[:signed_request]}")
@@ -162,6 +165,7 @@ module RestGraph::RailsUtil
 
     if rest_graph.authorized?
       rest_graph_write_session
+      rest_graph_write_cookies
     else
       logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
     end
@@ -178,13 +182,23 @@ module RestGraph::RailsUtil
       "#{rest_graph_normalized_request_uri}, " \
       "parsed: #{rest_graph.data.inspect}")
 
-    rest_graph_write_session if rest_graph.authorized?
+    if rest_graph.authorized?
+      rest_graph_write_session
+      rest_graph_write_cookies
+    end
   end
 
   def rest_graph_check_rails_session
     return if rest_graph.authorized? || !session['rest_graph_session']
     rest_graph.parse_fbs!(session['rest_graph_session'])
     logger.debug("DEBUG: RestGraph: detected session, parsed:" \
+                 " #{rest_graph.data.inspect}")
+  end
+
+  def rest_graph_check_rails_cookies
+    return if rest_graph.authorized? || !cookies['rest_graph_cookies']
+    rest_graph.parse_fbs!(cookies['rest_graph_cookies'])
+    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
 
@@ -195,6 +209,13 @@ module RestGraph::RailsUtil
     fbs = rest_graph.fbs
     session['rest_graph_session'] = fbs
     logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
+  end
+
+  def rest_graph_write_cookies
+    return if !rest_graph_oget(:write_cookies)
+    fbs = rest_graph.fbs
+    cookies['rest_graph_cookies'] = fbs
+    logger.debug("DEBUG: RestGraph: wrote cookies: fbs => #{fbs}")
   end
 
   def rest_graph_log event
