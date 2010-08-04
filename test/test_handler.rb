@@ -64,9 +64,7 @@ describe RestGraph do
       @bad_fql_query  = 'SELECT name FROM bad_table WHERE uid="12345"'
       bad_fql_request = "https://api.facebook.com/method/fql.query?format=json&query=#{CGI.escape(@bad_fql_query)}"
 
-      reset_webmock
-      stub_request(:get, bad_fql_request).
-        to_return(:body => @fql_error)
+      stub_request(:get, bad_fql_request).to_return(:body => @fql_error)
     end
 
     it 'would call error_handler if error occurred' do
