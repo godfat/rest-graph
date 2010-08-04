@@ -18,7 +18,7 @@ describe RestGraph do
       stub_request(:get, 'https://graph.facebook.com/me').
         to_return(:body => @error)
     end
-    
+
     it 'would call error_handler if error occurred' do
       RestGraph.new(:error_handler => @id).get('me').should == @error_hash
     end
@@ -39,15 +39,15 @@ describe RestGraph do
       @id             = lambda{ |obj| obj }
       @fql_error      = '{"error_code":603, "error_msg":"Unknown table: permission"}'
       @fql_error_hash = JSON.parse(@fql_error)
-      
+
       @bad_fql_query  = 'SELECT name FROM bad_table WHERE uid="12345"'
       bad_fql_request = "https://api.facebook.com/method/fql.query?format=json&query=#{CGI.escape(@bad_fql_query)}"
-      
+
       reset_webmock
       stub_request(:get, bad_fql_request).
         to_return(:body => @fql_error)
     end
-    
+
     it 'would call error_handler if error occurred' do
       RestGraph.new(:error_handler => @id).fql(@bad_fql_query).should == @fql_error_hash
     end
