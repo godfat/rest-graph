@@ -182,9 +182,8 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_check_rails_session
-    return if rest_graph.authorized? || !session['fbs']
-
-    rest_graph.parse_fbs!(session['fbs'])
+    return if rest_graph.authorized? || !session['rest_graph_session']
+    rest_graph.parse_fbs!(session['rest_graph_session'])
     logger.debug("DEBUG: RestGraph: detected session, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
@@ -193,9 +192,8 @@ module RestGraph::RailsUtil
 
   def rest_graph_write_session
     return if !rest_graph_oget(:write_session)
-
-    fbs = rest_graph.data.to_a.map{ |k_v| k_v.join('=') }.join('&')
-    session['fbs'] = fbs
+    fbs = rest_graph.fbs
+    session['rest_graph_session'] = fbs
     logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
   end
 
