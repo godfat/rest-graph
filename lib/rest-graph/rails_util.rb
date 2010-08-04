@@ -4,6 +4,7 @@ require 'rest-graph'
 class RestGraph
   module DefaultAttributes
     def default_canvas                ; ''   ; end
+    def default_iframe                ; false; end
     def default_auto_authorize        ; false; end
     def default_auto_authorize_options; {}   ; end
     def default_auto_authorize_scope  ; ''   ; end
@@ -74,7 +75,7 @@ module RestGraph::RailsUtil
 
   # override this if you want the simple redirect_to
   def rest_graph_authorize_redirect
-    if !rest_graph_in_canvas?
+    if !rest_graph_oget(:iframe)
       redirect_to @rest_graph_authorize_url
     else
       render :inline => <<-HTML

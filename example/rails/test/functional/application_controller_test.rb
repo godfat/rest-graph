@@ -29,24 +29,35 @@ class ApplicationControllerTest < ActionController::TestCase
 
   def test_canvas
     get(:canvas)
-    assert_response :success
+    assert_response :redirect
     assert_equal(
       normalize_url(
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \
         'scope=publish_stream&'                                     \
         'redirect_uri=http%3A%2F%2Fapps.facebook.com%2Fcan%2Fcanvas'),
-      normalize_url((assigns(:rest_graph_authorize_url))))
+      normalize_url(assigns(:rest_graph_authorize_url)))
   end
 
   def test_diff_canvas
     get(:diff_canvas)
-    assert_response :success
+    assert_response :redirect
     assert_equal(
       normalize_url(
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \
         'scope=email&'                                              \
         'redirect_uri=http%3A%2F%2Fapps.facebook.com%2FToT%2Fdiff_canvas'),
-      normalize_url((assigns(:rest_graph_authorize_url))))
+      normalize_url(assigns(:rest_graph_authorize_url)))
+  end
+
+  def test_iframe_canvas
+    get(:iframe_canvas)
+    assert_response :success
+    assert_equal(
+      normalize_url(
+        'https://graph.facebook.com/oauth/authorize?client_id=123&' \
+        'scope=&'                                                   \
+        'redirect_uri=http%3A%2F%2Fapps.facebook.com%2Fzzz%2Fiframe_canvas'),
+      normalize_url(assigns(:rest_graph_authorize_url)))
   end
 
   def test_options

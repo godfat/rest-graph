@@ -10,20 +10,22 @@ class ApplicationController < ActionController::Base
 
   include RestGraph::RailsUtil
 
-  before_filter :filter_common,      :only => [:index]
-  before_filter :filter_canvas,      :only => [:canvas]
-  before_filter :filter_options,     :only => [:options]
-  before_filter :filter_no_auto,     :only => [:no_auto]
-  before_filter :filter_diff_app_id, :only => [:diff_app_id]
-  before_filter :filter_diff_canvas, :only => [:diff_canvas]
-  before_filter :filter_cache,       :only => [:cache]
+  before_filter :filter_common       , :only => [:index]
+  before_filter :filter_canvas       , :only => [:canvas]
+  before_filter :filter_options      , :only => [:options]
+  before_filter :filter_no_auto      , :only => [:no_auto]
+  before_filter :filter_diff_app_id  , :only => [:diff_app_id]
+  before_filter :filter_diff_canvas  , :only => [:diff_canvas]
+  before_filter :filter_iframe_canvas, :only => [:iframe_canvas]
+  before_filter :filter_cache        , :only => [:cache]
 
   def index
     render :text => rest_graph.get('me').to_json
   end
-  alias_method :canvas     , :index
-  alias_method :options    , :index
-  alias_method :diff_canvas, :index
+  alias_method :canvas       , :index
+  alias_method :options      , :index
+  alias_method :diff_canvas  , :index
+  alias_method :iframe_canvas, :index
 
   def no_auto
     rest_graph.get('me')
@@ -55,6 +57,12 @@ class ApplicationController < ActionController::Base
   def filter_diff_canvas
     rest_graph_setup(:canvas               => 'ToT',
                      :auto_authorize_scope => 'email')
+  end
+
+  def filter_iframe_canvas
+    rest_graph_setup(:canvas               => 'zzz',
+                     :iframe               => true,
+                     :auto_authorize       => true)
   end
 
   def filter_no_auto
