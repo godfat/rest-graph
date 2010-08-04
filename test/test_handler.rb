@@ -54,21 +54,27 @@ describe RestGraph do
   end
 
   describe 'with FQL API' do
-    # Example of an actual response
-    # {"error_code":603,"error_msg":"Unknown table: bad_table","request_args":[{"key":"method","value":"fql.query"},{"key":"format","value":"json"},{"key":"query","value":"SELECT name FROM bad_table WHERE uid=12345"}]}
+    # Example of an actual response (without newline)
+    # {"error_code":603,"error_msg":"Unknown table: bad_table",
+    #  "request_args":[{"key":"method","value":"fql.query"},
+    #                  {"key":"format","value":"json"},
+    #                  {"key":"query","value":
+    #                     "SELECT name FROM bad_table WHERE uid=12345"}]}
     before do
       @id             = lambda{ |obj| obj }
-      @fql_error      = '{"error_code":603, "error_msg":"Unknown table: permission"}'
+      @fql_error      = '{"error_code":603,"error_msg":"Unknown table: bad"}'
       @fql_error_hash = JSON.parse(@fql_error)
 
       @bad_fql_query  = 'SELECT name FROM bad_table WHERE uid="12345"'
-      bad_fql_request = "https://api.facebook.com/method/fql.query?format=json&query=#{CGI.escape(@bad_fql_query)}"
+      bad_fql_request = "https://api.facebook.com/method/fql.query?" \
+                        "format=json&query=#{CGI.escape(@bad_fql_query)}"
 
       stub_request(:get, bad_fql_request).to_return(:body => @fql_error)
     end
 
     it 'would call error_handler if error occurred' do
-      RestGraph.new(:error_handler => @id).fql(@bad_fql_query).should == @fql_error_hash
+      RestGraph.new(:error_handler => @id).fql(@bad_fql_query).
+        should == @fql_error_hash
     end
 
     it 'would raise ::RestGraph::Error in default error_handler' do
