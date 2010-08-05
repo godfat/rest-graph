@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.4.2 -- ?
+== rest-graph 1.4.2 -- 2010-08-05
 
 * [RestGraph] Added RestGraph#fbs to generate fbs with correct sig,
               to be used for future parse_fbs! See the bug in RailsUtil.
@@ -8,6 +8,8 @@
 * [RailsUtil] Added iframe and write_cookies option.
 * [RailsUtil] Fixed a bug that write_session didn't parse because parse_fbs!
               reject the fbs due to missing sig.
+* [RailsUtil] Fixed a bug that in Rails 3, must call safe_html to prevent
+              unintended HTML escaping.
 
 * Thanks a lot, Andrew.
 
