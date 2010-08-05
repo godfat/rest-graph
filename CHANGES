@@ -9,7 +9,7 @@
 * [RailsUtil] Fixed a bug that write_session didn't parse because parse_fbs!
               reject the fbs due to missing sig.
 * [RailsUtil] Fixed a bug that in Rails 3, must call safe_html to prevent
-              unintended HTML escaping.
+              unintended HTML escaping. Thanks, Justin.
 
 * Thanks a lot, Andrew.
 
