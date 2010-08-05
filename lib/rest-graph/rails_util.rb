@@ -80,13 +80,20 @@ module RestGraph::RailsUtil
     if !rest_graph_oget(:iframe)
       redirect_to @rest_graph_authorize_url
     else
+      # for rails 3
+      @rest_graph_safe_url = if ''.respond_to?(:html_safe)
+                               @rest_graph_authorize_url.html_safe
+                             else
+                               @rest_graph_authorize_url
+                             end
+
       render :inline => <<-HTML
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
       <html>
         <head>
         <script type="text/javascript">
-          window.top.location.href = '<%= @rest_graph_authorize_url %>'
+          window.top.location.href = '<%= @rest_graph_safe_url %>'
         </script>
         <noscript>
           <meta http-equiv="refresh" content="0;url=<%= h @rest_graph_authorize_url %>" />
