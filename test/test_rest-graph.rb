@@ -130,4 +130,12 @@ describe RestGraph do
     }
     cache.should == {rg.send(:cache_key, url) => body}
   end
+
+  it 'would treat oauth_token as access_token as well' do
+    rg = RestGraph.new
+    hate_facebook = 'why the hell two different name?'
+    rg.data['oauth_token'] = hate_facebook
+    rg.authorized?.should == true
+    rg.access_token       == hate_facebook
+  end
 end

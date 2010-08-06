@@ -76,7 +76,7 @@ class RestGraph < RestGraphStruct
   end
 
   def access_token
-    data['access_token']
+    data['access_token'] || data['oauth_token']
   end
 
   def access_token= token
