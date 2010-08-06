@@ -151,8 +151,7 @@ module RestGraph::RailsUtil
                  " #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
-      rest_graph_write_rg_session
-      rest_graph_write_rg_cookies
+      rest_graph_write_rg_fbs
     else
       logger.warn(
         "WARN: RestGraph: bad signed_request: #{params[:signed_request]}")
@@ -171,8 +170,7 @@ module RestGraph::RailsUtil
                  " #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
-      rest_graph_write_rg_session
-      rest_graph_write_rg_cookies
+      rest_graph_write_rg_fbs
     else
       logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
     end
@@ -189,10 +187,7 @@ module RestGraph::RailsUtil
       "#{rest_graph_normalized_request_uri}, " \
       "parsed: #{rest_graph.data.inspect}")
 
-    if rest_graph.authorized?
-      rest_graph_write_rg_session
-      rest_graph_write_rg_cookies
-    end
+    rest_graph_write_rg_fbs if rest_graph.authorized?
   end
 
   def rest_graph_check_rg_session
@@ -210,6 +205,11 @@ module RestGraph::RailsUtil
   end
 
   # ==================== others ================================
+
+  def rest_graph_write_rg_fbs
+    rest_graph_write_rg_session
+    rest_graph_write_rg_cookies
+  end
 
   def rest_graph_write_rg_session
     return if !rest_graph_oget(:write_session)
