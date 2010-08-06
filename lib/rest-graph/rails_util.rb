@@ -247,7 +247,7 @@ module RestGraph::RailsUtil
               end).
       tap{ |uri|
         uri.query = uri.query.split('&').reject{ |q|
-                      q =~ /^(code|session)\=/
+                      q =~ /^(code|session|signed_request)\=/
                     }.join('&') if uri.query
         uri.query = nil if uri.query.blank?
       }.to_s

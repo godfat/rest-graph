@@ -35,4 +35,10 @@ class RailsUtilTest < ActiveSupport::TestCase
     assert_equal('http://test.com/',
                  RestGraph::RailsUtil.rest_graph_normalized_request_uri)
   end
+
+  def test_rest_graph_normalized_request_uri_4
+    setup_mock(  'http://test.com/?signed_request=abc&code=123')
+    assert_equal('http://test.com/',
+                 RestGraph::RailsUtil.rest_graph_normalized_request_uri)
+  end
 end
