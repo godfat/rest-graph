@@ -238,8 +238,10 @@ module RestGraph::RailsUtil
 
   def rest_graph_normalized_request_uri
     URI.parse(if rest_graph_in_canvas?
-                "http://apps.facebook.com/" \
-                "#{rest_graph_oget(:canvas)}#{request.request_uri}"
+                # rails 3 uses newer rack which has fullpath
+                "http://apps.facebook.com/#{rest_graph_oget(:canvas)}" +
+                (request.respond_to?(:fullpath) ?
+                  request.fullpath : request.request_uri)
               else
                 request.url
               end).
