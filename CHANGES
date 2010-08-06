@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.4.5 -- ?
+== rest-graph 1.4.5 -- 2010-08-07
 
 * [RestGraph] Treat oauth_token as access_token as well. This came from
               Facebook's new signed_request. Why didn't they choose
