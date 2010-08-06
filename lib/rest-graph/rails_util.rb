@@ -237,13 +237,17 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_normalized_request_uri
-    if rest_graph_in_canvas?
-      "http://apps.facebook.com/" \
-      "#{rest_graph_oget(:canvas)}#{request.request_uri}"
-    else
-      request.url
-    end.sub(/[\&\?]session=[^\&]+/, '').
-        sub(/[\&\?]code=[^\&]+/, '')
+    URI.parse(if rest_graph_in_canvas?
+                "http://apps.facebook.com/" \
+                "#{rest_graph_oget(:canvas)}#{request.request_uri}"
+              else
+                request.url
+              end).
+      tap{ |uri|
+        uri.query = uri.query.split('&').reject{ |q|
+                      q =~ /^(code|session)\=/
+                    }.join('&') if uri.query
+      }.to_s
   end
 
   def rest_graph_in_canvas?
