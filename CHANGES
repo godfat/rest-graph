@@ -1,5 +1,10 @@
 = rest-graph changes history
 
+== rest-graph 1.4.4 -- 2010-08-06
+
+* [RailsUtil] Fixed a bug that empty query appends a question mark,
+              that confuses Facebook, so that redirect_uri didn't match.
+
 == rest-graph 1.4.3 -- 2010-08-06
 
 * [RestGraph] Fixed a bug in RestGraph#fbs, which didn't join '&'.
