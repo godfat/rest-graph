@@ -50,6 +50,8 @@ module RestGraph::RailsUtil
     # didn't authorize for us, but we can check if user has authorized
     # before, in that case, the fbs would be inside session,
     # as we just saved it there
+
+    rest_graph_check_rg_fbs
   end
 
   # override this if you need different app_id and secret
