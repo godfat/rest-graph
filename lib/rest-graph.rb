@@ -131,7 +131,7 @@ class RestGraph < RestGraphStruct
   end
 
   def fbs
-    "#{fbs_without_sig(data)}&sig=#{calculate_sig(data)}"
+    "#{fbs_without_sig(data).join('&')}&sig=#{calculate_sig(data)}"
   end
 
   # facebook's new signed_request...
@@ -239,12 +239,11 @@ class RestGraph < RestGraphStruct
   end
 
   def calculate_sig cookies
-    Digest::MD5.hexdigest(fbs_without_sig(cookies) + secret)
+    Digest::MD5.hexdigest(fbs_without_sig(cookies).join + secret)
   end
 
   def fbs_without_sig cookies
-    cookies.reject{ |(k, v)| k == 'sig' }.sort.
-      map{ |a| a.join('=') }.join('&')
+    cookies.reject{ |(k, v)| k == 'sig' }.sort.map{ |a| a.join('=') }
   end
 
   def cache_key uri
