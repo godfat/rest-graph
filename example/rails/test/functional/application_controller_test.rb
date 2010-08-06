@@ -96,12 +96,12 @@ class ApplicationControllerTest < ActionController::TestCase
   def test_handler
     reset_webmock
     stub_request(:get, 'https://graph.facebook.com/me?access_token=aloha').
-      to_return(:body => '"snowman"')
+      to_return(:body => '["snowman"]')
 
     Rails.cache[:fbs] = RestGraph.new(:access_token => 'aloha').fbs
     get(:handler_)
     assert_response :success
-    assert_equal '"snowman"', @response.body
+    assert_equal '["snowman"]', @response.body
   ensure
     Rails.cache.clear
   end
@@ -109,26 +109,26 @@ class ApplicationControllerTest < ActionController::TestCase
   def test_session
     reset_webmock
     stub_request(:get, 'https://graph.facebook.com/me?access_token=wozilla').
-      to_return(:body => '"fireball"')
+      to_return(:body => '["fireball"]')
 
     @request.session['rest_graph_session'] =
       RestGraph.new(:access_token => 'wozilla').fbs
 
     get(:session_)
     assert_response :success
-    assert_equal '"fireball"', @response.body
+    assert_equal '["fireball"]', @response.body
   end
 
   def test_cookies
     reset_webmock
     stub_request(:get, 'https://graph.facebook.com/me?access_token=blizzard').
-      to_return(:body => '"yeti"')
+      to_return(:body => '["yeti"]')
 
     @request.cookies['rest_graph_cookies'] =
       RestGraph.new(:access_token => 'blizzard').fbs
 
     get(:cookies_)
     assert_response :success
-    assert_equal '"yeti"', @response.body
+    assert_equal '["yeti"]', @response.body
   end
 end
