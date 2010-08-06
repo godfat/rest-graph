@@ -100,10 +100,10 @@ describe RestGraph do
 
   it 'could generate correct fbs with additional parameters' do
     rg = RestGraph.new(:access_token => 'a', :secret => 'z')
-    rg.data['expire'] = '1234'
+    rg.data['expires'] = '1234'
     rg.parse_fbs!(rg.fbs)                           .should.kind_of?(Hash)
     rg.data['access_token']                         .should == 'a'
-    rg.data['expire']                               .should == '1234'
+    rg.data['expires']                              .should == '1234'
   end
 
 end
