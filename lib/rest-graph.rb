@@ -244,7 +244,7 @@ class RestGraph < RestGraphStruct
 
   def fbs_without_sig cookies
     cookies.reject{ |(k, v)| k == 'sig' }.sort.
-      map{ |a| a.join('=') }.join
+      map{ |a| a.join('=') }.join('&')
   end
 
   def cache_key uri

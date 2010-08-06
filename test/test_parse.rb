@@ -98,4 +98,12 @@ describe RestGraph do
     rg.parse_fbs!(rg.fbs.sub(/sig\=\w+/, 'sig=abc')).should == nil
   end
 
+  it 'could generate correct fbs with additional parameters' do
+    rg = RestGraph.new(:access_token => 'a', :secret => 'z')
+    rg.data['expire'] = '1234'
+    rg.parse_fbs!(rg.fbs)                           .should.kind_of?(Hash)
+    rg.data['access_token']                         .should == 'a'
+    rg.data['expire']                               .should == '1234'
+  end
+
 end
