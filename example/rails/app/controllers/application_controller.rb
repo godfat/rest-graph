@@ -18,7 +18,9 @@ class ApplicationController < ActionController::Base
   before_filter :filter_diff_canvas  , :only => [:diff_canvas]
   before_filter :filter_iframe_canvas, :only => [:iframe_canvas]
   before_filter :filter_cache        , :only => [:cache]
-  before_filter :filter_hanlder      , :only => [:handler]
+  before_filter :filter_hanlder      , :only => [:handler_]
+  before_filter :filter_session      , :only => [:session_]
+  before_filter :filter_cookies      , :only => [:cookies_]
 
   def index
     render :text => rest_graph.get('me').to_json
@@ -27,7 +29,9 @@ class ApplicationController < ActionController::Base
   alias_method :options      , :index
   alias_method :diff_canvas  , :index
   alias_method :iframe_canvas, :index
-  alias_method :handler      , :index
+  alias_method :handler_     , :index
+  alias_method :session_     , :index
+  alias_method :cookies_     , :index
 
   def no_auto
     rest_graph.get('me')
@@ -96,5 +100,13 @@ class ApplicationController < ActionController::Base
 
   def check_handler
     Rails.cache[:fbs]
+  end
+
+  def filter_session
+    rest_graph_setup(:write_session => true)
+  end
+
+  def filter_cookies
+    rest_graph_setup(:write_cookies => true)
   end
 end
