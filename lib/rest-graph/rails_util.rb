@@ -249,6 +249,7 @@ module RestGraph::RailsUtil
         uri.query = uri.query.split('&').reject{ |q|
                       q =~ /^(code|session)\=/
                     }.join('&') if uri.query
+        uri.query = nil if uri.query.blank?
       }.to_s
   end
 
