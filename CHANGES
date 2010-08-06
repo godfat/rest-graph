@@ -1,5 +1,11 @@
 = rest-graph changes history
 
+== rest-graph 1.4.5 -- ?
+
+* [RestGraph] Treat oauth_token as access_token as well. This came from
+              Facebook's new signed_request. Why didn't they choose
+              consistent name? Why different signature algorithm?
+
 == rest-graph 1.4.4 -- 2010-08-06
 
 * [RailsUtil] Fixed a bug that empty query appends a question mark,
