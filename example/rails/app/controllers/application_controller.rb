@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
   before_filter :filter_diff_canvas  , :only => [:diff_canvas]
   before_filter :filter_iframe_canvas, :only => [:iframe_canvas]
   before_filter :filter_cache        , :only => [:cache]
+  before_filter :filter_hanlder      , :only => [:handler]
 
   def index
     render :text => rest_graph.get('me').to_json
@@ -26,6 +27,7 @@ class ApplicationController < ActionController::Base
   alias_method :options      , :index
   alias_method :diff_canvas  , :index
   alias_method :iframe_canvas, :index
+  alias_method :handler      , :index
 
   def no_auto
     rest_graph.get('me')
@@ -81,5 +83,18 @@ class ApplicationController < ActionController::Base
 
   def filter_cache
     rest_graph_setup(:cache => Rails.cache)
+  end
+
+  def filter_hanlder
+    rest_graph_setup(:write_handler => method(:write_handler),
+                     :check_handler => method(:check_handler))
+  end
+
+  def write_handler fbs
+    Rails.cache[:fbs] = fbs
+  end
+
+  def check_handler
+    Rails.cache[:fbs]
   end
 end

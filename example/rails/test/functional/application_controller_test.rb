@@ -91,4 +91,16 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal '{"message":"ok"}', @response.body
   end
+
+  def test_handler
+    stub_request(:get, 'https://graph.facebook.com/me?access_token=aloha').
+      to_return(:body => '"snowman"')
+
+    Rails.cache[:fbs] = RestGraph.new(:access_token => 'aloha').fbs
+    get(:handler)
+    assert_response :success
+    assert_equal '"snowman"', @response.body
+  ensure
+    Rails.cache.clear
+  end
 end
