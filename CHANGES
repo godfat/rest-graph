@@ -1,5 +1,18 @@
 = rest-graph changes history
 
+== rest-graph 1.4.3 -- 2010-08-06
+
+* [RestGraph] Fixed a bug in RestGraph#fbs, which didn't join '&'.
+              Thanks, Andrew.
+
+* [RailsUtil] Fixed a bug that wrongly rewrites request URI.
+              Previously it is processed by regular expressions,
+              now we're using URI.parse to handle this. Closed #4.
+              Thanks, Justin.
+
+* [RailsUtil] Favor Request#fullpath over Request#request_uri,
+              which came from newer Rack and thus for Rails 3.
+
 == rest-graph 1.4.2 -- 2010-08-05
 
 * [RestGraph] Added RestGraph#fbs to generate fbs with correct sig,
