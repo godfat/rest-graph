@@ -10,6 +10,8 @@ class RestGraph
     def default_auto_authorize_scope  ; ''   ; end
     def default_write_session         ; false; end
     def default_write_cookies         ; false; end
+    def default_write_handler         ;   nil; end
+    def default_check_handler         ;   nil; end
   end
 
   module RailsCache
@@ -49,8 +51,7 @@ module RestGraph::RailsUtil
     # before, in that case, the fbs would be inside session,
     # as we just saved it there
 
-    rest_graph_check_rg_session # prefered way to store fbs
-    rest_graph_check_rg_cookies # in canvas, session might not work..
+
   end
 
   # override this if you need different app_id and secret
@@ -110,8 +111,7 @@ module RestGraph::RailsUtil
 
   module_function
 
-  # ==================== options utility =======================
-
+  # ==================== begin options utility =======================
   def rest_graph_oget key
     if rest_graph_options_ctl.has_key?(key)
       rest_graph_options_ctl[key]
@@ -129,9 +129,11 @@ module RestGraph::RailsUtil
       {:error_handler => method(:rest_graph_authorize),
          :log_handler => method(:rest_graph_log)}
   end
+  # ==================== end options utility =======================
 
-  # ==================== checking utility ======================
 
+
+  # ==================== begin facebook check ======================
   # if we're not in canvas nor code passed,
   # we could check out cookies as well.
   def rest_graph_check_cookie
@@ -189,6 +191,23 @@ module RestGraph::RailsUtil
 
     rest_graph_write_rg_fbs if rest_graph.authorized?
   end
+  # ==================== end facebook check ======================
+
+
+
+  # ==================== begin check ================================
+  def rest_graph_check_rg_fbs
+    rest_graph_check_rg_handler # custom method to store fbs
+    rest_graph_check_rg_session # prefered way to store fbs
+    rest_graph_check_rg_cookies # in canvas, session might not work..
+  end
+
+  def rest_graph_check_rg_handler
+    return if rest_graph.authorized? || !rest_graph_oget(:check_handler)
+    rest_graph.parse_fbs!(rest_graph_oget(:check_handler).call)
+    logger.debug("DEBUG: RestGraph: called check_handler, parsed:" \
+                 " #{rest_graph.data.inspect}")
+  end
 
   def rest_graph_check_rg_session
     return if rest_graph.authorized? || !session['rest_graph_session']
@@ -203,12 +222,19 @@ module RestGraph::RailsUtil
     logger.debug("DEBUG: RestGraph: detected rest-graph cookies, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
-
-  # ==================== others ================================
-
+  # ====================   end check ================================
+  # ==================== begin write ================================
   def rest_graph_write_rg_fbs
+    rest_graph_write_rg_handler
     rest_graph_write_rg_session
     rest_graph_write_rg_cookies
+  end
+
+  def rest_graph_write_rg_handler
+    return if !rest_graph_oget(:write_handler)
+    fbs = rest_graph.fbs
+    rest_graph_oget(:write_handler).call(fbs)
+    logger.debug("DEBUG: RestGraph: called write_handler: fbs => #{fbs}")
   end
 
   def rest_graph_write_rg_session
@@ -224,7 +250,11 @@ module RestGraph::RailsUtil
     cookies['rest_graph_cookies'] = fbs
     logger.debug("DEBUG: RestGraph: wrote cookies: fbs => #{fbs}")
   end
+  # ==================== end write ================================
 
+
+
+  # ==================== begin misc ================================
   def rest_graph_log event
     message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
     case event
@@ -268,4 +298,5 @@ module RestGraph::RailsUtil
     return result if result.kind_of?(Hash) # RUBY_VERSION >= 1.9.1
     result.inject({}){ |r, (k, v)| r[k] = v; r }
   end
+  # ==================== end misc ================================
 end
