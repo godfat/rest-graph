@@ -6,6 +6,9 @@
               Facebook's new signed_request. Why didn't they choose
               consistent name? Why different signature algorithm?
 
+* [RailsUtil] Fixed a bug that didn't reject signed_request in redirect_uri.
+              Now code, session, and signed_request are rejected.
+
 == rest-graph 1.4.4 -- 2010-08-06
 
 * [RailsUtil] Fixed a bug that empty query appends a question mark,
