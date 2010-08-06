@@ -49,8 +49,8 @@ module RestGraph::RailsUtil
     # before, in that case, the fbs would be inside session,
     # as we just saved it there
 
-    rest_graph_check_rails_session # prefered way to store fbs
-    rest_graph_check_rails_cookies # in canvas, session might not work..
+    rest_graph_check_rg_session # prefered way to store fbs
+    rest_graph_check_rg_cookies # in canvas, session might not work..
   end
 
   # override this if you need different app_id and secret
@@ -151,8 +151,8 @@ module RestGraph::RailsUtil
                  " #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
-      rest_graph_write_session
-      rest_graph_write_cookies
+      rest_graph_write_rg_session
+      rest_graph_write_rg_cookies
     else
       logger.warn(
         "WARN: RestGraph: bad signed_request: #{params[:signed_request]}")
@@ -171,8 +171,8 @@ module RestGraph::RailsUtil
                  " #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
-      rest_graph_write_session
-      rest_graph_write_cookies
+      rest_graph_write_rg_session
+      rest_graph_write_rg_cookies
     else
       logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
     end
@@ -190,35 +190,35 @@ module RestGraph::RailsUtil
       "parsed: #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
-      rest_graph_write_session
-      rest_graph_write_cookies
+      rest_graph_write_rg_session
+      rest_graph_write_rg_cookies
     end
   end
 
-  def rest_graph_check_rails_session
+  def rest_graph_check_rg_session
     return if rest_graph.authorized? || !session['rest_graph_session']
     rest_graph.parse_fbs!(session['rest_graph_session'])
-    logger.debug("DEBUG: RestGraph: detected session, parsed:" \
+    logger.debug("DEBUG: RestGraph: detected rest-graph session, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
 
-  def rest_graph_check_rails_cookies
+  def rest_graph_check_rg_cookies
     return if rest_graph.authorized? || !cookies['rest_graph_cookies']
     rest_graph.parse_fbs!(cookies['rest_graph_cookies'])
-    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
+    logger.debug("DEBUG: RestGraph: detected rest-graph cookies, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
 
   # ==================== others ================================
 
-  def rest_graph_write_session
+  def rest_graph_write_rg_session
     return if !rest_graph_oget(:write_session)
     fbs = rest_graph.fbs
     session['rest_graph_session'] = fbs
     logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
   end
 
-  def rest_graph_write_cookies
+  def rest_graph_write_rg_cookies
     return if !rest_graph_oget(:write_cookies)
     fbs = rest_graph.fbs
     cookies['rest_graph_cookies'] = fbs
