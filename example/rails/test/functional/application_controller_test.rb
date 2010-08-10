@@ -111,7 +111,7 @@ class ApplicationControllerTest < ActionController::TestCase
     stub_request(:get, 'https://graph.facebook.com/me?access_token=wozilla').
       to_return(:body => '["fireball"]')
 
-    @request.session['rest_graph_session'] =
+    @request.session[RestGraph::RailsUtil.rest_graph_storage_key] =
       RestGraph.new(:access_token => 'wozilla').fbs
 
     get(:session_)
@@ -124,7 +124,7 @@ class ApplicationControllerTest < ActionController::TestCase
     stub_request(:get, 'https://graph.facebook.com/me?access_token=blizzard').
       to_return(:body => '["yeti"]')
 
-    @request.cookies['rest_graph_cookies'] =
+    @request.cookies[RestGraph::RailsUtil.rest_graph_storage_key] =
       RestGraph.new(:access_token => 'blizzard').fbs
 
     get(:cookies_)

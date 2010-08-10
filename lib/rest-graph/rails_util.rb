@@ -196,6 +196,10 @@ module RestGraph::RailsUtil
 
 
   # ==================== begin check ================================
+  def rest_graph_storage_key
+    "rest_graph_fbs_#{rest_graph_oget(:app_id)}"
+  end
+
   def rest_graph_check_rg_fbs
     rest_graph_check_rg_handler # custom method to store fbs
     rest_graph_check_rg_session # prefered way to store fbs
@@ -210,15 +214,17 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_check_rg_session
-    return if rest_graph.authorized? || !session[:rest_graph_session]
-    rest_graph.parse_fbs!(session[:rest_graph_session])
+    return if rest_graph.authorized? ||
+              !(fbs = session[rest_graph_storage_key])
+    rest_graph.parse_fbs!(fbs)
     logger.debug("DEBUG: RestGraph: detected rest-graph session, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
 
   def rest_graph_check_rg_cookies
-    return if rest_graph.authorized? || !cookies[:rest_graph_cookies]
-    rest_graph.parse_fbs!(cookies[:rest_graph_cookies])
+    return if rest_graph.authorized? ||
+              !(fbs = cookies[rest_graph_storage_key])
+    rest_graph.parse_fbs!(fbs)
     logger.debug("DEBUG: RestGraph: detected rest-graph cookies, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
@@ -240,14 +246,14 @@ module RestGraph::RailsUtil
   def rest_graph_write_rg_session
     return if !rest_graph_oget(:write_session)
     fbs = rest_graph.fbs
-    session[:rest_graph_session] = fbs
+    session[rest_graph_storage_key] = fbs
     logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
   end
 
   def rest_graph_write_rg_cookies
     return if !rest_graph_oget(:write_cookies)
     fbs = rest_graph.fbs
-    cookies[:rest_graph_cookies] = fbs
+    cookies[rest_graph_storage_key] = fbs
     logger.debug("DEBUG: RestGraph: wrote cookies: fbs => #{fbs}")
   end
   # ==================== end write ================================
