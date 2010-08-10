@@ -207,9 +207,9 @@ module RestGraph::RailsUtil
     rest_graph_check_rg_cookies # in canvas, session might not work..
   end
 
-  def rest_graph_check_rg_handler
-    return if rest_graph.authorized? || !rest_graph_oget(:check_handler)
-    rest_graph.parse_fbs!(rest_graph_oget(:check_handler).call)
+  def rest_graph_check_rg_handler handler=rest_graph_oget(:check_handler)
+    return if rest_graph.authorized? || !handler
+    rest_graph.parse_fbs!(handler.call)
     logger.debug("DEBUG: RestGraph: called check_handler, parsed:" \
                  " #{rest_graph.data.inspect}")
   end
@@ -237,10 +237,9 @@ module RestGraph::RailsUtil
     rest_graph_write_rg_cookies
   end
 
-  def rest_graph_write_rg_handler
-    return if !rest_graph_oget(:write_handler)
-    fbs = rest_graph.fbs
-    rest_graph_oget(:write_handler).call(fbs)
+  def rest_graph_write_rg_handler handler=rest_graph_oget(:write_handler)
+    return if !handler
+    handler.call(fbs = rest_graph.fbs)
     logger.debug("DEBUG: RestGraph: called write_handler: fbs => #{fbs}")
   end
 
