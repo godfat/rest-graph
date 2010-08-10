@@ -5,7 +5,7 @@ else
   require File.dirname(__FILE__) + '/common'
 end
 
-require 'json'
+require 'yajl'
 
 describe RestGraph do
   after do
@@ -34,7 +34,7 @@ describe RestGraph do
     before do
       @id    = lambda{ |obj| obj }
       @error = '{"error":{"type":"Exception","message":"(#2500)"}}'
-      @error_hash = JSON.parse(@error)
+      @error_hash = Yajl::Parser.parse(@error)
 
       stub_request(:get, 'https://graph.facebook.com/me').
         to_return(:body => @error)
@@ -63,7 +63,7 @@ describe RestGraph do
     before do
       @id             = lambda{ |obj| obj }
       @fql_error      = '{"error_code":603,"error_msg":"Unknown table: bad"}'
-      @fql_error_hash = JSON.parse(@fql_error)
+      @fql_error_hash = Yajl::Parser.parse(@fql_error)
 
       @bad_fql_query  = 'SELECT name FROM bad_table WHERE uid="12345"'
       bad_fql_request = "https://api.facebook.com/method/fql.query?" \

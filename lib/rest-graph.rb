@@ -1,5 +1,6 @@
 
 # gem
+require 'yajl'
 require 'rest_client'
 
 # stdlib
@@ -13,14 +14,6 @@ begin
   require 'rack'
 rescue LoadError; end
 
-# pick a json gem if available
-%w[ yajl/json_gem json json_pure ].each{ |json|
-  begin
-    require json
-    break
-  rescue LoadError
-  end
-}
 
 # the data structure used in RestGraph
 RestGraphStruct = Struct.new(:auto_decode,
@@ -126,8 +119,8 @@ class RestGraph < RestGraphStruct
 
   def parse_json! json
     self.data = json &&
-      check_sig_and_return_data(JSON.parse(json))
-  rescue JSON::ParserError
+      check_sig_and_return_data(Yajl::Parser.parse(json))
+  rescue Yajl::ParseError
   end
 
   def fbs
@@ -141,9 +134,9 @@ class RestGraph < RestGraphStruct
     sig,  json = [sig_encoded, json_encoded].map{ |str|
       "#{str.tr('-_', '+/')}==".unpack('m').first
     }
-    self.data = JSON.parse(json) if
+    self.data = Yajl::Parser.parse(json) if
       secret && OpenSSL::HMAC.digest('sha256', secret, json_encoded) == sig
-  rescue JSON::ParserError
+  rescue Yajl::ParseError
   end
 
   # oauth related
@@ -180,14 +173,7 @@ class RestGraph < RestGraphStruct
   end
 
   def fql_multi codes, query={}, opts={}
-    c = if codes.respond_to?(:to_json)
-           codes.to_json
-        else
-          middle = codes.inject([]){ |r, (k, v)|
-                     r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
-                   }.join(',')
-          "{#{middle}}"
-        end
+    c = Yajl::Encoder.encode(codes)
     old_rest('fql.multiquery', {:queries => c}.merge(query), opts)
   end
 
@@ -218,7 +204,7 @@ class RestGraph < RestGraphStruct
 
   def post_request result, suppress_decode=nil
     if auto_decode && !suppress_decode
-      check_error(JSON.parse(result))
+      check_error(Yajl::Parser::parse(result))
     else
       result
     end
