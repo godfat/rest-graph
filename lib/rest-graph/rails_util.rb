@@ -8,6 +8,7 @@ class RestGraph
     def default_auto_authorize        ; false; end
     def default_auto_authorize_options; {}   ; end
     def default_auto_authorize_scope  ; ''   ; end
+    def default_ensure_authorized     ; false; end
     def default_write_session         ; false; end
     def default_write_cookies         ; false; end
     def default_write_handler         ;   nil; end
@@ -51,8 +52,15 @@ module RestGraph::RailsUtil
     # before, in that case, the fbs would be inside session,
     # as we just saved it there
 
-    rest_graph_check_rg_fbs
-    true # everything should be fine...
+    rest_graph_check_rg_fbs # check rest-graph storage
+
+    if rest_graph_oget(:ensure_authorized) && !rest_graph.authorized?
+      rest_graph_authorize('ensure authorized', true)
+      false # action halt, redirect to do authorize,
+            # eagerly, as opposed to auto_authorize
+    else
+      true  # keep going
+    end
   end
 
   # override this if you need different app_id and secret
