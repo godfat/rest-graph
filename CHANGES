@@ -1,5 +1,16 @@
 = rest-graph changes history
 
+== rest-graph 1.4.6 -- ?
+
+* [RailsUtil] Add ensure_authorized option which enforces the user has
+              authorized to the application.
+
+* [RailsUtil] Unified rest_graph_storage_key, which used in cookies/session
+              storage, and the key would depend on app_id, just like Facebook
+              JavaScript SDK which use fbs_[app_id] as the name of cookie.
+              This way, you are able to run different applications with
+              different permissions in one Rails application.
+
 == rest-graph 1.4.5 -- 2010-08-07
 
 * [RestGraph] Treat oauth_token as access_token as well. This came from
