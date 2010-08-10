@@ -18,208 +18,6 @@ by Cardinal Blue ( http://cardinalblue.com )
 * Simple FQL call
 * Utility to extract access_token and check sig in cookies
 
-== QUICK START:
-
- # In typical use, here's how you use RestGraph. Note that the syntax follows
- # closely to the Graph API URL syntax, making it easy to use. First, suppose
- # that you already have an access_token, represented by TOKEN:
-
- require 'rest-graph'
- rg = RestGraph.new(:access_token => TOKEN)
-
- # GET https://graph.facebook.com/me?access_token=TOKEN
- rg.get('me')
-
- # GET https://graph.facebook.com/me/likes?access_token=TOKEN
- rg.get('me/likes')
-
- # GET https://graph.facebook.com/search?q=taiwan&access_token=TOKEN
- rg.get('search', :q => 'taiwan')
-
-
- # Next, we explain how to use RestGraph to obtain the access token
-
- # If you are using Rails, we recommend that you include a module
- # called RailsUtil into your controllers, which will configure RestGraph.
- # (Your code contributions for other Ruby frameworks would be appreciated!)
- # There is an option in RailsUtil called "auto_authorize" which will cause
- # RestGraph to automatically redirect the user to the authorization page if
- # the access token is unavailable or has expired. (This way, you don't have
- # to check if the token is expired or not.)
-
- # Here is an example:
-
- class UserController < ApplicationController
-   include RestGraph::RailsUtil
-   before_filter :filter_rest_graph_setup
-
-   def index
-     # rest_graph_setup provides rest_graph as a RestGraph instance
-     @profile = rest_graph.get('me')
-   end
-
-   # your code
-
-   private
-   def filter_rest_graph_setup
-     # Please see RestGraph::RailsUtil#rest_graph_options for all options.
-     rest_graph_setup(:auto_authorize_scope => 'publish_stream,email',
-                      :app_id               => '123',
-                      :canvas               => RestGraph.default_canvas)
-   end
- end
-
-
- # You might wonder how do we setup app_id, secret, and other stuffs?
- # You could pass them in rest_graph_setup(:app_id => 1234), or setup
- # in a config YAML file. Here's a config example:
-{rest-graph.yaml}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
- # For a QUICK START, we recommend that put this config file under
- # config/rest-graph.yaml and require 'rest-graph/auto_load' to automatically
- # load the config to setup default values for RestGraph in your application.
- # in Rails 2.x, you might want to add this line into config/environment.rb:
-
- config.gem 'rest-graph', :lib => 'rest-graph/auto_load'
-
- # While for bundler, you might want to add this line into Gemfile:
-
- gem 'rest-graph', :require => 'rest-graph/auto_load'
-
-== SYNOPSIS:
-
- # Here are ALL the available options for new instance of RestGraph.
- # All options are optional:
-
- rg = RestGraph.new(:access_token => TOKEN,
-                    :graph_server => 'https://graph.facebook.com/',
-                    :old_server   => 'https://api.facebook.com/',
-                    :accept       => 'text/javascript',
-                    :lang         => 'en-us', # this affect search
-                    :auto_decode  =>  true  , # decode by json
-                    :app_id       => '123'  ,
-                    :secret       => '1829' ,
-                    :cache        => {}     , # a cache for the same API call
-
- # This handler callback is only called if auto_decode is set to true,
- # otherwise, it's ignored.
-                    :error_handler =>
-                      lambda{ |hash| raise ::RestGraph::Error.new(hash) },
-
- # You might want to do this in Rails to do debug logging:
-                    :log_handler =>
-                      lambda{ |duration, url|
-                        Rails.logger.debug("RestGraph "         \
-                                           "spent #{duration} " \
-                                           "requesting #{url}")
-                      })
-
-
- # API calls:
-
- # GET https://graph.facebook.com/me?access_token=TOKEN
- rg.get('me')
-
- # GET https://graph.facebook.com/me?metadata=1&access_token=TOKEN
- rg.get('me', :metadata => '1')
-
- # POST https://graph.facebook.com/me/feed?message=bread%21&access_token=tok
- rg.post('me/feed', :message => 'bread!')
-
-== UTILITY FUNCTIONS:
-
- # If you have the session in the cookies,
- # then RestGraph can parse the cookies:
- rg.parse_cookies!(cookies) # auto save access_token if sig is correct
- rg.data['uid']             # => facebook uid
-
- # If you're writing a Rack application, you might want to parse
- # the session directly from Rack env:
- rg.parse_rack_env!(env)    # auto save access_token if sig is correct
- rg.data['uid']             # => facebook uid
-
- # The following method yields the redirect URL for authorizing
- # https://graph.facebook.com/oauth/authorize?client_id=123&
- #         redirect_uri=http%3A%2F%2Fw3.org%2F
- rg.authorize_url(:redirect_uri => 'http://w3.org/', :scope => 'email')
-
- # The following method makes a call to Facebook to convert
- # the authorization "code" into an access token:
- # https://graph.facebook.com/oauth/access_token?code=CODE&
- #         client_id=123&redirect_uri=http%3A%2F%2Fw3.org%2F&
- #         client_secret=1829
- rg.authorize!(:redirect_uri => 'http://w3.org/', :code => 'CODE')
- rg.access_token    # your access_token is now available
- rg.data['expires'] # other values are available in data
-
- # The following method takes a session key from the old REST API
- # (non-Graph API) and converts to an access token:
- # https://graph.facebook.com/oauth/exchange_sessions?sessions=SESSION
- params[:fb_sig_session_key] # => SESSION
- rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
-
- # The following method allows for an arbitrary FQL query to made
- # GET https://api.facebook.com/method/fql.query?query=
- #             SELECT+name+FROM+page+WHERE+page_id%3D%22123%22&
- #             format=json&access_token=tok
- rg.fql('SELECT name FROM page WHERE page_id="123"')
-
- # The following method allows for multiple FQL query to made
- # http://developers.facebook.com/docs/reference/rest/fql.multiquery
- # GET https://api.facebook.com/method/fql.multiquery?query=
- #            %7BSELECT+name+FROM+page+WHERE+page_id%3D%22123%22&%2C
- #            SELECT+name+FROM+page+WHERE+page_id%3D%22456%22&%7D
- #            format=json&access_token=tok
- rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
-              :q2 => 'SELECT name FROM page WHERE page_id="456"')
-
- # The following method makes it possible to call functionality
- # from Facebook's old REST API:
- rg.old_rest(
-   'stream.publish',
-   { :message    => 'Greetings',
-     :attachment => {:name => 'Wikipedia',
-                     :href => 'http://wikipedia.org/',
-                     :caption => 'Wikipedia says hi.',
-                     :media => [{:type => 'image',
-                                 :src  => 'http://wikipedia.org/favicon.ico',
-                                 :href => 'http://wikipedia.org/'}]
-                    }.to_json,
-     :action_links => [{:text => 'Go to Wikipedia',
-                        :href => 'http://wikipedia.org/'}
-                      ].to_json
-   },
-   :suppress_decode => true) # You'll need to set suppress_decode to true
-                             # if Facebook is not returning a proper JSON
-                             # response. Otherwise, this could be omitted.
-
- # Here are 3 possible ways to set up the default settings:
-
- # (1) set it directly
- module MyDefaults
-   def default_app_id
-     '456'
-   end
-
-   def default_secret
-     'category theory'
-   end
- end
- RestGraph.send(:extend, MyDefaults)
-
- # or (2) Load defaults from a YAML config file:
- require 'rest-graph/load_config'
- RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'development')
-
- RestGraph.new                   # app_id would be 456
- RestGraph.new(:app_id => '123') # defaults could be overridden
-
- # or (3) Load config automatically
- require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
-
- # Please read: for an example of config file.
- # Note that :auto_authorize_scope and friends is only for RailsUtil.
-{rest-graph.yaml}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
-
 == REQUIREMENTS:
 
 * Tested with MRI 1.8.7 and 1.9.1 and Rubinius HEAD
@@ -233,6 +31,215 @@ by Cardinal Blue ( http://cardinalblue.com )
  > gem install rest-graph
  # or if you want rails plugin and bleeding edge
  > script/plugin install git://github.com/cardinalblue/rest-graph.git
+
+== QUICK START:
+
+    require 'rest-graph'
+    rg = RestGraph.new(:access_token => 'myaccesstokenfromfb')
+    rg.get('me')
+    rg.get('me/likes')
+    rg.get('search', :q => 'taiwan')
+
+=== Obtaining an access token
+
+    # If you are using Rails, we recommend that you include a module
+    # called RailsUtil into your Controllers.
+    # (Your code contributions for other Ruby frameworks would be appreciated!).
+    # RailsUtil adds the following two methods to your Controllers:
+    #
+    #   rest_graph_setup:     Attempts to find an access_token from the environment 
+    #                         and initializes a RestGraph object with it. 
+    #                         Most commonly used inside a filter.
+    #                     
+    #   rest_graph:           Accesses the RestGraph object by rest_graph_setup.
+    #
+ 
+==== Example usage:
+ 
+    class MyController
+      include RestGraph::RailsUtil
+      before_filter do
+        rest_graph_setup(:app_id => '123',
+                         :canvas => RestGraph.default_canvas,
+                         :auto_authorize => true        
+                         )    
+                         # See below for more options
+      end
+
+      def myaction
+        @medata = rest_graph.get('me')
+      end
+    end
+
+=== Default setup 
+ 
+    # New RestGraph objects can read their default setup configuration from
+    # a YAML configuration file (here's a {sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]).
+    #
+    # To enable, just require anywhere:
+
+    require 'rest-graph/auto_load'
+
+    # If you are using Rails and rest-graph as a gem, you can include this 
+    # when you specify the gem in your environment file by using:
+
+    config.gem 'rest-graph', :lib => 'rest-graph/auto_load'
+
+    # Or if using bundler, by adding this line into your Gemfile:
+
+    gem 'rest-graph', :require => 'rest-graph/auto_load'
+
+== Setup options:
+
+    # Here are ALL the available options for new instance of RestGraph.
+
+    rg = RestGraph.new :access_token => TOKEN,
+                    :graph_server => 'https://graph.facebook.com/',
+                    :old_server   => 'https://api.facebook.com/',
+                    :accept       => 'text/javascript',
+                    :lang         => 'en-us', # this affect search
+                    :auto_decode  =>  true  , # decode by json
+                    :app_id       => '123'  ,
+                    :secret       => '1829' ,
+                    :cache        => {}     , # a cache for the same API call
+
+                    :error_handler =>
+                        lambda{ |hash| raise ::RestGraph::Error.new(hash) },
+                      # This handler callback is only called if auto_decode is 
+                      # set to true, otherwise, it's ignored.
+
+                    :log_handler =>
+                        lambda{ |duration, url|
+                            Rails.logger.debug("Spent #{duration} requesting #{url}")
+                        }
+
+== Setup procedures:
+
+  # (1) Set upon RestGraph object creation:
+
+    rg = RestGraph.new :app_id => 1234
+
+  # (2) Set via the rest_graph_setup call in a Controller:
+
+    rest_graph_setup :app_id => 1234
+
+  # (3) Load from a YAML file
+
+    require 'rest-graph/load_config'
+    RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'development')
+    rg = RestGraph.new
+
+  # (4) Load config automatically
+
+    require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
+    rg = RestGraph.new
+
+  # (5) Override directly
+
+    module MyDefaults
+      def default_app_id
+        '456'
+      end
+
+      def default_secret
+        'category theory'
+      end
+    end
+    RestGraph.send(:extend, MyDefaults)
+    rg = RestGraph.new
+
+
+----------------------------------------------------------
+== API REFERENCE:
+
+=== Facebook Graph API:
+
+==== get
+  rg.get('me')      # GET https://graph.facebook.com/me?access_token=TOKEN
+  rg.get('me', :metadata => '1')
+                    # GET https://graph.facebook.com/me?metadata=1&access_token=TOKEN
+                    
+==== post
+  rg.post('me/feed', :message => 'bread!')
+
+==== fql                    
+  # Make an arbitrary {FQL}[http://developers.facebook.com/docs/reference/fql/] query
+  rg.fql('SELECT name FROM page WHERE page_id="123"')
+                    
+==== fql_multi
+  rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
+               :q2 => 'SELECT name FROM page WHERE page_id="456"')
+
+==== old_rest
+
+  # Call functionality from Facebook's old REST API:
+  rg.old_rest(
+    'stream.publish',
+    { :message    => 'Greetings',
+      :attachment => {:name => 'Wikipedia',
+                      :href => 'http://wikipedia.org/',
+                      :caption => 'Wikipedia says hi.',
+                      :media => [{:type => 'image',
+                                  :src  => 'http://wikipedia.org/favicon.ico',
+                                  :href => 'http://wikipedia.org/'}]
+                     }.to_json,
+      :action_links => [{:text => 'Go to Wikipedia',
+                         :href => 'http://wikipedia.org/'}
+                       ].to_json
+    },
+    :suppress_decode => true) # You'll need to set suppress_decode to true
+                              # if Facebook is not returning a proper JSON
+                              # response. Otherwise, this could be omitted.
+
+=== Utility Methods:
+
+  # All the methods that obtain an access_token will automatically save it.
+
+  # If you have the session in the cookies,
+  # then RestGraph can parse the cookies:
+  #
+  rg.parse_cookies!(cookies)
+  
+  # If you're writing a Rack application, you might want to parse
+  # the session directly from Rack env:
+  #
+  rg.parse_rack_env!(env)
+
+  # Access token
+  #  
+  rg.access_token
+  
+  # Data associated with the access_token (which might or might not 
+  # available, depending on how the access_token was obtained).
+  #
+  rg.data
+  rg.data['uid']
+  rg.data['expires']
+
+  # Default values (read from the rest-graph.yaml file)
+  #
+  rg.default_xxxxx
+
+  
+  # The following method returns the redirect URL for authorizing (e.g.
+  # https://graph.facebook.com/oauth/authorize?client_id=123&
+  #         redirect_uri=http%3A%2F%2Fw3.org%2F)
+  #
+  rg.authorize_url(:redirect_uri => 'http://w3.org/', :scope => 'email')
+  
+  # makes a call to Facebook to convert
+  # the authorization "code" into an access token:
+  # https://graph.facebook.com/oauth/access_token?code=CODE&
+  #         client_id=123&redirect_uri=http%3A%2F%2Fw3.org%2F&
+  #         client_secret=1829
+  #
+  rg.authorize!(:redirect_uri => 'http://w3.org/', :code => 'CODE')
+  
+  # The following method takes a session key from the old REST API
+  # (non-Graph API) and converts to an access token:
+  # https://graph.facebook.com/oauth/exchange_sessions?sessions=SESSION
+  #
+  rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
 
 == LICENSE:
 
