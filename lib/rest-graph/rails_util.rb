@@ -52,6 +52,7 @@ module RestGraph::RailsUtil
     # as we just saved it there
 
     rest_graph_check_rg_fbs
+    true # everything should be fine...
   end
 
   # override this if you need different app_id and secret
