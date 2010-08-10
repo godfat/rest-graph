@@ -245,15 +245,13 @@ module RestGraph::RailsUtil
 
   def rest_graph_write_rg_session
     return if !rest_graph_oget(:write_session)
-    fbs = rest_graph.fbs
-    session[rest_graph_storage_key] = fbs
+    session[rest_graph_storage_key] = fbs = rest_graph.fbs
     logger.debug("DEBUG: RestGraph: wrote session: fbs => #{fbs}")
   end
 
   def rest_graph_write_rg_cookies
     return if !rest_graph_oget(:write_cookies)
-    fbs = rest_graph.fbs
-    cookies[rest_graph_storage_key] = fbs
+    cookies[rest_graph_storage_key] = fbs = rest_graph.fbs
     logger.debug("DEBUG: RestGraph: wrote cookies: fbs => #{fbs}")
   end
   # ==================== end write ================================
