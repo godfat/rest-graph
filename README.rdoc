@@ -220,7 +220,7 @@ available, depending on how the access_token was obtained).
 
 ==== Default values (read from the rest-graph.yaml file)
 
- rg.default_xxxxx
+ RestGraph.default_xxxxx
 
 ==== Other way to get an access token
 
