@@ -42,9 +42,9 @@ or if you want rails plugin and bleeding edge
 
 === Obtaining an access token
 
-If you are using Rails, we recommend that you include a module called<br/>
-RestGraph::RailsUtil into your Controllers. (Your code contributions<br/>
-for other Ruby frameworks would be appreciated!). RestGraph::RailsUtil <br/>
+If you are using Rails, we recommend that you include a module called
+RestGraph::RailsUtil into your Controllers. (Your code contributions
+for other Ruby frameworks would be appreciated!). RestGraph::RailsUtil
 adds the following two methods to your Controllers:
 
  rest_graph_setup:   Attempts to find an access_token from the environment
@@ -71,7 +71,7 @@ adds the following two methods to your Controllers:
 
 === Default setup
 
-New RestGraph objects can read their default setup configuration from a<br/>
+New RestGraph objects can read their default setup configuration from a
 YAML configuration file.
 
 * {Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
@@ -80,7 +80,7 @@ To enable, just require anywhere:
 
  require 'rest-graph/auto_load'
 
-If you are using Rails and rest-graph as a gem, you can include this<br/>
+If you are using Rails and rest-graph as a gem, you can include this
 when you specify the gem in your environment file by using:
 
  config.gem 'rest-graph', :lib => 'rest-graph/auto_load'
@@ -116,22 +116,22 @@ Here are ALL the available options for new instance of RestGraph.
 
 1. Set upon RestGraph object creation:
     rg = RestGraph.new :app_id => 1234
-   <br/>
+
 
 2. Set via the rest_graph_setup call in a Controller:
     rest_graph_setup :app_id => 1234
-   <br/>
+
 
 3. Load from a YAML file
     require 'rest-graph/load_config'
     RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'production')
     rg = RestGraph.new
-   <br/>
+
 
 4. Load config automatically
     require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
     rg = RestGraph.new
-   <br/>
+
 
 
 5. Override directly
@@ -194,14 +194,14 @@ Call functionality from Facebook's old REST API:
                              # response. Otherwise, this could be omitted.
 
 === Utility Methods:
-All the methods that obtain an access_token will automatically save it.<br/>
+All the methods that obtain an access_token will automatically save it.
 
-If you have the session in the cookies,<br/>
-then RestGraph can parse the cookies:<br/>
+If you have the session in the cookies,
+then RestGraph can parse the cookies:
 
  rg.parse_cookies!(cookies)
 
-If you're writing a Rack application, you might want to parse<br/>
+If you're writing a Rack application, you might want to parse
 the session directly from Rack env:
 
  rg.parse_rack_env!(env)
@@ -210,7 +210,7 @@ the session directly from Rack env:
 
  rg.access_token
 
-Data associated with the access_token (which might or might not<br/>
+Data associated with the access_token (which might or might not
 available, depending on how the access_token was obtained).
 
  rg.data
