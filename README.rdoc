@@ -74,7 +74,7 @@ adds the following two methods to your Controllers:
 New RestGraph objects can read their default setup configuration from a<br/>
 YAML configuration file.
 
-{Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
+* {Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
 
 To enable, just require anywhere:
 
