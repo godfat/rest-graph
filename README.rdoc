@@ -47,22 +47,22 @@ by Cardinal Blue ( http://cardinalblue.com )
     # (Your code contributions for other Ruby frameworks would be appreciated!).
     # RailsUtil adds the following two methods to your Controllers:
     #
-    #   rest_graph_setup:     Attempts to find an access_token from the environment 
-    #                         and initializes a RestGraph object with it. 
+    #   rest_graph_setup:     Attempts to find an access_token from the environment
+    #                         and initializes a RestGraph object with it.
     #                         Most commonly used inside a filter.
-    #                     
+    #
     #   rest_graph:           Accesses the RestGraph object by rest_graph_setup.
     #
- 
+
 ==== Example usage:
- 
+
     class MyController
       include RestGraph::RailsUtil
       before_filter do
         rest_graph_setup(:app_id => '123',
                          :canvas => RestGraph.default_canvas,
-                         :auto_authorize => true        
-                         )    
+                         :auto_authorize => true
+                         )
                          # See below for more options
       end
 
@@ -71,18 +71,18 @@ by Cardinal Blue ( http://cardinalblue.com )
       end
     end
 
-=== Default setup 
- 
+=== Default setup
+
     # New RestGraph objects can read their default setup configuration from
     # a YAML configuration file.
-    
-    {Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]     
+
+    {Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
 
     # To enable, just require anywhere:
 
     require 'rest-graph/auto_load'
 
-    # If you are using Rails and rest-graph as a gem, you can include this 
+    # If you are using Rails and rest-graph as a gem, you can include this
     # when you specify the gem in your environment file by using:
 
     config.gem 'rest-graph', :lib => 'rest-graph/auto_load'
@@ -107,7 +107,7 @@ by Cardinal Blue ( http://cardinalblue.com )
 
                     :error_handler =>
                         lambda{ |hash| raise ::RestGraph::Error.new(hash) },
-                      # This handler callback is only called if auto_decode is 
+                      # This handler callback is only called if auto_decode is
                       # set to true, otherwise, it's ignored.
 
                     :log_handler =>
@@ -160,14 +160,14 @@ by Cardinal Blue ( http://cardinalblue.com )
   rg.get('me')      # GET https://graph.facebook.com/me?access_token=TOKEN
   rg.get('me', :metadata => '1')
                     # GET https://graph.facebook.com/me?metadata=1&access_token=TOKEN
-                    
+
 ==== post
   rg.post('me/feed', :message => 'bread!')
 
-==== fql                    
+==== fql
   # Make an arbitrary {FQL}[http://developers.facebook.com/docs/reference/fql/] query
   rg.fql('SELECT name FROM page WHERE page_id="123"')
-                    
+
 ==== fql_multi
   rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
                :q2 => 'SELECT name FROM page WHERE page_id="456"')
@@ -201,17 +201,17 @@ by Cardinal Blue ( http://cardinalblue.com )
   # then RestGraph can parse the cookies:
   #
   rg.parse_cookies!(cookies)
-  
+
   # If you're writing a Rack application, you might want to parse
   # the session directly from Rack env:
   #
   rg.parse_rack_env!(env)
 
   # Access token
-  #  
+  #
   rg.access_token
-  
-  # Data associated with the access_token (which might or might not 
+
+  # Data associated with the access_token (which might or might not
   # available, depending on how the access_token was obtained).
   #
   rg.data
@@ -222,13 +222,13 @@ by Cardinal Blue ( http://cardinalblue.com )
   #
   rg.default_xxxxx
 
-  
+
   # The following method returns the redirect URL for authorizing (e.g.
   # https://graph.facebook.com/oauth/authorize?client_id=123&
   #         redirect_uri=http%3A%2F%2Fw3.org%2F)
   #
   rg.authorize_url(:redirect_uri => 'http://w3.org/', :scope => 'email')
-  
+
   # makes a call to Facebook to convert
   # the authorization "code" into an access token:
   # https://graph.facebook.com/oauth/access_token?code=CODE&
@@ -236,7 +236,7 @@ by Cardinal Blue ( http://cardinalblue.com )
   #         client_secret=1829
   #
   rg.authorize!(:redirect_uri => 'http://w3.org/', :code => 'CODE')
-  
+
   # The following method takes a session key from the old REST API
   # (non-Graph API) and converts to an access token:
   # https://graph.facebook.com/oauth/exchange_sessions?sessions=SESSION
