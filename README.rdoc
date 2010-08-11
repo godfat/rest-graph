@@ -73,10 +73,9 @@ by Cardinal Blue ( http://cardinalblue.com )
 
 === Default setup 
  
-    # New RestGraph objects can read their default setup configuration from
-    # a YAML configuration file.
+New RestGraph objects can read their default setup configuration from a YAML configuration file.
     
-    {Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]     
+* {Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]     
 
     # To enable, just require anywhere:
 
