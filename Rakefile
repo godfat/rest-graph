@@ -32,7 +32,7 @@ Bones{
    readme_file   'README.rdoc'
    ignore_file   '.gitignore'
   rdoc.include   ['\w+']
-  rdoc.exclude   ['test', 'doc', 'Rakefile']
+  rdoc.exclude   ['test', 'doc', 'Rakefile', 'example']
 }
 
 CLEAN.include Dir['**/*.rbc']
