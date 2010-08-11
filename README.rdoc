@@ -60,9 +60,9 @@ adds the following two methods to your Controllers:
  class MyController
    include RestGraph::RailsUtil
    before_filter do
-     rest_graph_setup(:app_id => '123',
-                      :canvas => RestGraph.default_canvas,
-                      :auto_authorize => true)
+     rest_graph_setup(:app_id               => '123',
+                      :canvas               => 'mycanvas',
+                      :auto_authorize_scope => 'email')
                       # See below for more options
    end
 
