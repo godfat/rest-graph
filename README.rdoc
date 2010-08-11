@@ -96,23 +96,67 @@ Or if using bundler, by adding this line into your Gemfile:
 Here are ALL the available options for new instance of RestGraph.
 
  rg = RestGraph.new(
-        :access_token  => TOKEN,
-        :graph_server  => 'https://graph.facebook.com/',
-        :old_server    => 'https://api.facebook.com/',
-        :accept        => 'text/javascript',
-        :lang          => 'en-us', # this affect search
-        :auto_decode   =>  true  , # decode by json
-        :app_id        => '123'  ,
-        :secret        => '1829' ,
-        :cache         => {}     , # a cache for the same API call
+        :access_token  => TOKEN                        , # default nil
+        :graph_server  => 'https://graph.facebook.com/', # this is the default
+        :old_server    => 'https://api.facebook.com/'  , # this is the default
+        :accept        => 'text/javascript'            , # this is the default
+        :lang          => 'en-us'                      , # this affect search
+        :auto_decode   =>  true                        , # decode by json
+                                                         # default true
+        :app_id        => '123'                        , # default nil
+        :secret        => '1829'                       , # default nil
 
-        # This handler callback is only called if auto_decode is
-        # set to true, otherwise, it's ignored.
+        :cache         => {}                           ,
+        # A cache for the same API call. Any object quacks like a hash should
+        # work, and Rails.cache works, too. (because of a patch in RailsUtil)
+
         :error_handler => lambda{ |hash| raise ::RestGraph::Error.new(hash) },
+        # This handler callback is only called if auto_decode is
+        # set to true, otherwise, it's ignored. And raising exception
+        # is the default unless you're using RailsUtil and enabled
+        # auto_authorize. That way, RailsUtil would do redirect instead
+        # of raising an exception.
 
         :log_handler   => lambda{ |event|
           Rails.logger.
             debug("Spent #{event.duration} requesting #{event.url}")})
+        # You might not want to touch this if you're using RailsUtil.
+        # Otherwise, the default behavior is do nothing. (i.e. no logging)
+
+And here are ALL the available options for rest_graph_setup. Note that all
+options for RestGraph instance are also valid options for rest_graph_setup.
+
+ rest_graph_setup(:app_id                 => '123'     , # available too
+                  # ...see above for other RestGraph options
+                  :canvas                 => 'mycanvas', # default ''
+                  :iframe                 => true      , # default false
+                  :auto_authorize         => true      , # default false
+                  :auto_authorize_scope   => 'email'   , # default ''
+                  :auto_authorize_options => {}        , # default {}
+                  # auto_authorize means it will do redirect to oauth
+                  # API automatically if the access_token is invalid or
+                  # missing. So you would like to setup scope if you're
+                  # using it. Note that: setting scope implies setting
+                  # auto_authorize to true, even it's false.
+
+                  :ensure_authorized      => false     , # default false
+                  # This means if the access_token is not there,
+                  # then do auto_authorize.
+
+                  :write_session          => false     , # default false
+                  :write_cookies          => false     , # default false
+                  :write_handler          =>
+                    lambda{ |fbs| @cache[uid] = fbs }  , # default nil
+                  :check_handler          =>
+                    lambda{       @cache[uid] })         # default nil
+                  # If we're not using Facebook JavaScript SDK,
+                  # then we'll need to find a way to store the fbs,
+                  # which contains access_token and/or user id.
+                  # In a FBML canvas application, it seems session
+                  # doesn't work right, so you'll need cookies or
+                  # your custom handler to store it. In a standalone
+                  # site or iframe canvas application, you might want
+                  # to just use the Rails (or other framework) session.
 
 === Setup procedures:
 
