@@ -29,7 +29,9 @@ A super simple Facebook Open Graph API client
 == INSTALL:
 
  gem install rest-graph
+
 or if you want rails plugin and bleeding edge
+
  script/plugin install git://github.com/cardinalblue/rest-graph.git
 
 == QUICK START:
@@ -115,24 +117,23 @@ Here are ALL the available options for new instance of RestGraph.
 === Setup procedures:
 
 1. Set upon RestGraph object creation:
+
     rg = RestGraph.new :app_id => 1234
 
-
 2. Set via the rest_graph_setup call in a Controller:
+
     rest_graph_setup :app_id => 1234
 
-
 3. Load from a YAML file
+
     require 'rest-graph/load_config'
     RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'production')
     rg = RestGraph.new
 
-
 4. Load config automatically
+
     require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
     rg = RestGraph.new
-
-
 
 5. Override directly
 
