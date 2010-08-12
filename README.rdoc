@@ -126,8 +126,9 @@ Here are ALL the available options for new instance of RestGraph.
 And here are ALL the available options for rest_graph_setup. Note that all
 options for RestGraph instance are also valid options for rest_graph_setup.
 
- rest_graph_setup(:app_id                 => '123'     , # available too
-                  # ...see above for other RestGraph options
+ rest_graph_setup(#
+                  # == All the above RestGraph options, plus
+                  #
                   :canvas                 => 'mycanvas', # default ''
                   :iframe                 => true      , # default false
                   :auto_authorize         => true      , # default false
@@ -239,6 +240,9 @@ Call functionality from Facebook's old REST API:
                              # response. Otherwise, this could be omitted.
 
 === Utility Methods:
+
+==== parse_xxxx
+
 All the methods that obtain an access_token will automatically save it.
 
 If you have the session in the cookies,
@@ -251,7 +255,7 @@ the session directly from Rack env:
 
  rg.parse_rack_env!(env)
 
-==== Access token
+==== access_token
 
  rg.access_token
 
@@ -262,19 +266,25 @@ available, depending on how the access_token was obtained).
  rg.data['uid']
  rg.data['expires']
 
-==== Default values (read from the rest-graph.yaml file)
+==== Default values 
 
- RestGraph.default_xxxxx
+Read from the rest-graph.yaml file.
 
-==== Other way to get an access token
+ RestGraph.default_xxxx
 
-The following method returns the redirect URL for authorizing
+=== Other ways of getting an access token
+
+==== authorize_url
+
+Returns the redirect URL for authorizing
 
  # https://graph.facebook.com/oauth/authorize?
  #   client_id=123&redirect_uri=http%3A%2F%2Fw3.org%2F
  rg.authorize_url(:redirect_uri => 'http://w3.org/', :scope => 'email')
 
-makes a call to Facebook to convert
+==== authorize!
+
+Makes a call to Facebook to convert
 the authorization "code" into an access token:
 
  # https://graph.facebook.com/oauth/access_token?
@@ -282,7 +292,9 @@ the authorization "code" into an access token:
  #   redirect_uri=http%3A%2F%2Fw3.org%2F
  rg.authorize!(:redirect_uri => 'http://w3.org/', :code => 'CODE')
 
-The following method takes a session key from the old REST API
+==== exchange_sessions
+
+Takes a session key from the old REST API
 (non-Graph API) and converts to an access token:
 
  # https://graph.facebook.com/oauth/exchange_sessions?sessions=SESSION
