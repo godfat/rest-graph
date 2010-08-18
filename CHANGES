@@ -2,6 +2,15 @@
 
 == rest-graph 1.4.6 -- ?
 
+* [RestGraph] Now it will try to pick yajl-ruby or json gem from memory first,
+              if it's not there, then try to load one and try to pick one
+              again. This way, it won't force you to load two gems at the
+              same time if you've installed them both. In addition, there's
+              a bug in yajl/json_gem pointed out at:
+              http://github.com/brianmario/yajl-ruby/issues/31
+              So we're using Nicolas' patch to use yajl directly to workaround
+              this issue when we've chosen yajl-ruby json backend.
+
 * [RailsUtil] Add ensure_authorized option which enforces the user has
               authorized to the application.
 
