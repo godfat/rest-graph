@@ -70,7 +70,7 @@ describe RestGraph do
 
   it 'would parse signed_request' do
     secret = 'aloha'
-    json   = {'ooh' => 'dir', 'moo' => 'bar'}.to_json
+    json   = RestGraph.json_encode('ooh' => 'dir', 'moo' => 'bar')
     encode = lambda{ |str|
       [str].pack('m').tr("\n=", '').tr('+/', '-_')
     }

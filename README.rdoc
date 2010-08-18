@@ -1,4 +1,4 @@
-= rest-graph 1.4.6
+= rest-graph 1.4.7
 by Cardinal Blue ( http://cardinalblue.com )
 
 == LINKS:
@@ -266,7 +266,7 @@ available, depending on how the access_token was obtained).
  rg.data['uid']
  rg.data['expires']
 
-==== Default values 
+==== Default values
 
 Read from the rest-graph.yaml file.
 

@@ -14,7 +14,7 @@ begin
 rescue LoadError; end
 
 # pick a json gem if available
-%w[ yajl/json_gem json json_pure ].each{ |json|
+%w[ yajl json json_pure ].each{ |json|
   begin
     require json
     break
@@ -32,6 +32,60 @@ RestGraphStruct = Struct.new(:auto_decode,
                              :log_handler) unless defined?(RestGraphStruct)
 
 class RestGraph < RestGraphStruct
+
+  # begin json backend adapter
+  module YajlRuby
+    def self.extended mod
+      mod.const_set(:ParseError, Yajl::ParseError)
+    end
+    def json_encode hash
+      Yajl::Encoder.encode(hash)
+    end
+    def json_decode json
+      Yajl::Parser.parse(json)
+    end
+  end
+
+  module Json
+    def self.extended mod
+      mod.const_set(:ParseError, JSON::ParserError)
+    end
+    def json_encode hash
+      JSON.dump(hash)
+    end
+    def json_decode json
+      JSON.parse(json)
+    end
+  end
+
+  module Gsub
+    class ParseError < RuntimeError; end
+    def self.extended mod
+      mod.const_set(:ParseError, Gsub::ParseError)
+    end
+
+    # only works for flat hash
+    def json_encode hash
+      middle = hash.inject([]){ |r, (k, v)|
+                 r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
+               }.join(',')
+      "{#{middle}}"
+    end
+    def json_decode
+      raise NotImplementedError.new(
+        'You need to install either yajl-ruby, json, or json_pure gem')
+    end
+  end
+
+  if    defined?(::Yajl)
+    extend YajlRuby
+  elsif defined?(::JSON)
+    extend Json
+  else
+    extend Gsub
+  end
+  #   end json backend adapter
+
   class Error < RuntimeError; end
   class Event < Struct.new(:duration, :url); end
   class Event::Requested < Event; end
@@ -126,8 +180,8 @@ class RestGraph < RestGraphStruct
 
   def parse_json! json
     self.data = json &&
-      check_sig_and_return_data(JSON.parse(json))
-  rescue JSON::ParserError
+      check_sig_and_return_data(self.class.json_decode(json))
+  rescue ParseError
   end
 
   def fbs
@@ -141,9 +195,9 @@ class RestGraph < RestGraphStruct
     sig,  json = [sig_encoded, json_encoded].map{ |str|
       "#{str.tr('-_', '+/')}==".unpack('m').first
     }
-    self.data = JSON.parse(json) if
+    self.data = self.class.json_decode(json) if
       secret && OpenSSL::HMAC.digest('sha256', secret, json_encoded) == sig
-  rescue JSON::ParserError
+  rescue ParseError
   end
 
   # oauth related
@@ -180,15 +234,8 @@ class RestGraph < RestGraphStruct
   end
 
   def fql_multi codes, query={}, opts={}
-    c = if codes.respond_to?(:to_json)
-           codes.to_json
-        else
-          middle = codes.inject([]){ |r, (k, v)|
-                     r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
-                   }.join(',')
-          "{#{middle}}"
-        end
-    old_rest('fql.multiquery', {:queries => c}.merge(query), opts)
+    old_rest('fql.multiquery',
+      {:queries => self.class.json_encode(codes)}.merge(query), opts)
   end
 
   private
@@ -218,7 +265,7 @@ class RestGraph < RestGraphStruct
 
   def post_request result, suppress_decode=nil
     if auto_decode && !suppress_decode
-      check_error(JSON.parse(result))
+      check_error(self.class.json_decode(result))
     else
       result
     end
@@ -262,7 +309,7 @@ class RestGraph < RestGraphStruct
   def fetch meth, uri, payload
     RestClient::Request.execute(:method => meth, :url => uri,
                                 :headers => build_headers,
-                                :payload => payload).
+                                :payload => payload).body.
       tap{ |result|
         cache[cache_key(uri)] = result if cache
       }
