@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rest-client>, [">= 1.6.0"])
-      s.add_runtime_dependency(%q<yajl-ruby>, [">= 0.7.7"])
+      s.add_development_dependency(%q<json>, [">= 1.4.3"])
       s.add_development_dependency(%q<rack>, [">= 1.2.1"])
       s.add_development_dependency(%q<rr>, [">= 0.10.11"])
       s.add_development_dependency(%q<webmock>, [">= 1.3.2"])
@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<bones>, [">= 3.4.7"])
     else
       s.add_dependency(%q<rest-client>, [">= 1.6.0"])
-      s.add_dependency(%q<yajl-ruby>, [">= 0.7.7"])
+      s.add_dependency(%q<json>, [">= 1.4.3"])
       s.add_dependency(%q<rack>, [">= 1.2.1"])
       s.add_dependency(%q<rr>, [">= 0.10.11"])
       s.add_dependency(%q<webmock>, [">= 1.3.2"])
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<rest-client>, [">= 1.6.0"])
-    s.add_dependency(%q<yajl-ruby>, [">= 0.7.7"])
+    s.add_dependency(%q<json>, [">= 1.4.3"])
     s.add_dependency(%q<rack>, [">= 1.2.1"])
     s.add_dependency(%q<rr>, [">= 0.10.11"])
     s.add_dependency(%q<webmock>, [">= 1.3.2"])

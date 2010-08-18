@@ -49,6 +49,13 @@ describe RestGraph do
     queries = {:f0 => f0, :f1 => f1}
     RestGraph.new.fql_multi(queries).should == []
 
+    # FIXME: didn't work
+    # mock(queries).respond_to?(:json){ false }
+    # mock.proxy(queries).inject
+    def queries.respond_to? msg
+      msg == :to_json ? false : super(msg)
+    end
+
     stub_multi.call
     RestGraph.new.fql_multi(queries).should == []
   end

@@ -70,7 +70,7 @@ describe RestGraph do
 
   it 'would parse signed_request' do
     secret = 'aloha'
-    json   = Yajl::Encoder.encode('ooh' => 'dir', 'moo' => 'bar')
+    json   = {'ooh' => 'dir', 'moo' => 'bar'}.to_json
     encode = lambda{ |str|
       [str].pack('m').tr("\n=", '').tr('+/', '-_')
     }
