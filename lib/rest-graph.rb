@@ -77,7 +77,7 @@ class RestGraph < RestGraphStruct
       extend Gsub
     else
       # pick a json gem if available
-      %w[ yajl json json_pure ].each{ |json|
+      %w[yajl json].each{ |json|
         begin
           require json
           break

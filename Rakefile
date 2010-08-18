@@ -52,3 +52,10 @@ end
 
 desc 'Run all tests'
 task 'test:all' => ['test', 'test:example']
+
+desc 'Run different json test'
+task 'test:json' do
+  %w[yajl json].each{ |json|
+    sh "#{Gem.ruby} -S rake -r #{json} test"
+  }
+end
