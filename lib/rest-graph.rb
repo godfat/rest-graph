@@ -13,15 +13,6 @@ begin
   require 'rack'
 rescue LoadError; end
 
-# pick a json gem if available
-%w[ yajl json json_pure ].each{ |json|
-  begin
-    require json
-    break
-  rescue LoadError
-  end
-}
-
 # the data structure used in RestGraph
 RestGraphStruct = Struct.new(:auto_decode,
                              :graph_server, :old_server,
@@ -77,13 +68,26 @@ class RestGraph < RestGraphStruct
     end
   end
 
-  if    defined?(::Yajl)
-    extend YajlRuby
-  elsif defined?(::JSON)
-    extend Json
-  else
-    extend Gsub
+  def self.select_json! picked=false
+    if    defined?(::Yajl)
+      extend YajlRuby
+    elsif defined?(::JSON)
+      extend Json
+    elsif picked
+      extend Gsub
+    else
+      # pick a json gem if available
+      %w[ yajl json json_pure ].each{ |json|
+        begin
+          require json
+          break
+        rescue LoadError
+        end
+      }
+      select_json!(true)
+    end
   end
+  select_json!
   #   end json backend adapter
 
   class Error < RuntimeError; end
