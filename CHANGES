@@ -20,6 +20,12 @@
               This way, you are able to run different applications with
               different permissions in one Rails application.
 
+* [RailsUtil] Now rest_graph_authorize defaults to do redirect.
+              Previously, you'll need to use:
+                `rest_graph_authorize(message, true)`
+              Now it's:
+                `rest_graph_authorize(message)`
+
 == rest-graph 1.4.5 -- 2010-08-07
 
 * [RestGraph] Treat oauth_token as access_token as well. This came from
