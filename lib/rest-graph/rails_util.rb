@@ -31,7 +31,7 @@ module RestGraph::RailsUtil
   end
 
   def self.included controller
-    controller.rescue_from(::RestGraph::Error, :with => :rest_graph_authorize)
+    controller.rescue_from(::RestGraph::Error, :with => :rest_graph_on_error)
     controller.helper(::RestGraph::RailsUtil::Helper)
   end
 
@@ -53,7 +53,7 @@ module RestGraph::RailsUtil
     rest_graph_check_rg_fbs # check rest-graph storage
 
     if rest_graph_oget(:ensure_authorized) && !rest_graph.authorized?
-      rest_graph_authorize('ensure authorized', true)
+      rest_graph_authorize('ensure authorized')
       false # action halt, redirect to do authorize,
             # eagerly, as opposed to auto_authorize
     else
@@ -66,10 +66,14 @@ module RestGraph::RailsUtil
     @rest_graph ||= RestGraph.new(rest_graph_options_new)
   end
 
-  def rest_graph_authorize error=nil, redirect=false
+  def rest_graph_on_error error=nil
+    rest_graph_authorize(error, false)
+  end
+
+  def rest_graph_authorize error=nil, force_redirect=true
     logger.warn("WARN: RestGraph: #{error.inspect}")
 
-    if redirect || rest_graph_auto_authorize?
+    if force_redirect || rest_graph_auto_authorize?
       @rest_graph_authorize_url = rest_graph.authorize_url(
         {:redirect_uri => rest_graph_normalized_request_uri,
          :scope        => rest_graph_oget(:auto_authorize_scope)}.
