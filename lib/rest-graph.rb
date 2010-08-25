@@ -315,7 +315,7 @@ class RestGraph < RestGraphStruct
                                 :headers => build_headers,
                                 :payload => payload).body.
       tap{ |result|
-        cache[cache_key(uri)] = result if cache
+        cache[cache_key(uri)] = result if cache && meth == :get
       }
   end
 end
