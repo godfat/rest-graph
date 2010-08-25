@@ -11,6 +11,8 @@
               So we're using Nicolas' patch to use yajl directly to workaround
               this issue when we've chosen yajl-ruby json backend.
 
+* [RestGraph] Only cache GET request, don't cache POST/PUT/DELETE
+
 * [RailsUtil] Add ensure_authorized option which enforces the user has
               authorized to the application.
 
