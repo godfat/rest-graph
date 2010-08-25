@@ -31,9 +31,7 @@ module RestGraph::RailsUtil
   end
 
   def self.included controller
-    controller.rescue_from(::RestGraph::Error){ |exception|
-      logger.debug("DEBUG: RestGraph: action halt")
-    }
+    controller.rescue_from(::RestGraph::Error, :with => :rest_graph_authorize)
     controller.helper(::RestGraph::RailsUtil::Helper)
   end
 
@@ -81,8 +79,6 @@ module RestGraph::RailsUtil
 
       rest_graph_authorize_redirect
     end
-
-    raise ::RestGraph::Error.new(error)
   end
 
   # override this if you want the simple redirect_to
@@ -134,9 +130,7 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_options_new
-    @rest_graph_options_new ||=
-      {:error_handler => method(:rest_graph_authorize),
-         :log_handler => method(:rest_graph_log)}
+    @rest_graph_options_new ||= {:log_handler => method(:rest_graph_log)}
   end
   # ==================== end options utility =======================
 
