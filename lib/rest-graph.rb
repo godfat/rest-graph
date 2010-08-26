@@ -165,6 +165,10 @@ class RestGraph < RestGraphStruct
     request(:put   , url(path, query, graph_server), opts, payload)
   end
 
+
+
+
+
   # cookies, app_id, secrect related below
 
   def parse_rack_env! env
@@ -204,6 +208,10 @@ class RestGraph < RestGraphStruct
   rescue ParseError
   end
 
+
+
+
+
   # oauth related
 
   def authorize_url opts={}
@@ -217,6 +225,10 @@ class RestGraph < RestGraphStruct
                   request(:get, url('oauth/access_token', query),
                           :suppress_decode => true))
   end
+
+
+
+
 
   # old rest facebook api, i will definitely love to remove them someday
 
@@ -241,6 +253,10 @@ class RestGraph < RestGraphStruct
     old_rest('fql.multiquery',
       {:queries => self.class.json_encode(codes)}.merge(query), opts)
   end
+
+
+
+
 
   private
   def request meth, uri, opts={}, payload=nil
