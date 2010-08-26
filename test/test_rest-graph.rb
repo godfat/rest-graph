@@ -153,4 +153,16 @@ describe RestGraph do
     rg.authorized?.should == true
     rg.access_token       == hate_facebook
   end
+
+  it 'could be serialized with lighten' do
+    [YAML, Marshal].each{ |engine|
+      test = lambda{ |obj| engine.load(engine.dump(obj)) }
+        rg = RestGraph.new(:log_handler => lambda{})
+      lambda{ test[rg] }.should.raise(TypeError)
+      test[rg.lighten].should == rg.lighten
+      lambda{ test[rg] }.should.raise(TypeError)
+      rg.lighten!
+      test[rg.lighten].should == rg
+    }
+  end
 end

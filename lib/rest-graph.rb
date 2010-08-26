@@ -151,6 +151,15 @@ class RestGraph < RestGraphStruct
     !!access_token
   end
 
+  def lighten!
+    [:cache, :error_handler, :log_handler].each{ |obj| send("#{obj}=", nil) }
+    self
+  end
+
+  def lighten
+    dup.lighten!
+  end
+
 
 
 

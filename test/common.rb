@@ -7,6 +7,9 @@ require 'rr'
 require 'webmock'
 require 'bacon'
 
+# for testing lighten (serialization)
+require 'yaml'
+
 include RR::Adapters::RRMethods
 include WebMock
 WebMock.disable_net_connect!
