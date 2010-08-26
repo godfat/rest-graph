@@ -13,6 +13,9 @@
 
 * [RestGraph] Only cache GET request, don't cache POST/PUT/DELETE
 
+* [RestGrahp] Add RestGraph#lighten and RestGraph#lighten! to remove any
+              handler and cache object to make it serializable.
+
 * [RailsUtil] Add ensure_authorized option which enforces the user has
               authorized to the application.
 
