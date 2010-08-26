@@ -127,6 +127,12 @@ class RestGraph < RestGraphStruct
   end
   extend DefaultAttributes
 
+
+
+
+
+  # common methods
+
   def initialize o={}
     (Attributes + [:access_token]).each{ |name|
       send("#{name}=", o[name]) if o.key?(name)
@@ -144,6 +150,12 @@ class RestGraph < RestGraphStruct
   def authorized?
     !!access_token
   end
+
+
+
+
+
+  # graph api related methods
 
   def url path, query={}, server=graph_server
     "#{server}#{path}#{build_query_string(query)}"
