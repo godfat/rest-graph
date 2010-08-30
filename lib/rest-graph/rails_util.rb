@@ -87,6 +87,7 @@ module RestGraph::RailsUtil
 
   # override this if you want the simple redirect_to
   def rest_graph_authorize_redirect
+    cookies.delete "fbs_#{rest_graph.app_id}"
     if !rest_graph_oget(:iframe)
       redirect_to @rest_graph_authorize_url
     else
