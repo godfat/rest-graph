@@ -225,9 +225,22 @@ class RestGraph < RestGraphStruct
       "#{str.tr('-_', '+/')}==".unpack('m').first
     }
     self.data = self.class.json_decode(json) if
-      secret && OpenSSL::HMAC.digest('sha256', secret, json_encoded) == sig
+      secret && hmac_digest(secret, json_encoded) == sig
   rescue ParseError
   end
+
+  # fallback to ruby gem if sha256 isn't available in system openssl lib
+
+  def hmac_digest key, data
+    begin
+      digest = OpenSSL::Digest::Digest.new('sha256')
+      return OpenSSL::HMAC.digest(digest, key, data)
+    rescue
+      require 'hmac-sha2'
+      return HMAC::SHA256.digest(key, data)
+    end
+  end
+
 
 
 
