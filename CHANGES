@@ -1,5 +1,11 @@
 = rest-graph changes history
 
+== rest-graph 1.4.7 -- ?
+
+* [RestGraph] Make sure RestGraph::Error#message is string, that way,
+              irb could print out error message correctly. Introduced
+              RestGraph::Error#error for original error hash. Thanks Bluce.
+
 == rest-graph 1.4.6 -- 2010-09-01
 
 * [RestGraph] Now it will try to pick yajl-ruby or json gem from memory first,

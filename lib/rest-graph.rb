@@ -90,7 +90,14 @@ class RestGraph < RestGraphStruct
   select_json!
   #   end json backend adapter
 
-  class Error < RuntimeError; end
+  class Error < RuntimeError
+    attr_reader :error
+    def initialize error
+      @error = error
+      super(error.inspect)
+    end
+  end
+
   class Event < Struct.new(:duration, :url); end
   class Event::Requested < Event; end
   class Event::CacheHit  < Event; end

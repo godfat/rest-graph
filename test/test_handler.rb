@@ -46,7 +46,8 @@ describe RestGraph do
       begin
         RestGraph.new.get('me')
       rescue ::RestGraph::Error => e
-        e.message.should == @error_hash
+        e.error  .should == @error_hash
+        e.message.should == @error_hash.inspect
       end
     end
   end
@@ -79,7 +80,8 @@ describe RestGraph do
       begin
         RestGraph.new.fql(@bad_fql_query)
       rescue ::RestGraph::Error => e
-        e.message.should == @fql_error_hash
+        e.error  .should == @fql_error_hash
+        e.message.should == @fql_error_hash.inspect
       end
     end
   end
