@@ -8,8 +8,11 @@ class ApplicationControllerTest < ActionController::TestCase
   include WebMock
 
   def setup
+    body = rand(2) == 0 ? '{"error":{"type":"OAuthException"}}' :
+                          '{"error_code":104}'
+
     stub_request(:get, 'https://graph.facebook.com/me').
-      to_return(:body => '{"error":"not authorized"}')
+      to_return(:body => body)
   end
 
   def teardown

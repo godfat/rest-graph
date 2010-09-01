@@ -31,7 +31,8 @@ module RestGraph::RailsUtil
   end
 
   def self.included controller
-    controller.rescue_from(::RestGraph::Error, :with => :rest_graph_on_error)
+    controller.rescue_from(::RestGraph::Error::AccessToken,
+                           :with => :rest_graph_on_error)
     controller.helper(::RestGraph::RailsUtil::Helper)
   end
 
