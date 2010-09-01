@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.4.6 -- ?
+== rest-graph 1.4.6 -- 2010-09-01
 
 * [RestGraph] Now it will try to pick yajl-ruby or json gem from memory first,
               if it's not there, then try to load one and try to pick one
