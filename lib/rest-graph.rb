@@ -34,11 +34,41 @@ class RestGraph < RestGraphStruct
   class Event::CacheHit  < Event; end
 
   class Error < RuntimeError
+    class AccessToken < Error; end
+    class InvalidAccessToken < AccessToken; end
+    class MissingAccessToken < AccessToken; end
+
     attr_reader :error
     def initialize error
       @error = error
       super(error.inspect)
     end
+
+    module Util
+      extend self
+      def parse error
+        return Error.new(error) unless error.kind_of?(Hash)
+        if    invalid_token?(error)
+          InvalidAccessToken.new(error)
+        elsif missing_token?(error)
+          MissingAccessToken.new(error)
+        else
+          Error.new(error)
+        end
+      end
+
+      def invalid_token? error
+        ((error['error'] || {})['type'] == 'OAuthException') ||
+        (error['error_code'] == 190) # Invalid OAuth 2.0 Access Token
+      end
+
+      def missing_token? error
+        ((error['error'] || {})['type']    == 'QueryParseException' &&
+         (error['error'] || {})['message'] =~ /^An active access token/) ||
+        (error['error_code'] == 104) # Requires valid signature
+      end
+    end
+    extend Util
   end
 
   # honor default attributes
@@ -63,7 +93,7 @@ class RestGraph < RestGraphStruct
     def default_data        ; {}                           ; end
     def default_cache       ; nil                          ; end
     def default_error_handler
-      lambda{ |error| raise ::RestGraph::Error.new(error) }
+      lambda{ |error| raise ::RestGraph::Error.parse(error) }
     end
     def default_log_handler
       lambda{ |event| }
