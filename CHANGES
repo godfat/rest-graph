@@ -9,6 +9,15 @@
 * [RestGraph] Make RestGraph#inspect honor default attributes, see:
 http://groups.google.com/group/rest-graph/browse_thread/thread/7ad5c81fbb0334e8
 
+* [RestGraph] Introduced RestGraph::Error::AccessToken,
+                         RestGraph::Error::InvalidAccessToken,
+                         RestGraph::Error::MissingAccessToken.
+              RestGraph::Error::AccessToken is the parent of the others,
+              and RestGraph::Error is the parent of all above.
+
+* [RailsUtil] Only rescue RestGraph::Error::AccessToken in controller,
+              make other errors raise through.
+
 == rest-graph 1.4.6 -- 2010-09-01
 
 * [RestGraph] Now it will try to pick yajl-ruby or json gem from memory first,
