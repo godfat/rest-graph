@@ -47,7 +47,7 @@ end
 
 desc 'Run example tests'
 task 'test:example' => ['gem:install'] do
-  sh "cd example/rails; #{Gem.ruby} -S rake test"
+  sh "cd example/rails2; #{Gem.ruby} -S rake test"
 end
 
 desc 'Run all tests'
