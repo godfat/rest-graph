@@ -20,9 +20,56 @@ RestGraphStruct = Struct.new(:auto_decode,
                              :app_id, :secret,
                              :data, :cache,
                              :error_handler,
-                             :log_handler) unless defined?(RestGraphStruct)
+                             :log_handler) unless defined?(::RestGraphStruct)
 
 class RestGraph < RestGraphStruct
+  EventStruct = Struct.new(:duration, :url)           unless
+    defined?(::RestGraph::EventStruct)
+
+  Attributes  = RestGraphStruct.members.map(&:to_sym) unless
+    defined?(::RestGraph::Attributes)
+
+  class Event < EventStruct; end
+  class Event::Requested < Event; end
+  class Event::CacheHit  < Event; end
+
+  class Error < RuntimeError
+    attr_reader :error
+    def initialize error
+      @error = error
+      super(error.inspect)
+    end
+  end
+
+  # honor default attributes
+  Attributes.each{ |name|
+    module_eval <<-RUBY
+      def #{name}
+        (r = super).nil? ? (self.#{name} = self.class.default_#{name}) : r
+      end
+    RUBY
+  }
+
+  # setup defaults
+  module DefaultAttributes
+    extend self
+    def default_auto_decode ; true                         ; end
+    def default_graph_server; 'https://graph.facebook.com/'; end
+    def default_old_server  ; 'https://api.facebook.com/'  ; end
+    def default_accept      ; 'text/javascript'            ; end
+    def default_lang        ; 'en-us'                      ; end
+    def default_app_id      ; nil                          ; end
+    def default_secret      ; nil                          ; end
+    def default_data        ; {}                           ; end
+    def default_cache       ; nil                          ; end
+    def default_error_handler
+      lambda{ |error| raise ::RestGraph::Error.new(error) }
+    end
+    def default_log_handler
+      lambda{ |event| }
+    end
+  end
+  extend DefaultAttributes
 
   # begin json backend adapter
   module YajlRuby
@@ -54,7 +101,6 @@ class RestGraph < RestGraphStruct
     def self.extended mod
       mod.const_set(:ParseError, Gsub::ParseError)
     end
-
     # only works for flat hash
     def json_encode hash
       middle = hash.inject([]){ |r, (k, v)|
@@ -87,54 +133,8 @@ class RestGraph < RestGraphStruct
       select_json!(true)
     end
   end
-  select_json! unless defined?(ParseError)
+  select_json! unless respond_to?(:json_decode)
   #   end json backend adapter
-
-  class Error < RuntimeError
-    attr_reader :error
-    def initialize error
-      @error = error
-      super(error.inspect)
-    end
-  end
-
-  EventStruct = Struct.new(:duration, :url) unless defined?(EventStruct)
-  class Event < EventStruct; end
-  class Event::Requested < Event; end
-  class Event::CacheHit  < Event; end
-
-  Attributes = RestGraphStruct.members.map(&:to_sym) unless
-    defined?(Attributes)
-
-  # honor default attributes
-  Attributes.each{ |name|
-    module_eval <<-RUBY
-      def #{name}
-        (r = super).nil? ? (self.#{name} = self.class.default_#{name}) : r
-      end
-    RUBY
-  }
-
-  # setup defaults
-  module DefaultAttributes
-    extend self
-    def default_auto_decode ; true                         ; end
-    def default_graph_server; 'https://graph.facebook.com/'; end
-    def default_old_server  ; 'https://api.facebook.com/'  ; end
-    def default_accept      ; 'text/javascript'            ; end
-    def default_lang        ; 'en-us'                      ; end
-    def default_app_id      ; nil                          ; end
-    def default_secret      ; nil                          ; end
-    def default_data        ; {}                           ; end
-    def default_cache       ; nil                          ; end
-    def default_error_handler
-      lambda{ |error| raise ::RestGraph::Error.new(error) }
-    end
-    def default_log_handler
-      lambda{ |event| }
-    end
-  end
-  extend DefaultAttributes
 
 
 
