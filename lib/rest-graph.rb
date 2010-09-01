@@ -87,7 +87,7 @@ class RestGraph < RestGraphStruct
       select_json!(true)
     end
   end
-  select_json!
+  select_json! unless defined?(ParseError)
   #   end json backend adapter
 
   class Error < RuntimeError
@@ -98,11 +98,13 @@ class RestGraph < RestGraphStruct
     end
   end
 
-  class Event < Struct.new(:duration, :url); end
+  EventStruct = Struct.new(:duration, :url) unless defined?(EventStruct)
+  class Event < EventStruct; end
   class Event::Requested < Event; end
   class Event::CacheHit  < Event; end
 
-  Attributes = RestGraphStruct.members.map(&:to_sym)
+  Attributes = RestGraphStruct.members.map(&:to_sym) unless
+    defined?(Attributes)
 
   # honor default attributes
   Attributes.each{ |name|
