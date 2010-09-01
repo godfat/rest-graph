@@ -134,4 +134,10 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal '["yeti"]', @response.body
   end
+
+  def test_error
+    get(:error)
+  rescue => e
+    assert_equal RestGraph::Error, e.class
+  end
 end

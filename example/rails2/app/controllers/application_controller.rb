@@ -50,6 +50,10 @@ class ApplicationController < ActionController::Base
     render :text => Rails.cache.read(Digest::MD5.hexdigest(url))
   end
 
+  def error
+    raise RestGraph::Error.new("don't rescue me")
+  end
+
   private
   def filter_common
     rest_graph_setup(:auto_authorize => true, :canvas => '')
