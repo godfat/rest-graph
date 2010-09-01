@@ -6,6 +6,9 @@
               irb could print out error message correctly. Introduced
               RestGraph::Error#error for original error hash. Thanks Bluce.
 
+* [RestGraph] Make RestGraph#inspect honor default attributes, see:
+http://groups.google.com/group/rest-graph/browse_thread/thread/7ad5c81fbb0334e8
+
 == rest-graph 1.4.6 -- 2010-09-01
 
 * [RestGraph] Now it will try to pick yajl-ruby or json gem from memory first,

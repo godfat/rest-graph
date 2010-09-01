@@ -169,6 +169,13 @@ class RestGraph < RestGraphStruct
     dup.lighten!
   end
 
+  def inspect
+    super.gsub(/(\w+)=([^,]+)/){ |match|
+      value = $2 == 'nil' ? self.class.send("default_#{$1}").inspect : $2
+      "#{$1}=#{value}"
+    }
+  end
+
 
 
 
