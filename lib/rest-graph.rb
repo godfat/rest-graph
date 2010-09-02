@@ -244,6 +244,15 @@ class RestGraph < RestGraphStruct
   end
   alias_method :previous_page, :prev_page
 
+  def for_pages hash, pages=1, kind=:next_page, opts={}
+    return hash if pages <= 1
+    if result = send(kind, hash, opts)
+      for_pages(merge_data(result, hash), pages - 1, kind, opts)
+    else
+      hash
+    end
+  end
+
 
 
 
@@ -412,5 +421,14 @@ class RestGraph < RestGraphStruct
       tap{ |result|
         cache[cache_key(uri)] = result if cache && meth == :get
       }
+  end
+
+  def merge_data lhs, rhs
+    [lhs, rhs].each{ |hash|
+      return rhs.reject{ |k, v| k == 'paging' } if
+        !hash.kind_of?(Hash) || !hash['data'].kind_of?(Array)
+    }
+    lhs['data'].unshift(*rhs['data'])
+    lhs
   end
 end

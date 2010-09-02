@@ -20,6 +20,12 @@ http://groups.google.com/group/rest-graph/browse_thread/thread/7ad5c81fbb0334e8
 
                 rg.next_page(rg.get('me/feed'))
 
+* [RestGraph] Add RestGraph#for_pages that would crawl from page 1 to
+              a number of pages you specified. For example, this might
+              crawl down all the feeds:
+
+                rg.for_pages(rg.get('me/feed'), 1000)
+
 * [RailsUtil] Only rescue RestGraph::Error::AccessToken in controller,
               make other errors raise through.
 
