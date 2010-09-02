@@ -2,22 +2,22 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rest-graph}
-  s.version = "1.4.6"
+  s.version = "1.4.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Cardinal Blue", "Lin Jen-Shin (aka godfat 真常)"]
-  s.date = %q{2010-09-01}
+  s.date = %q{2010-09-02}
   s.description = %q{A super simple Facebook Open Graph API client}
   s.email = %q{dev (XD) cardinalblue.com}
   s.extra_rdoc_files = ["CHANGES", "CONTRIBUTORS", "Gemfile", "Gemfile.lock", "LICENSE", "README", "TODO", "rest-graph.gemspec"]
-  s.files = ["CHANGES", "CONTRIBUTORS", "Gemfile", "Gemfile.lock", "LICENSE", "README", "README.rdoc", "Rakefile", "TODO", "example/rails/README", "example/rails/Rakefile", "example/rails/app/controllers/application_controller.rb", "example/rails/config/boot.rb", "example/rails/config/environment.rb", "example/rails/config/environments/development.rb", "example/rails/config/environments/production.rb", "example/rails/config/environments/test.rb", "example/rails/config/initializers/cookie_verification_secret.rb", "example/rails/config/initializers/new_rails_defaults.rb", "example/rails/config/initializers/session_store.rb", "example/rails/config/rest-graph.yaml", "example/rails/config/routes.rb", "example/rails/log", "example/rails/script/console", "example/rails/script/server", "example/rails/test/functional/application_controller_test.rb", "example/rails/test/test_helper.rb", "example/rails/test/unit/rails_util_test.rb", "init.rb", "lib/rest-graph.rb", "lib/rest-graph/auto_load.rb", "lib/rest-graph/load_config.rb", "lib/rest-graph/rails_util.rb", "lib/rest-graph/version.rb", "rest-graph.gemspec", "test/common.rb", "test/config/rest-graph.yaml", "test/test_access_token.rb", "test/test_api.rb", "test/test_cache.rb", "test/test_default.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_misc.rb", "test/test_oauth.rb", "test/test_old.rb", "test/test_parse.rb", "test/test_serialize.rb"]
+  s.files = ["CHANGES", "CONTRIBUTORS", "Gemfile", "Gemfile.lock", "LICENSE", "README", "README.rdoc", "Rakefile", "TODO", "example/rails2/README", "example/rails2/Rakefile", "example/rails2/app/controllers/application_controller.rb", "example/rails2/config/boot.rb", "example/rails2/config/environment.rb", "example/rails2/config/environments/development.rb", "example/rails2/config/environments/production.rb", "example/rails2/config/environments/test.rb", "example/rails2/config/initializers/cookie_verification_secret.rb", "example/rails2/config/initializers/new_rails_defaults.rb", "example/rails2/config/initializers/session_store.rb", "example/rails2/config/rest-graph.yaml", "example/rails2/config/routes.rb", "example/rails2/log", "example/rails2/script/console", "example/rails2/script/server", "example/rails2/test/functional/application_controller_test.rb", "example/rails2/test/test_helper.rb", "example/rails2/test/unit/rails_util_test.rb", "init.rb", "lib/rest-graph.rb", "lib/rest-graph/auto_load.rb", "lib/rest-graph/load_config.rb", "lib/rest-graph/rails_util.rb", "lib/rest-graph/version.rb", "rest-graph.gemspec", "test/common.rb", "test/config/rest-graph.yaml", "test/test_api.rb", "test/test_cache.rb", "test/test_default.rb", "test/test_error.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_misc.rb", "test/test_oauth.rb", "test/test_old.rb", "test/test_page.rb", "test/test_parse.rb", "test/test_serialize.rb"]
   s.homepage = %q{http://github.com/cardinalblue/rest-graph}
   s.rdoc_options = ["--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{rest-graph}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{A super simple Facebook Open Graph API client}
-  s.test_files = ["test/test_access_token.rb", "test/test_api.rb", "test/test_cache.rb", "test/test_default.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_misc.rb", "test/test_oauth.rb", "test/test_old.rb", "test/test_parse.rb", "test/test_serialize.rb"]
+  s.test_files = ["test/test_api.rb", "test/test_cache.rb", "test/test_default.rb", "test/test_error.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_misc.rb", "test/test_oauth.rb", "test/test_old.rb", "test/test_page.rb", "test/test_parse.rb", "test/test_serialize.rb"]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION

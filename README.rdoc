@@ -1,4 +1,4 @@
-= rest-graph 1.4.6
+= rest-graph 1.4.7
 by Cardinal Blue ( http://cardinalblue.com )
 
 == LINKS:
