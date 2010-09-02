@@ -64,8 +64,7 @@ class RestGraph < RestGraphStruct
       end
 
       def missing_token? error
-        ((error['error'] || {})['type']    == 'QueryParseException' &&
-         (error['error'] || {})['message'] =~ /^An active access token/) ||
+        (error['error'] || {})['message'] =~ /^An active access token/ ||
         (error['error_code'] == 104) # Requires valid signature
       end
     end
