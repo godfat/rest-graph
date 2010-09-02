@@ -14,12 +14,13 @@ describe RestGraph do
   it 'would get the next/prev page' do
     rg = RestGraph.new
     %w[next previous].each{ |type|
-      rg.send("#{type}_page", {})              .should == nil
-      rg.send("#{type}_page", {'paging' => []}).should == nil
-      rg.send("#{type}_page", {'paging' => {}}).should == nil
+      kind = "#{type}_page"
+      rg.send(kind, {})              .should == nil
+      rg.send(kind, {'paging' => []}).should == nil
+      rg.send(kind, {'paging' => {}}).should == nil
 
       mock(rg).request(:get, 'zzz', {}){ 'ok' }
-      rg.send("#{type}_page", {'paging' => {type => 'zzz'}}).should == 'ok'
+      rg.send(kind, {'paging' => {type => 'zzz'}}).should == 'ok'
     }
   end
 end
