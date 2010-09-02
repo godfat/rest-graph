@@ -15,6 +15,11 @@ http://groups.google.com/group/rest-graph/browse_thread/thread/7ad5c81fbb0334e8
               RestGraph::Error::AccessToken is the parent of the others,
               and RestGraph::Error is the parent of all above.
 
+* [RestGraph] Add RestGraph#next_page and RestGraph#prev_page.
+              To get next page for a result from Facebook, example:
+
+                rg.next_page(rg.get('me/feed'))
+
 * [RailsUtil] Only rescue RestGraph::Error::AccessToken in controller,
               make other errors raise through.
 

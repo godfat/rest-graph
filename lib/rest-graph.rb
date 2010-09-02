@@ -233,6 +233,17 @@ class RestGraph < RestGraphStruct
     request(:put   , url(path, query, graph_server), opts, payload)
   end
 
+  def next_page hash, opts={}
+    return unless hash['paging'].kind_of?(Hash) && hash['paging']['next']
+    request(:get   , hash['paging']['next']        , opts)
+  end
+
+  def prev_page hash, opts={}
+    return unless hash['paging'].kind_of?(Hash) && hash['paging']['previous']
+    request(:get   , hash['paging']['previous']    , opts)
+  end
+  alias_method :previous_page, :prev_page
+
 
 
 
