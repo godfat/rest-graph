@@ -22,8 +22,10 @@ describe RestGraph::Error do
   end
 
   it 'would parse right' do
-    RestGraph::Error.parse('error' => {'type' => 'OAuthException'}).
-      should.kind_of?(RestGraph::Error::InvalidAccessToken)
+    %w[OAuthInvalidTokenException OAuthException].each{ |type|
+      RestGraph::Error.parse('error' => {'type' => type}).
+        should.kind_of?(RestGraph::Error::InvalidAccessToken)
+    }
 
     RestGraph::Error.parse('error' => {'type' => 'QueryParseException',
                                     'message' => 'An active access token..'}).

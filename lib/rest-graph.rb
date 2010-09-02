@@ -58,7 +58,8 @@ class RestGraph < RestGraphStruct
       end
 
       def invalid_token? error
-        ((error['error'] || {})['type'] == 'OAuthException') ||
+        (%w[OAuthInvalidTokenException
+            OAuthException].include?((error['error'] || {})['type'])) ||
         (error['error_code'] == 190) # Invalid OAuth 2.0 Access Token
       end
 
