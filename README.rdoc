@@ -159,7 +159,7 @@ options for RestGraph instance are also valid options for rest_graph_setup.
                   # site or iframe canvas application, you might want
                   # to just use the Rails (or other framework) session.
 
-=== Setup procedures:
+=== Alternate ways to setup RestGraph:
 
 1. Set upon RestGraph object creation:
 
