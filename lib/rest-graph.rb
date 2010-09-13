@@ -326,6 +326,13 @@ class RestGraph < RestGraphStruct
       opts)
   end
 
+  def broken_old_rest path, query={}, opts={}
+    post_request(old_rest(path,
+                          query.merge(:access_token => "#{app_id}|#{secret}"),
+                          :suppress_decode => true).tr('\\', '')[1..-2],
+                          opts[:suppress_decode])
+  end
+
   def exchange_sessions opts={}
     query = {:client_id => app_id, :client_secret => secret,
              :type => 'client_cred'}.merge(opts)
