@@ -143,17 +143,6 @@ module RestGraph::RailsUtil
 
 
   # ==================== begin facebook check ======================
-  # if we're not in canvas nor code passed,
-  # we could check out cookies as well.
-  def rest_graph_check_cookie
-    return if rest_graph.authorized? ||
-              !cookies["fbs_#{rest_graph.app_id}"]
-
-    rest_graph.parse_cookies!(cookies)
-    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
-                 " #{rest_graph.data.inspect}")
-  end
-
   def rest_graph_check_params_signed_request
     return if rest_graph.authorized? || !params[:signed_request]
 
@@ -186,6 +175,17 @@ module RestGraph::RailsUtil
     else
       logger.warn("WARN: RestGraph: bad session: #{params[:session]}")
     end
+  end
+
+  # if we're not in canvas nor code passed,
+  # we could check out cookies as well.
+  def rest_graph_check_cookie
+    return if rest_graph.authorized? ||
+              !cookies["fbs_#{rest_graph.app_id}"]
+
+    rest_graph.parse_cookies!(cookies)
+    logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
+                 " #{rest_graph.data.inspect}")
   end
 
   # exchange the code with access_token
