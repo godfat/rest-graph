@@ -40,8 +40,8 @@ module RestGraph::RailsUtil
     rest_graph_options_ctl.merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
-    rest_graph_check_cookie                # for javascript sdk (canvas or not)
     rest_graph_check_params_signed_request # canvas
+    rest_graph_check_cookie                # for javascript sdk (canvas or not)
     rest_graph_check_params_session        # i think it would be deprecated
     rest_graph_check_code                  # oauth api
 
@@ -88,6 +88,7 @@ module RestGraph::RailsUtil
 
   # override this if you want the simple redirect_to
   def rest_graph_authorize_redirect
+    cookies.delete "fbs_#{rest_graph.app_id}"
     if !rest_graph_oget(:iframe)
       redirect_to @rest_graph_authorize_url
     else
@@ -161,6 +162,7 @@ module RestGraph::RailsUtil
                  " #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
+      cookies.delete "fbs_#{rest_graph.app_id}"
       rest_graph_write_rg_fbs
     else
       logger.warn(
