@@ -151,7 +151,6 @@ module RestGraph::RailsUtil
                  " #{rest_graph.data.inspect}")
 
     if rest_graph.authorized?
-      cookies.delete "fbs_#{rest_graph.app_id}"
       rest_graph_write_rg_fbs
     else
       logger.warn(
@@ -241,6 +240,7 @@ module RestGraph::RailsUtil
   # ====================   end check ================================
   # ==================== begin write ================================
   def rest_graph_write_rg_fbs
+    cookies.delete("fbs_#{rest_graph.app_id}")
     rest_graph_write_rg_handler
     rest_graph_write_rg_session
     rest_graph_write_rg_cookies
