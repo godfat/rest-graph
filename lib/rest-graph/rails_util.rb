@@ -41,8 +41,8 @@ module RestGraph::RailsUtil
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
     rest_graph_check_params_signed_request # canvas
-    rest_graph_check_cookie                # for javascript sdk (canvas or not)
     rest_graph_check_params_session        # i think it would be deprecated
+    rest_graph_check_cookie                # for js sdk (canvas or not)
     rest_graph_check_code                  # oauth api
 
     # there are above 4 ways to check the user identity!
