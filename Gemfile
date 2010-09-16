@@ -12,4 +12,5 @@ group :test do
   gem 'rr'
   gem 'webmock'
   gem 'bacon'
+  gem 'ruby-hmac'
 end

@@ -101,6 +101,18 @@ class RestGraph < RestGraphStruct
   end
   extend DefaultAttributes
 
+  # Fallback to ruby-hmac gem in case system openssl
+  # lib doesn't support SHA256 (OSX 10.5)
+  def self.hmac_sha256 key, data
+    # for ruby version >= 1.8.7, we can simply pass sha256,
+    # instead of OpenSSL::Digest::Digest.new('sha256')
+    # i'll go back to original implementation once all old systems died
+    OpenSSL::HMAC.digest(OpenSSL::Digest::Digest.new('sha256'), key, data)
+  rescue RuntimeError
+    require 'hmac-sha2'
+    HMAC::SHA256.digest(key, data)
+  end
+
   # begin json backend adapter
   module YajlRuby
     def self.extended mod
@@ -291,22 +303,9 @@ class RestGraph < RestGraphStruct
       "#{str.tr('-_', '+/')}==".unpack('m').first
     }
     self.data = self.class.json_decode(json) if
-      secret && hmac_digest(secret, json_encoded) == sig
+      secret && self.class.hmac_sha256(secret, json_encoded) == sig
   rescue ParseError
   end
-
-  # fallback to ruby gem if sha256 isn't available in system openssl lib
-
-  def hmac_digest key, data
-    begin
-      digest = OpenSSL::Digest::Digest.new('sha256')
-      return OpenSSL::HMAC.digest(digest, key, data)
-    rescue
-      require 'hmac-sha2'
-      return HMAC::SHA256.digest(key, data)
-    end
-  end
-
 
 
 

@@ -87,6 +87,13 @@ describe RestGraph do
     rg.parse_signed_request!(signed_request).should == nil
   end
 
+  it 'would fallback to ruby-hmac if Digest.new raise an runtime error' do
+    key, data = 'top', 'secret'
+    mock(OpenSSL::Digest::Digest).new('sha256'){ raise 'boom' }
+    RestGraph.hmac_sha256(key, data).should ==
+      OpenSSL::HMAC.digest('sha256', key, data)
+  end
+
   it 'would generate correct fbs with correct sig' do
     RestGraph.new(:access_token => 'fake', :secret => 's').fbs.should ==
       "access_token=fake&sig=#{Digest::MD5.hexdigest('access_token=fakes')}"
