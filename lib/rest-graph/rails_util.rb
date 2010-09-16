@@ -278,20 +278,21 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_normalized_request_uri
-    URI.parse(if rest_graph_in_canvas?
-                # rails 3 uses newer rack which has fullpath
-                "http://apps.facebook.com/#{rest_graph_oget(:canvas)}" +
-                (request.respond_to?(:fullpath) ?
-                  request.fullpath : request.request_uri)
-              else
-                request.url
-              end).
-      tap{ |uri|
-        uri.query = uri.query.split('&').reject{ |q|
-                      q =~ /^(code|session|signed_request)\=/
-                    }.join('&') if uri.query
-        uri.query = nil if uri.query.blank?
-      }.to_s
+    uri = URI.encode(
+            if rest_graph_in_canvas?
+              # rails 3 uses newer rack which has fullpath
+              "http://apps.facebook.com/#{rest_graph_oget(:canvas)}" +
+              (request.respond_to?(:fullpath) ?
+                request.fullpath : request.request_uri)
+            else
+              request.url
+            end)
+    URI.parse(uri).tap{ |uri|
+                        uri.query = uri.query.split('&').reject{ |q|
+                          q =~ /^(code|session|signed_request)\=/
+                        }.join('&') if uri.query
+                        uri.query = nil if uri.query.blank?
+    }.to_s
   end
 
   def rest_graph_in_canvas?
