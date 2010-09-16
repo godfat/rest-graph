@@ -17,11 +17,14 @@ Bones{
 
   depend_on 'rest-client'
 
+  depend_on 'rack'     , :development => true
+
   depend_on 'yajl-ruby', :development => true
   depend_on 'json'     , :development => true
   depend_on 'json_pure', :development => true
 
-  depend_on 'rack'     , :development => true
+  depend_on 'ruby-hmac', :development => true
+
   depend_on 'rr'       , :development => true
   depend_on 'webmock'  , :development => true
   depend_on 'bacon'    , :development => true
