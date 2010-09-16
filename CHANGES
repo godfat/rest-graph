@@ -26,8 +26,43 @@ http://groups.google.com/group/rest-graph/browse_thread/thread/7ad5c81fbb0334e8
 
                 rg.for_pages(rg.get('me/feed'), 1000)
 
+* [RestGraph] Added RestGraph#broken_old_rest, see:
+http://www.nivas.hr/blog/2010/09/03/facebook-php-sdk-access-token-signing-bug/
+
+If you're getting this error from calling old_rest:
+
+  The method you are calling or the FQL table you are querying cannot be
+  called using a session secret or by a desktop application.
+
+Then try broken_old_rest instead. The problem is that the access_token
+should be formatted by "#{app_id}|#{secret}" instead of the usual one,
+and the JSON returned by Facebook is broken too, need to remove the
+quotes and the extra '\'. For instance:
+
+  "{\"app_id\":\"123\"}"
+
+instead of the correct one:
+
+  {"app_id":"123"}
+
+So, there are two hacks in broken_old_rest. One is faking access_token,
+the other one is fix the JSON by removing extra quotes and the '\'.
+
+This applied to admin.getAppProperties.
+
+* [RestGraph] Fallback to ruby-hmac gem if we have an old openssl lib when
+              parsing signed_request which requires HMAC SHA256.
+              (e.g. Mac OS 10.5) Thanks Barnabas Debreczeni!
+
 * [RailsUtil] Only rescue RestGraph::Error::AccessToken in controller,
               make other errors raise through.
+
+* [RailsUtil] Remove bad fbs in cookies when doing new authorization.
+* [RailsUtil] Make signed_request and session higher priority than
+              fbs in cookies. Since Facebook is not deleting bad fbs,
+              I guess? Thanks Barnabas Debreczeni!
+
+* [RailsUtil] URI.encode before URI.parse for broken URL Facebook passed.
 
 == rest-graph 1.4.6 -- 2010-09-01
 
