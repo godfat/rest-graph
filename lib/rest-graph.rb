@@ -150,7 +150,7 @@ class RestGraph < RestGraphStruct
                }.join(',')
       "{#{middle}}"
     end
-    def json_decode
+    def json_decode json
       raise NotImplementedError.new(
         'You need to install either yajl-ruby, json, or json_pure gem')
     end
