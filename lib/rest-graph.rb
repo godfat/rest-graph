@@ -202,6 +202,10 @@ class RestGraph < RestGraphStruct
     !!access_token
   end
 
+  def secret_access_token
+    "#{app_id}|#{secret}"
+  end
+
   def lighten!
     [:cache, :error_handler, :log_handler].each{ |obj| send("#{obj}=", nil) }
     self
@@ -338,11 +342,15 @@ class RestGraph < RestGraphStruct
       opts)
   end
 
+  def secret_old_rest path, query={}, opts={}
+    old_rest(path, {:access_token => secret_access_token}.merge(query), opts)
+  end
+
   def broken_old_rest path, query={}, opts={}
-    post_request(old_rest(path,
-                          query.merge(:access_token => "#{app_id}|#{secret}"),
-                          :suppress_decode => true).tr('\\', '')[1..-2],
-                          opts[:suppress_decode])
+    post_request(
+      secret_old_rest(path, query, :suppress_decode => true).
+        tr('\\', '')[1..-2],
+      opts[:suppress_decode])
   end
 
   def exchange_sessions opts={}

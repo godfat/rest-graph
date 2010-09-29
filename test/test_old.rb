@@ -70,4 +70,26 @@ describe RestGraph do
       exchange_sessions(:sessions => 'bad bed').
       first['access_token'].should == 'bogus'
   end
+
+  it 'returns broken json' do
+    stub_request(:get,
+      'https://api.facebook.com/method/admin.getAppProperties?' \
+      'access_token=123%7Cs&format=json&properties=app_id'
+    ).to_return(:body => '"{\"app_id\":\"123\"}"')
+
+    RestGraph.new(:app_id => '123', :secret => 's').
+      broken_old_rest('admin.getAppProperties', :properties => 'app_id').
+      should == {'app_id' => '123'}
+  end
+
+  it 'uses an secret access_token' do
+    stub_request(:get,
+      'https://api.facebook.com/method/admin.getAppProperties?' \
+      'access_token=123%7Cs&format=json&properties=app_id'
+    ).to_return(:body => '{"app_id":"123"}')
+
+    RestGraph.new(:app_id => '123', :secret => 's').
+      secret_old_rest('admin.getAppProperties', :properties => 'app_id').
+      should == {'app_id' => '123'}
+  end
 end
