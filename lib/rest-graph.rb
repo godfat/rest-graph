@@ -347,10 +347,7 @@ class RestGraph < RestGraphStruct
   end
 
   def broken_old_rest path, query={}, opts={}
-    post_request(
-      secret_old_rest(path, query, :suppress_decode => true).
-        tr('\\', '')[1..-2],
-      opts[:suppress_decode])
+    secret_old_rest(path, query, {:double_decode => true}.merge(opts))
   end
 
   def exchange_sessions opts={}
@@ -375,10 +372,9 @@ class RestGraph < RestGraphStruct
   private
   def request meth, uri, opts={}, payload=nil
     start_time = Time.now
-    post_request(cache_get(uri) || fetch(meth, uri, payload),
-                 opts[:suppress_decode])
+    post_request(cache_get(uri) || fetch(meth, uri, payload), opts)
   rescue RestClient::Exception => e
-    post_request(e.http_body, opts[:suppress_decode])
+    post_request(e.http_body, opts)
   ensure
     log_handler.call(Event::Requested.new(Time.now - start_time, uri))
   end
@@ -397,9 +393,14 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, suppress_decode=nil
-    if auto_decode && !suppress_decode
-      check_error(self.class.json_decode(result))
+  def post_request result, opts={}
+    if auto_decode && !opts[:suppress_decode]
+      check_error(self.class.json_decode(
+        if opts[:double_decode]
+          self.class.json_decode("[#{result}]").first
+        else
+          result
+        end))
     else
       result
     end
