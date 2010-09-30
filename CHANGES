@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.4.7 -- ?
+== rest-graph 1.5.0 -- ?
 
 * [RestGraph] Make sure RestGraph::Error#message is string, that way,
               irb could print out error message correctly. Introduced
@@ -26,7 +26,7 @@ http://groups.google.com/group/rest-graph/browse_thread/thread/7ad5c81fbb0334e8
 
                 rg.for_pages(rg.get('me/feed'), 1000)
 
-* [RestGraph] Added RestGraph#broken_old_rest, see:
+* [RestGraph] Added RestGraph#secret_old_rest, see:
 http://www.nivas.hr/blog/2010/09/03/facebook-php-sdk-access-token-signing-bug/
 
 If you're getting this error from calling old_rest:
@@ -34,21 +34,26 @@ If you're getting this error from calling old_rest:
   The method you are calling or the FQL table you are querying cannot be
   called using a session secret or by a desktop application.
 
-Then try broken_old_rest instead. The problem is that the access_token
-should be formatted by "#{app_id}|#{secret}" instead of the usual one,
-and the JSON returned by Facebook is broken too, need to remove the
-quotes and the extra '\'. For instance:
+Then try secret_old_rest instead. The problem is that the access_token
+should be formatted by "#{app_id}|#{secret}" instead of the usual one.
 
-  "{\"app_id\":\"123\"}"
+* [RestGraph] Added RestGraph#broken_old_rest. This is essentially the same
+              as secret_old_rest with :double_decode turned on by default.
+              In some API, e.g. admin.getAppProperties, Facebook returns
+              broken JSON, which is double encoded, and is not a well-formed
+              JSON. That case, we'll need to double parse the JSON to get
+              the correct result. For example, Facebook might return this:
 
-instead of the correct one:
+                "{\"app_id\":\"123\"}"
 
-  {"app_id":"123"}
+              instead of the correct one:
+
+                {"app_id":"123"}
+
+              P.S. This doesn't matter for people who don't use :auto_decode.
 
 So, there are two hacks in broken_old_rest. One is faking access_token,
 the other one is fix the JSON by removing extra quotes and the '\'.
-
-This applied to admin.getAppProperties.
 
 * [RestGraph] Fallback to ruby-hmac gem if we have an old openssl lib when
               parsing signed_request which requires HMAC SHA256.

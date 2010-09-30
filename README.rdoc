@@ -238,6 +238,13 @@ Call functionality from Facebook's old REST API:
    :suppress_decode => true) # You'll need to set suppress_decode to true
                              # if Facebook is not returning a proper JSON
                              # response. Otherwise, this could be omitted.
+                             # You might need to pass :double_decode => true
+                             # if the broken JSON is just double encoded.
+
+ # Some Old Rest API requires a special access token with app secret
+ # inside of it. For those methods, use secret_old_rest instead of the
+ # usual old_rest with common access token.
+ rg.secret_old_rest('admin.getAppProperties', :properties => 'app_id')
 
 === Utility Methods:
 
