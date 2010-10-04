@@ -3,11 +3,18 @@ GEM
   specs:
     addressable (2.2.1)
     bacon (1.1.0)
+    bones (3.4.7)
+      little-plugger (>= 1.1.2)
+      loquacious (>= 1.6.4)
+      rake (>= 0.8.7)
     crack (0.1.8)
     json (1.4.6)
     json_pure (1.4.6)
+    little-plugger (1.1.2)
+    loquacious (1.7.0)
     mime-types (1.16)
     rack (1.2.1)
+    rake (0.8.7)
     rest-client (1.6.1)
       mime-types (>= 1.16)
     rr (1.0.0)
@@ -22,6 +29,7 @@ PLATFORMS
 
 DEPENDENCIES
   bacon
+  bones
   json
   json_pure
   rack
