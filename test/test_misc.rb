@@ -65,6 +65,7 @@ describe RestGraph do
   it 'would give better inspect string' do
     RestGraph.new(:auto_decode => false).inspect.should =~ Regexp.new(
     '#<struct RestGraph auto_decode=false,'                          \
+                      ' strict=false,'                               \
                       ' graph_server="https://graph.facebook.com/",' \
                       ' old_server="https://api.facebook.com/",'     \
                       ' accept="text/javascript",'                   \

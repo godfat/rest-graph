@@ -14,7 +14,7 @@ begin
 rescue LoadError; end
 
 # the data structure used in RestGraph
-RestGraphStruct = Struct.new(:auto_decode,
+RestGraphStruct = Struct.new(:auto_decode, :strict,
                              :graph_server, :old_server,
                              :accept, :lang,
                              :app_id, :secret,
@@ -84,6 +84,7 @@ class RestGraph < RestGraphStruct
   module DefaultAttributes
     extend self
     def default_auto_decode ; true                         ; end
+    def default_strict      ; false                        ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
     def default_old_server  ; 'https://api.facebook.com/'  ; end
     def default_accept      ; 'text/javascript'            ; end
@@ -393,10 +394,11 @@ class RestGraph < RestGraphStruct
   def post_request result, opts={}
     if auto_decode && !opts[:suppress_decode]
       decoded = self.class.json_decode("[#{result}]").first
-
-      check_error(decoded.kind_of?(String) ?
-        self.class.json_decode(decoded)    :
-        decoded)
+      check_error(if strict || !decoded.kind_of?(String)
+                    decoded
+                  else
+                    self.class.json_decode(decoded)
+                  end)
     else
       result
     end

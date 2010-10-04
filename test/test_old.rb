@@ -92,4 +92,15 @@ describe RestGraph do
       secret_old_rest('admin.getAppProperties', :properties => 'app_id').
       should == {'app_id' => '123'}
   end
+
+  it 'would not parse twice in strict mode' do
+    stub_request(:get,
+      'https://api.facebook.com/method/admin.getAppProperties?' \
+      'access_token=123%7Cs&format=json&properties=app_id'
+    ).to_return(:body => '"{\"app_id\":\"123\"}"')
+
+    RestGraph.new(:app_id => '123', :secret => 's', :strict => true).
+      secret_old_rest('admin.getAppProperties', :properties => 'app_id').
+      should == '{"app_id":"123"}'
+  end
 end
