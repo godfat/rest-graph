@@ -97,6 +97,7 @@ Here are ALL the available options for new instance of RestGraph.
 
  rg = RestGraph.new(
         :access_token  => TOKEN                        , # default nil
+        :strict        => false                        , # this is the default
         :graph_server  => 'https://graph.facebook.com/', # this is the default
         :old_server    => 'https://api.facebook.com/'  , # this is the default
         :accept        => 'text/javascript'            , # this is the default
@@ -238,8 +239,6 @@ Call functionality from Facebook's old REST API:
    :suppress_decode => true) # You'll need to set suppress_decode to true
                              # if Facebook is not returning a proper JSON
                              # response. Otherwise, this could be omitted.
-                             # You might need to pass :double_decode => true
-                             # if the broken JSON is just double encoded.
 
  # Some Old Rest API requires a special access token with app secret
  # inside of it. For those methods, use secret_old_rest instead of the

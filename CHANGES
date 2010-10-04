@@ -37,8 +37,7 @@ If you're getting this error from calling old_rest:
 Then try secret_old_rest instead. The problem is that the access_token
 should be formatted by "#{app_id}|#{secret}" instead of the usual one.
 
-* [RestGraph] Added RestGraph#broken_old_rest. This is essentially the same
-              as secret_old_rest with :double_decode turned on by default.
+* [RestGraph] Added RestGraph#strict.
               In some API, e.g. admin.getAppProperties, Facebook returns
               broken JSON, which is double encoded, and is not a well-formed
               JSON. That case, we'll need to double parse the JSON to get
@@ -51,9 +50,8 @@ should be formatted by "#{app_id}|#{secret}" instead of the usual one.
                 {"app_id":"123"}
 
               P.S. This doesn't matter for people who don't use :auto_decode.
-
-So, there are two hacks in broken_old_rest. One is faking access_token,
-the other one is fix the JSON by removing extra quotes and the '\'.
+              So under non-strict mode, which is the default, rest-graph
+              would handle this for you.
 
 * [RestGraph] Fallback to ruby-hmac gem if we have an old openssl lib when
               parsing signed_request which requires HMAC SHA256.
