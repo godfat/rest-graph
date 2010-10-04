@@ -345,10 +345,7 @@ class RestGraph < RestGraphStruct
   def secret_old_rest path, query={}, opts={}
     old_rest(path, {:access_token => secret_access_token}.merge(query), opts)
   end
-
-  def broken_old_rest path, query={}, opts={}
-    secret_old_rest(path, query, {:double_decode => true}.merge(opts))
-  end
+  alias_method :broken_old_rest, :secret_old_rest
 
   def exchange_sessions opts={}
     query = {:client_id => app_id, :client_secret => secret,
@@ -395,12 +392,11 @@ class RestGraph < RestGraphStruct
 
   def post_request result, opts={}
     if auto_decode && !opts[:suppress_decode]
-      check_error(self.class.json_decode(
-        if opts[:double_decode]
-          self.class.json_decode("[#{result}]").first
-        else
-          result
-        end))
+      decoded = self.class.json_decode("[#{result}]").first
+
+      check_error(decoded.kind_of?(String) ?
+        self.class.json_decode(decoded)    :
+        decoded)
     else
       result
     end

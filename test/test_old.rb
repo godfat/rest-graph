@@ -78,7 +78,7 @@ describe RestGraph do
     ).to_return(:body => '"{\"app_id\":\"123\"}"')
 
     RestGraph.new(:app_id => '123', :secret => 's').
-      broken_old_rest('admin.getAppProperties', :properties => 'app_id').
+      secret_old_rest('admin.getAppProperties', :properties => 'app_id').
       should == {'app_id' => '123'}
   end
 
