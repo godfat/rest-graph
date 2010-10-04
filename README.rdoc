@@ -1,4 +1,4 @@
-= rest-graph 1.4.7
+= rest-graph 1.5.0
 by Cardinal Blue ( http://cardinalblue.com )
 
 == LINKS:
@@ -20,8 +20,9 @@ A super simple Facebook Open Graph API client
 
 == REQUIREMENTS:
 
-* Tested with MRI 1.8.7 and 1.9.2 and Rubinius HEAD
+* Tested with MRI 1.8.7 and 1.9.2 and Rubinius 1.1.0
 * gem install rest-client
+* gem install yajl-ruby (optional)
 * gem install json      (optional)
 * gem install json_pure (optional)
 * gem install rack      (optional, to parse access_token in HTTP_COOKIE)
