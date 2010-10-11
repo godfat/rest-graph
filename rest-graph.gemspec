@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Cardinal Blue", "Lin Jen-Shin (aka godfat 真常)"]
-  s.date = %q{2010-09-30}
+  s.date = %q{2010-10-11}
   s.description = %q{A super simple Facebook Open Graph API client}
   s.email = %q{dev (XD) cardinalblue.com}
   s.extra_rdoc_files = ["CHANGES", "CONTRIBUTORS", "Gemfile", "Gemfile.lock", "LICENSE", "README", "TODO", "rest-graph.gemspec"]

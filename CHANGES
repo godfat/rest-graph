@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.5.0 -- ?
+== rest-graph 1.5.0 -- 2010-10-11
 
 * [RestGraph] Make sure RestGraph::Error#message is string, that way,
               irb could print out error message correctly. Introduced
