@@ -10,6 +10,8 @@ module RestGraph::TestUtil
   module_function
   def setup
     any_instance_of(RestGraph){ |rg|
+      stub(rg).data{default_data}
+
       stub(rg).fetch{ |meth, uri, payload|
         send("#{meth}s") << [uri, payload]
         RestGraph.json_encode(default_response)
@@ -27,7 +29,14 @@ module RestGraph::TestUtil
   def default_response
     @default_response ||= {'data' => []}
   end
-  self.class.module_eval{ attr_writer :default_response }
+
+  def default_data
+    @default_data ||= {'uid' => 1234}
+  end
+
+  self.class.module_eval{
+    attr_writer :default_response, :default_data
+  }
 
   Methods.each{ |meth|
     instance_eval <<-RUBY

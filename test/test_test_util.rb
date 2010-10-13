@@ -34,6 +34,14 @@ describe RestGraph::TestUtil do
   should 'override default response' do
     default = {'meta' => []}
     RestGraph::TestUtil.default_response = default
-    RestGraph.new.get('me').should      == default
+    RestGraph.new.get('me')     .should == default
+  end
+
+  should 'have default data' do
+    rg = RestGraph.new
+    rg.data['uid']           .should == 1234
+    RestGraph::TestUtil.default_data  = {'uid' => 4321}
+    rg.data['uid']           .should == 4321
+    RestGraph.new.data['uid'].should == 4321
   end
 end
