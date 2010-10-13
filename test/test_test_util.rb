@@ -51,4 +51,12 @@ describe RestGraph::TestUtil do
     RestGraph.new.get('me').should == response
     RestGraph.new.get('he').should == RestGraph::TestUtil.default_response
   end
+
+  should 'emulate login' do
+    RestGraph::TestUtil.login(1829)
+    rg = RestGraph.new
+    # rg.data['uid'].should == '1829'
+    # rg.authorized?.should == true
+    rg.get('me').should == RestGraph::TestUtil.user('1829')
+  end
 end

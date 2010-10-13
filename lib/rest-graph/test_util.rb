@@ -43,6 +43,26 @@ module RestGraph::TestUtil
     attr_writer :default_response, :default_data
   }
 
+  def login id=default_data['uid']
+    get('me'){ user(id.to_s) }
+  end
+
+  def user id
+    {         'id' => id,
+            'name' => 'rest-graph stubbed-user',
+      'first_name' => 'rest-graph',
+       'last_name' => 'stubbed-user',
+            'link' => 'http://www.facebook.com/rest-graph',
+           'about' => 'this is a stubbed user in rest-graph',
+        'hometown' => {'id' => id*2, 'name' => 'Taiwan'},
+             'bio' => 'A super simple Facebook Open Graph API client',
+          'quotes' => 'Write programs that do one thing and do it well.',
+        'timezone' => 8,
+          'locale' => 'en_US',
+        'verified' => true,
+    'updated_time' => '2010-05-07T15:04:08+0000'}
+  end
+
   instance_eval(s = Methods.map{ |meth|
     <<-RUBY
       def #{meth} *args, &block
