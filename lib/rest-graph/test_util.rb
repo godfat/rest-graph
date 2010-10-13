@@ -21,7 +21,9 @@ module RestGraph::TestUtil
   alias_method :before, :setup
 
   def teardown
-    RR::Injections::DoubleInjection.instances.delete(RestGraph)
+    RestGraph.instance_methods.each{ |meth|
+      RR::Injections::DoubleInjection.reset_double(RestGraph, meth)
+    }
     Methods.map{ |meth| send("#{meth}_history") }.each(&:clear)
     [:default_response, :default_data].each{ |meth|
       send("#{meth}=", nil)
