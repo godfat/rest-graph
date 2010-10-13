@@ -32,7 +32,8 @@ describe RestGraph::TestUtil do
   end
 
   should 'override default response' do
-    RestGraph::TestUtil.default_response = {'meta' => []}
-    RestGraph.new.get('me').should == {'meta' => []}
+    default = {'meta' => []}
+    RestGraph::TestUtil.default_response = default
+    RestGraph.new.get('me').should      == default
   end
 end
