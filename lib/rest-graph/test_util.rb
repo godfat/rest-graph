@@ -5,7 +5,7 @@ require 'rr'
 module RestGraph::TestUtil
   extend RR::Adapters::RRMethods
 
-  Methods = [:gets, :deletes, :posts, :puts]
+  Methods = [:get, :delete, :post, :put]
 
   module_function
   def setup
@@ -13,7 +13,7 @@ module RestGraph::TestUtil
       stub(rg).data{default_data}
 
       stub(rg).fetch{ |meth, uri, payload|
-        send("#{meth}s") << [uri, payload]
+        send("#{meth}_history") << [uri, payload]
         RestGraph.json_encode(default_response)
       }
     }
@@ -22,7 +22,10 @@ module RestGraph::TestUtil
 
   def teardown
     RR::Injections::DoubleInjection.instances.delete(RestGraph)
-    Methods.map{ |meth| send(meth) }.each(&:clear)
+    Methods.map{ |meth| send("#{meth}_history") }.each(&:clear)
+    [:default_response, :default_data].each{ |meth|
+      send("#{meth}=", nil)
+    }
   end
   alias_method :after, :teardown
 

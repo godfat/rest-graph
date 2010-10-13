@@ -18,12 +18,12 @@ describe RestGraph::TestUtil do
 
   should 'stub requests and store result and teardown do cleanup' do
     RestGraph.new.get('me') .should == {'data' => []}
-    RestGraph::TestUtil.gets.should ==
+    RestGraph::TestUtil.get_history.should ==
       [["https://graph.facebook.com/me", nil]]
 
     RestGraph::TestUtil.teardown
 
-    RestGraph::TestUtil.gets.should == []
+    RestGraph::TestUtil.get_history.should == []
     begin
       RestGraph.new.get('me')
     rescue => e
@@ -31,7 +31,7 @@ describe RestGraph::TestUtil do
     end
   end
 
-  should 'override default response' do
+  should 'have default response' do
     default = {'meta' => []}
     RestGraph::TestUtil.default_response = default
     RestGraph.new.get('me')     .should == default
