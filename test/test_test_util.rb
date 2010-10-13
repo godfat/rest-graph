@@ -44,4 +44,11 @@ describe RestGraph::TestUtil do
     rg.data['uid']           .should == 4321
     RestGraph.new.data['uid'].should == 4321
   end
+
+  should 'be easy to stub data' do
+    response = {'data' => 'me'}
+    RestGraph::TestUtil.get('me'){ response }
+    RestGraph.new.get('me').should == response
+    RestGraph.new.get('he').should == RestGraph::TestUtil.default_response
+  end
 end

@@ -41,11 +41,18 @@ module RestGraph::TestUtil
     attr_writer :default_response, :default_data
   }
 
-  Methods.each{ |meth|
-    instance_eval <<-RUBY
-      def #{meth}
-        @#{meth} ||= []
+  instance_eval(s = Methods.map{ |meth|
+    <<-RUBY
+      def #{meth} *args, &block
+        any_instance_of(RestGraph){ |rg|
+          stub.proxy(rg).#{meth}(*args, &block)
+          stub.proxy(rg).#{meth}
+        }
+      end
+
+      def #{meth}_history
+        @#{meth}_history ||= []
       end
     RUBY
-  }
+  }.join("\n"))
 end
