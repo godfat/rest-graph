@@ -11,7 +11,7 @@ describe RestGraph::Error do
     RR.verify
   end
 
-  it 'has the right ancestors' do
+  should 'have the right ancestors' do
     RestGraph::Error::AccessToken       .should < RestGraph::Error
 
     RestGraph::Error::InvalidAccessToken.should <
@@ -21,7 +21,7 @@ describe RestGraph::Error do
       RestGraph::Error::AccessToken
   end
 
-  it 'would parse right' do
+  should 'parse right' do
     %w[OAuthInvalidTokenException OAuthException].each{ |type|
       RestGraph::Error.parse('error' => {'type' => type}).
         should.kind_of?(RestGraph::Error::InvalidAccessToken)

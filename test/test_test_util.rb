@@ -16,7 +16,7 @@ describe RestGraph::TestUtil do
     RestGraph::TestUtil.teardown
   end
 
-  it 'should stub requests and store result and teardown do cleanup' do
+  should 'stub requests and store result and teardown do cleanup' do
     RestGraph.new.get('me') .should == {'data' => []}
     RestGraph::TestUtil.gets.should ==
       [["https://graph.facebook.com/me", nil]]

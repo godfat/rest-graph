@@ -12,7 +12,7 @@ describe RestGraph do
   end
 
   describe 'log handler' do
-    it 'would log whenever doing network request' do
+    should 'log whenever doing network request' do
       stub_request(:get, 'https://graph.facebook.com/me').
         to_return(:body => '{}')
 
@@ -38,11 +38,11 @@ describe RestGraph do
         to_return(:body => @error)
     end
 
-    it 'would call error_handler if error occurred' do
+    should 'call error_handler if error occurred' do
       RestGraph.new(:error_handler => @id).get('me').should == @error_hash
     end
 
-    it 'would raise ::RestGraph::Error in default error_handler' do
+    should 'raise ::RestGraph::Error in default error_handler' do
       begin
         RestGraph.new.get('me')
       rescue ::RestGraph::Error => e
@@ -71,12 +71,12 @@ describe RestGraph do
       stub_request(:get, bad_fql_request).to_return(:body => @fql_error)
     end
 
-    it 'would call error_handler if error occurred' do
+    should 'call error_handler if error occurred' do
       RestGraph.new(:error_handler => @id).fql(@bad_fql_query).
         should == @fql_error_hash
     end
 
-    it 'would raise ::RestGraph::Error in default error_handler' do
+    should 'raise ::RestGraph::Error in default error_handler' do
       begin
         RestGraph.new.fql(@bad_fql_query)
       rescue ::RestGraph::Error => e

@@ -7,13 +7,13 @@ end
 
 describe RestGraph do
 
-  it 'would return nil if parse error, but not when call data directly' do
+  should 'return nil if parse error, but not when call data directly' do
     rg = RestGraph.new
     rg.parse_cookies!({}).should == nil
     rg.data              .should == {}
   end
 
-  it 'would extract correct access_token or fail checking sig' do
+  should 'extract correct access_token or fail checking sig' do
     access_token = '1|2-5|f.'
     app_id       = '1829'
     secret       = app_id.reverse
@@ -49,13 +49,13 @@ describe RestGraph do
     check.call(nil, "\"#{fbs}\"")
   end
 
-  it 'would not pass if there is no secret, prevent from forgery' do
+  should 'not pass if there is no secret, prevent from forgery' do
     rg = RestGraph.new
     rg.parse_fbs!('"feed=me&sig=bddd192cf27f22c05f61c8bea24fa4b7"').
       should == nil
   end
 
-  it 'would parse json correctly' do
+  should 'parse json correctly' do
     rg = RestGraph.new
 
     rg.parse_json!('bad json').should == nil
@@ -68,7 +68,7 @@ describe RestGraph do
       should == {'feed' => 'me', 'sig' => "20393e7823730308938a86ecf1c88b14"}
   end
 
-  it 'would parse signed_request' do
+  should 'parse signed_request' do
     secret = 'aloha'
     json   = RestGraph.json_encode('ooh' => 'dir', 'moo' => 'bar')
     encode = lambda{ |str|
@@ -87,25 +87,25 @@ describe RestGraph do
     rg.parse_signed_request!(signed_request).should == nil
   end
 
-  it 'would fallback to ruby-hmac if Digest.new raise an runtime error' do
+  should 'fallback to ruby-hmac if Digest.new raise an runtime error' do
     key, data = 'top', 'secret'
     mock(OpenSSL::Digest::Digest).new('sha256'){ raise 'boom' }
     RestGraph.hmac_sha256(key, data).should ==
       OpenSSL::HMAC.digest('sha256', key, data)
   end
 
-  it 'would generate correct fbs with correct sig' do
+  should 'generate correct fbs with correct sig' do
     RestGraph.new(:access_token => 'fake', :secret => 's').fbs.should ==
       "access_token=fake&sig=#{Digest::MD5.hexdigest('access_token=fakes')}"
   end
 
-  it 'could parse fbs from facebook response which lacks sig...' do
+  should 'parse fbs from facebook response which lacks sig...' do
     rg = RestGraph.new(:access_token => 'a', :secret => 'z')
     rg.parse_fbs!(rg.fbs)                           .should.kind_of?(Hash)
     rg.parse_fbs!(rg.fbs.sub(/sig\=\w+/, 'sig=abc')).should == nil
   end
 
-  it 'could generate correct fbs with additional parameters' do
+  should 'generate correct fbs with additional parameters' do
     rg = RestGraph.new(:access_token => 'a', :secret => 'z')
     rg.data['expires'] = '1234'
     rg.parse_fbs!(rg.fbs)                           .should.kind_of?(Hash)

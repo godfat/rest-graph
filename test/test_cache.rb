@@ -11,7 +11,7 @@ describe RestGraph do
     RR.verify
   end
 
-  it 'would enable cache if passing cache' do
+  should 'enable cache if passing cache' do
     url, body = "https://graph.facebook.com/cache", '{"message":"ok"}'
     stub_request(:get, url).to_return(:body => body).times(1)
 
@@ -21,7 +21,7 @@ describe RestGraph do
     cache.should == {rg.send(:cache_key, url) => body}
   end
 
-  it 'would not cache post/put/delete' do
+  should 'not cache post/put/delete' do
     [:put, :post, :delete].each{ |meth|
       url, body = "https://graph.facebook.com/cache", '{"message":"ok"}'
       stub_request(meth, url).to_return(:body => body).times(3)

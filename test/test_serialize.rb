@@ -11,7 +11,7 @@ describe RestGraph do
     RR.verify
   end
 
-  it 'could be serialized with lighten' do
+  should 'be serialized with lighten' do
     marshal = RUBY_VERSION >= '1.9' ? Marshal : nil
     [YAML, marshal].compact.each{ |engine|
       test = lambda{ |obj| engine.load(engine.dump(obj)) }

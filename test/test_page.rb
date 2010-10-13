@@ -11,7 +11,7 @@ describe RestGraph do
     RR.verify
   end
 
-  it 'would get the next/prev page' do
+  should 'get the next/prev page' do
     rg = RestGraph.new
     %w[next previous].each{ |type|
       kind = "#{type}_page"
@@ -24,7 +24,7 @@ describe RestGraph do
     }
   end
 
-  it 'would merge all pages into one' do
+  should 'merge all pages into one' do
     rg = RestGraph.new
     %w[next previous].each{ |type|
       kind = "#{type}_page"

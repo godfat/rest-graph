@@ -11,14 +11,14 @@ describe RestGraph do
     RR.verify
   end
 
-  it 'would generate correct url' do
+  should 'generate correct url' do
     TestHelper.normalize_url(
     RestGraph.new(:access_token => 'awesome').url('path', :query => 'str')).
       should ==
         'https://graph.facebook.com/path?access_token=awesome&query=str'
   end
 
-  it 'would request to correct server' do
+  should 'request to correct server' do
     stub_request(:get, 'http://nothing.godfat.org/me').with(
       :headers => {'Accept'          => 'text/plain',
                    'Accept-Language' => 'zh-tw',
@@ -33,7 +33,7 @@ describe RestGraph do
                   :accept => 'text/plain').get('me').should == {'data' => []}
   end
 
-  it 'would post right' do
+  should 'post right' do
     stub_request(:post, 'https://graph.facebook.com/feed/me').
       with(:body => 'message=hi%20there').to_return(:body => 'ok')
 
@@ -41,7 +41,7 @@ describe RestGraph do
       post('feed/me', :message => 'hi there').should == 'ok'
   end
 
-  it 'could suppress auto-decode in an api call' do
+  should 'suppress auto-decode in an api call' do
     stub_request(:get, 'https://graph.facebook.com/woot').
       to_return(:body => 'bad json')
 
@@ -50,7 +50,7 @@ describe RestGraph do
     rg.auto_decode.should == true
   end
 
-  it 'would call post_request after request' do
+  should 'call post_request after request' do
     stub_request(:put, 'https://graph.facebook.com/feed/me').
       with(:body => 'message=hi%20there').to_return(:body => '[]')
 
@@ -59,7 +59,7 @@ describe RestGraph do
       should == []
   end
 
-  it 'would not raise exception when encountering error' do
+  should 'not raise exception when encountering error' do
     [500, 401, 402, 403].each{ |status|
       stub_request(:delete, 'https://graph.facebook.com/123').to_return(
         :body => '[]', :status => status)
@@ -68,7 +68,7 @@ describe RestGraph do
     }
   end
 
-  it 'would convert query to string' do
+  should 'convert query to string' do
     mock(o = Object.new).to_s{ 'i am mock' }
     stub_request(:get, "https://graph.facebook.com/search?q=i%20am%20mock").
       to_return(:body => 'ok')

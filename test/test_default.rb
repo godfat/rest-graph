@@ -6,7 +6,7 @@ else
 end
 
 describe RestGraph do
-  it 'would honor default attributes' do
+  should 'honor default attributes' do
     TestHelper.attrs_no_callback.each{ |name|
       RestGraph.new.send(name).should ==
         RestGraph.send("default_#{name}")
@@ -16,7 +16,7 @@ describe RestGraph do
     }
   end
 
-  it 'could use module to override default attributes' do
+  should 'use module to override default attributes' do
     module BlahAttributes
       def default_app_id
         '1829'

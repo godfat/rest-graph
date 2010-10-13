@@ -11,7 +11,7 @@ describe RestGraph do
     RR.verify
   end
 
-  it 'would do fql query with/without access_token' do
+  should 'do fql query with/without access_token' do
     fql = 'SELECT name FROM likes where id="123"'
     query = "format=json&query=#{CGI.escape(fql)}"
     stub_request(:get, "https://api.facebook.com/method/fql.query?#{query}").
@@ -27,7 +27,7 @@ describe RestGraph do
     RestGraph.new(:access_token => token).fql(fql).should == []
   end
 
-  it 'would do fql.mutilquery correctly' do
+  should 'do fql.mutilquery correctly' do
     f0 = 'SELECT display_name FROM application WHERE app_id="233082465238"'
     f1 = 'SELECT display_name FROM application WHERE app_id="110225210740"'
     f0q, f1q = "\"#{f0.gsub('"', '\\"')}\"", "\"#{f1.gsub('"', '\\"')}\""
@@ -48,7 +48,7 @@ describe RestGraph do
     RestGraph.new.fql_multi(:f0 => f0, :f1 => f1).should == []
   end
 
-  it 'would do facebook old rest api' do
+  should 'do facebook old rest api' do
     body = 'hate facebook inconsistent'
     stub_request(:get,
       'https://api.facebook.com/method/notes.create?format=json').
@@ -58,7 +58,7 @@ describe RestGraph do
       should == body
   end
 
-  it 'would exchange sessions for access token' do
+  should 'exchange sessions for access token' do
     stub_request(:post,
       'https://graph.facebook.com/oauth/exchange_sessions?'     \
               'type=client_cred&client_id=id&client_secret=di&' \
@@ -71,7 +71,7 @@ describe RestGraph do
       first['access_token'].should == 'bogus'
   end
 
-  it 'returns broken json' do
+  should 'broken json' do
     stub_request(:get,
       'https://api.facebook.com/method/admin.getAppProperties?' \
       'access_token=123%7Cs&format=json&properties=app_id'
@@ -82,7 +82,7 @@ describe RestGraph do
       should == {'app_id' => '123'}
   end
 
-  it 'uses an secret access_token' do
+  should 'use an secret access_token' do
     stub_request(:get,
       'https://api.facebook.com/method/admin.getAppProperties?' \
       'access_token=123%7Cs&format=json&properties=app_id'
@@ -93,7 +93,7 @@ describe RestGraph do
       should == {'app_id' => '123'}
   end
 
-  it 'would not parse twice in strict mode' do
+  should 'not parse twice in strict mode' do
     stub_request(:get,
       'https://api.facebook.com/method/admin.getAppProperties?' \
       'access_token=123%7Cs&format=json&properties=app_id'
