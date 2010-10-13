@@ -12,7 +12,7 @@ module RestGraph::TestUtil
     any_instance_of(RestGraph){ |rg|
       stub(rg).fetch{ |meth, uri, payload|
         send("#{meth}s") << [uri, payload]
-        '{"data":"ok"}'
+        RestGraph.json_encode(default_response)
       }
     }
   end
@@ -23,6 +23,11 @@ module RestGraph::TestUtil
     Methods.map{ |meth| send(meth) }.each(&:clear)
   end
   alias_method :after, :teardown
+
+  def default_response
+    @default_response ||= {'data' => []}
+  end
+  self.class.module_eval{ attr_writer :default_response }
 
   Methods.each{ |meth|
     instance_eval <<-RUBY

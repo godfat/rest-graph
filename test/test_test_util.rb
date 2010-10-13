@@ -17,7 +17,7 @@ describe RestGraph::TestUtil do
   end
 
   it 'should stub requests and store result and teardown do cleanup' do
-    RestGraph.new.get('me') .should == {'data' => 'ok'}
+    RestGraph.new.get('me') .should == {'data' => []}
     RestGraph::TestUtil.gets.should ==
       [["https://graph.facebook.com/me", nil]]
 
@@ -29,5 +29,10 @@ describe RestGraph::TestUtil do
     rescue => e
       e.should.kind_of?(WebMock::NetConnectNotAllowedError)
     end
+  end
+
+  should 'override default response' do
+    RestGraph::TestUtil.default_response = {'meta' => []}
+    RestGraph.new.get('me').should == {'meta' => []}
   end
 end
