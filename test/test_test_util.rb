@@ -17,7 +17,7 @@ describe RestGraph::TestUtil do
   end
 
   should 'stub requests and store result and teardown do cleanup' do
-    RestGraph.new.get('me') .should == {'data' => []}
+    RestGraph.new.get('me')        .should == {'data' => []}
     RestGraph::TestUtil.get_history.should ==
       [["https://graph.facebook.com/me", nil]]
 
