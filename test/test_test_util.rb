@@ -39,10 +39,10 @@ describe RestGraph::TestUtil do
 
   should 'have default data' do
     rg = RestGraph.new
-    rg.data['uid']           .should == 1234
-    RestGraph::TestUtil.default_data  = {'uid' => 4321}
-    rg.data['uid']           .should == 4321
-    RestGraph.new.data['uid'].should == 4321
+    rg.data['uid']           .should == '1234'
+    RestGraph::TestUtil.default_data  = {'uid' => '4321'}
+    rg.data['uid']           .should == '4321'
+    RestGraph.new.data['uid'].should == '4321'
   end
 
   should 'be easy to stub data' do

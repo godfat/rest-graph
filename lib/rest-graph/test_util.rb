@@ -34,7 +34,7 @@ module RestGraph::TestUtil
   end
 
   def default_data
-    @default_data ||= {'uid' => 1234}
+    @default_data ||= {'uid' => '1234'}
   end
 
   self.class.module_eval{
