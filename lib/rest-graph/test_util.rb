@@ -13,7 +13,7 @@ module RestGraph::TestUtil
       stub(rg).data{default_data}
 
       stub(rg).fetch{ |meth, uri, payload|
-        send("#{meth}_history") << [uri, payload]
+        history << [meth, uri, payload]
         RestGraph.json_encode(default_response)
       }
     }
@@ -21,12 +21,10 @@ module RestGraph::TestUtil
   alias_method :before, :setup
 
   def teardown
+    history.clear
+    [:default_response, :default_data].each{ |meth| send("#{meth}=", nil) }
     RestGraph.instance_methods.each{ |meth|
       RR::Injections::DoubleInjection.reset_double(RestGraph, meth)
-    }
-    Methods.map{ |meth| send("#{meth}_history") }.each(&:clear)
-    [:default_response, :default_data].each{ |meth|
-      send("#{meth}=", nil)
     }
   end
   alias_method :after, :teardown
@@ -42,6 +40,10 @@ module RestGraph::TestUtil
   self.class.module_eval{
     attr_writer :default_response, :default_data
   }
+
+  def history
+    @history ||= []
+  end
 
   def login id=default_data['uid']
     get('me'){ user(id.to_s) }
@@ -70,10 +72,6 @@ module RestGraph::TestUtil
           stub.proxy(rg).#{meth}(*args, &block)
           stub.proxy(rg).#{meth}
         }
-      end
-
-      def #{meth}_history
-        @#{meth}_history ||= []
       end
     RUBY
   }.join("\n"))

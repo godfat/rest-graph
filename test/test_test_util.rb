@@ -18,12 +18,12 @@ describe RestGraph::TestUtil do
 
   should 'stub requests and store result and teardown do cleanup' do
     RestGraph.new.get('me')        .should == {'data' => []}
-    RestGraph::TestUtil.get_history.should ==
-      [["https://graph.facebook.com/me", nil]]
+    RestGraph::TestUtil.history    .should ==
+      [[:get, "https://graph.facebook.com/me", nil]]
 
     RestGraph::TestUtil.teardown
 
-    RestGraph::TestUtil.get_history.should == []
+    RestGraph::TestUtil.history.should == []
     begin
       RestGraph.new.get('me')
     rescue => e
