@@ -23,7 +23,7 @@ module RestGraph::TestUtil
   def teardown
     history.clear
     [:default_response, :default_data].each{ |meth| send("#{meth}=", nil) }
-    RestGraph.instance_methods.each{ |meth|
+    RR::Injections::DoubleInjection.instances[RestGraph].keys.each{ |meth|
       RR::Injections::DoubleInjection.reset_double(RestGraph, meth)
     }
   end
