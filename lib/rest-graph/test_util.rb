@@ -46,7 +46,18 @@ module RestGraph::TestUtil
   end
 
   def login id=default_data['uid']
-    get('me'){ user(id.to_s) }
+             uid = id.to_s
+         expires = '123456789'
+          app_id = RestGraph.default_app_id || '5678'
+     session_key = "2.random_string.3600.#{expires}-#{uid}"
+            salt = 'random-salt'
+    access_token = "#{app_id}|#{session_key}|#{salt}"
+
+    self.default_data = {         'uid' =>          uid,
+                         'access_token' => access_token,
+                          'session_key' =>  session_key}
+
+    get('me'){ user(uid) }
   end
 
   def user id
