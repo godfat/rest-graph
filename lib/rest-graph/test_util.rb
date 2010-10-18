@@ -17,6 +17,7 @@ module RestGraph::TestUtil
         RestGraph.json_encode(default_response)
       }
     }
+    self
   end
   alias_method :before, :setup
 
@@ -26,6 +27,7 @@ module RestGraph::TestUtil
     RR::Injections::DoubleInjection.instances[RestGraph].keys.each{ |meth|
       RR::Injections::DoubleInjection.reset_double(RestGraph, meth)
     }
+    self
   end
   alias_method :after, :teardown
 
