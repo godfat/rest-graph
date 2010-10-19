@@ -273,19 +273,23 @@ class RestGraph < RestGraphStruct
 
   def multi *requests
     start_time = Time.now
-    m = EM::MultiRequest.new
-    requests.each{ |(method, path, query, opts)|
+    reqs = requests.map{ |(method, path, query, opts)|
       query ||= {}; opts ||= {}
-      m.add(EM::HttpRequest.new(graph_server + path).
-        send(method, {:query => query}.merge(opts)))
+      EM::HttpRequest.new(graph_server + path).
+        send(method, {:query => query}.merge(opts)){ |c|
+          c.callback{
+            log_handler.call(
+              Event::Requested.new(Time.now - start_time, c.uri))
+          }
+        }
     }
-    m.callback{
+    EM::MultiRequest.new(reqs){ |m|
+      log_handler.call(Event::Requested.new(Time.now - start_time,
+        m.responses.values.flatten.map(&:uri).join(', ')))
+
       yield(m.responses.values.flatten.map(&:response).
               map(&method(:post_request)))
     }
-  ensure
-    log_handler.call(Time.now - start_time,
-      m.responses.values.flatten.map(&:uri).map(&:to_s))
   end
 
 
