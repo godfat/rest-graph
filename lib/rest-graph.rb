@@ -13,27 +13,63 @@ begin
   require 'rack'
 rescue LoadError; end
 
-# pick a json gem if available
-%w[ yajl/json_gem json json_pure ].each{ |json|
-  begin
-    require json
-    break
-  rescue LoadError
-  end
-}
-
 # the data structure used in RestGraph
-RestGraphStruct = Struct.new(:data, :auto_decode,
+RestGraphStruct = Struct.new(:auto_decode, :strict,
                              :graph_server, :old_server,
                              :accept, :lang,
                              :app_id, :secret,
+                             :data, :cache,
                              :error_handler,
-                             :log_handler) unless defined?(RestGraphStruct)
+                             :log_handler) unless defined?(::RestGraphStruct)
 
 class RestGraph < RestGraphStruct
-  class Error < RuntimeError; end
+  EventStruct = Struct.new(:duration, :url)           unless
+    defined?(::RestGraph::EventStruct)
 
-  Attributes = RestGraphStruct.members.map(&:to_sym)
+  Attributes  = RestGraphStruct.members.map(&:to_sym) unless
+    defined?(::RestGraph::Attributes)
+
+  class Event < EventStruct; end
+  class Event::Requested < Event; end
+  class Event::CacheHit  < Event; end
+
+  class Error < RuntimeError
+    class AccessToken < Error; end
+    class InvalidAccessToken < AccessToken; end
+    class MissingAccessToken < AccessToken; end
+
+    attr_reader :error
+    def initialize error
+      @error = error
+      super(error.inspect)
+    end
+
+    module Util
+      extend self
+      def parse error
+        return Error.new(error) unless error.kind_of?(Hash)
+        if    invalid_token?(error)
+          InvalidAccessToken.new(error)
+        elsif missing_token?(error)
+          MissingAccessToken.new(error)
+        else
+          Error.new(error)
+        end
+      end
+
+      def invalid_token? error
+        (%w[OAuthInvalidTokenException
+            OAuthException].include?((error['error'] || {})['type'])) ||
+        (error['error_code'] == 190) # Invalid OAuth 2.0 Access Token
+      end
+
+      def missing_token? error
+        (error['error'] || {})['message'] =~ /^An active access token/ ||
+        (error['error_code'] == 104) # Requires valid signature
+      end
+    end
+    extend Util
+  end
 
   # honor default attributes
   Attributes.each{ |name|
@@ -47,22 +83,107 @@ class RestGraph < RestGraphStruct
   # setup defaults
   module DefaultAttributes
     extend self
-    def default_data        ; {}                           ; end
     def default_auto_decode ; true                         ; end
+    def default_strict      ; false                        ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
     def default_old_server  ; 'https://api.facebook.com/'  ; end
     def default_accept      ; 'text/javascript'            ; end
     def default_lang        ; 'en-us'                      ; end
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
+    def default_data        ; {}                           ; end
+    def default_cache       ; nil                          ; end
     def default_error_handler
-      lambda{ |error| raise ::RestGraph::Error.new(error) }
+      lambda{ |error| raise ::RestGraph::Error.parse(error) }
     end
     def default_log_handler
-      lambda{ |duration, url| }
+      lambda{ |event| }
     end
   end
   extend DefaultAttributes
+
+  # Fallback to ruby-hmac gem in case system openssl
+  # lib doesn't support SHA256 (OSX 10.5)
+  def self.hmac_sha256 key, data
+    # for ruby version >= 1.8.7, we can simply pass sha256,
+    # instead of OpenSSL::Digest::Digest.new('sha256')
+    # i'll go back to original implementation once all old systems died
+    OpenSSL::HMAC.digest(OpenSSL::Digest::Digest.new('sha256'), key, data)
+  rescue RuntimeError
+    require 'hmac-sha2'
+    HMAC::SHA256.digest(key, data)
+  end
+
+  # begin json backend adapter
+  module YajlRuby
+    def self.extended mod
+      mod.const_set(:ParseError, Yajl::ParseError)
+    end
+    def json_encode hash
+      Yajl::Encoder.encode(hash)
+    end
+    def json_decode json
+      Yajl::Parser.parse(json)
+    end
+  end
+
+  module Json
+    def self.extended mod
+      mod.const_set(:ParseError, JSON::ParserError)
+    end
+    def json_encode hash
+      JSON.dump(hash)
+    end
+    def json_decode json
+      JSON.parse(json)
+    end
+  end
+
+  module Gsub
+    class ParseError < RuntimeError; end
+    def self.extended mod
+      mod.const_set(:ParseError, Gsub::ParseError)
+    end
+    # only works for flat hash
+    def json_encode hash
+      middle = hash.inject([]){ |r, (k, v)|
+                 r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
+               }.join(',')
+      "{#{middle}}"
+    end
+    def json_decode json
+      raise NotImplementedError.new(
+        'You need to install either yajl-ruby, json, or json_pure gem')
+    end
+  end
+
+  def self.select_json! picked=false
+    if    defined?(::Yajl)
+      extend YajlRuby
+    elsif defined?(::JSON)
+      extend Json
+    elsif picked
+      extend Gsub
+    else
+      # pick a json gem if available
+      %w[yajl json].each{ |json|
+        begin
+          require json
+          break
+        rescue LoadError
+        end
+      }
+      select_json!(true)
+    end
+  end
+  select_json! unless respond_to?(:json_decode)
+  #   end json backend adapter
+
+
+
+
+
+  # common methods
 
   def initialize o={}
     (Attributes + [:access_token]).each{ |name|
@@ -71,7 +192,7 @@ class RestGraph < RestGraphStruct
   end
 
   def access_token
-    data['access_token']
+    data['access_token'] || data['oauth_token']
   end
 
   def access_token= token
@@ -81,6 +202,32 @@ class RestGraph < RestGraphStruct
   def authorized?
     !!access_token
   end
+
+  def secret_access_token
+    "#{app_id}|#{secret}"
+  end
+
+  def lighten!
+    [:cache, :error_handler, :log_handler].each{ |obj| send("#{obj}=", nil) }
+    self
+  end
+
+  def lighten
+    dup.lighten!
+  end
+
+  def inspect
+    super.gsub(/(\w+)=([^,]+)/){ |match|
+      value = $2 == 'nil' ? self.class.send("default_#{$1}").inspect : $2
+      "#{$1}=#{value}"
+    }
+  end
+
+
+
+
+
+  # graph api related methods
 
   def url path, query={}, server=graph_server
     "#{server}#{path}#{build_query_string(query)}"
@@ -141,6 +288,34 @@ class RestGraph < RestGraphStruct
       m.responses.values.flatten.map(&:uri).map(&:to_s))
   end
 
+
+
+
+
+  def next_page hash, opts={}
+    return unless hash['paging'].kind_of?(Hash) && hash['paging']['next']
+    request(:get   , hash['paging']['next']        , opts)
+  end
+
+  def prev_page hash, opts={}
+    return unless hash['paging'].kind_of?(Hash) && hash['paging']['previous']
+    request(:get   , hash['paging']['previous']    , opts)
+  end
+  alias_method :previous_page, :prev_page
+
+  def for_pages hash, pages=1, kind=:next_page, opts={}
+    return hash if pages <= 1
+    if result = send(kind, hash, opts)
+      for_pages(merge_data(result, hash), pages - 1, kind, opts)
+    else
+      hash
+    end
+  end
+
+
+
+
+
   # cookies, app_id, secrect related below
 
   def parse_rack_env! env
@@ -160,8 +335,12 @@ class RestGraph < RestGraphStruct
 
   def parse_json! json
     self.data = json &&
-      check_sig_and_return_data(JSON.parse(json))
-  rescue JSON::ParserError
+      check_sig_and_return_data(self.class.json_decode(json))
+  rescue ParseError
+  end
+
+  def fbs
+    "#{fbs_without_sig(data).join('&')}&sig=#{calculate_sig(data)}"
   end
 
   # facebook's new signed_request...
@@ -171,10 +350,14 @@ class RestGraph < RestGraphStruct
     sig,  json = [sig_encoded, json_encoded].map{ |str|
       "#{str.tr('-_', '+/')}==".unpack('m').first
     }
-    self.data = JSON.parse(json) if
-      secret && OpenSSL::HMAC.digest('sha256', secret, json_encoded) == sig
-  rescue JSON::ParserError
+    self.data = self.class.json_decode(json) if
+      secret && self.class.hmac_sha256(secret, json_encoded) == sig
+  rescue ParseError
   end
+
+
+
+
 
   # oauth related
 
@@ -190,6 +373,10 @@ class RestGraph < RestGraphStruct
                           :suppress_decode => true))
   end
 
+
+
+
+
   # old rest facebook api, i will definitely love to remove them someday
 
   def old_rest path, query={}, opts={}
@@ -198,6 +385,11 @@ class RestGraph < RestGraphStruct
       url("method/#{path}", {:format => 'json'}.merge(query), old_server),
       opts)
   end
+
+  def secret_old_rest path, query={}, opts={}
+    old_rest(path, {:access_token => secret_access_token}.merge(query), opts)
+  end
+  alias_method :broken_old_rest, :secret_old_rest
 
   def exchange_sessions opts={}
     query = {:client_id => app_id, :client_secret => secret,
@@ -210,28 +402,22 @@ class RestGraph < RestGraphStruct
   end
 
   def fql_multi codes, query={}, opts={}
-    c = if codes.respond_to?(:to_json)
-           codes.to_json
-        else
-          middle = codes.inject([]){ |r, (k, v)|
-                     r << "\"#{k}\":\"#{v.gsub('"','\\"')}\""
-                   }.join(',')
-          "{#{middle}}"
-        end
-    old_rest('fql.multiquery', {:queries => c}.merge(query), opts)
+    old_rest('fql.multiquery',
+      {:queries => self.class.json_encode(codes)}.merge(query), opts)
   end
+
+
+
+
 
   private
   def request meth, uri, opts={}, payload=nil
     start_time = Time.now
-    post_request(RestClient::Request.execute(:method => meth, :url => uri,
-                                             :headers => build_headers,
-                                             :payload => payload),
-                 opts[:suppress_decode])
+    post_request(cache_get(uri) || fetch(meth, uri, payload), opts)
   rescue RestClient::Exception => e
-    post_request(e.http_body, opts[:suppress_decode])
+    post_request(e.http_body, opts)
   ensure
-    log_handler.call(Time.now - start_time, uri)
+    log_handler.call(Event::Requested.new(Time.now - start_time, uri))
   end
 
   def build_query_string query={}
@@ -248,9 +434,14 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, suppress_decode=nil
-    if auto_decode && !suppress_decode
-      check_error(JSON.parse(result))
+  def post_request result, opts={}
+    if auto_decode && !opts[:suppress_decode]
+      decoded = self.class.json_decode("[#{result}]").first
+      check_error(if strict || !decoded.kind_of?(String)
+                    decoded
+                  else
+                    self.class.json_decode(decoded)
+                  end)
     else
       result
     end
@@ -261,7 +452,9 @@ class RestGraph < RestGraphStruct
   end
 
   def check_error hash
-    if error_handler && hash.kind_of?(Hash) && hash['error']
+    if error_handler && hash.kind_of?(Hash) &&
+       (hash['error'] ||    # from graph api
+        hash['error_code']) # from fql
       error_handler.call(hash)
     else
       hash
@@ -269,9 +462,41 @@ class RestGraph < RestGraphStruct
   end
 
   def calculate_sig cookies
-    args = cookies.reject{ |(k, v)| k == 'sig' }.sort.
-      map{ |a| a.join('=') }.join
+    Digest::MD5.hexdigest(fbs_without_sig(cookies).join + secret)
+  end
 
-    Digest::MD5.hexdigest(args + secret)
+  def fbs_without_sig cookies
+    cookies.reject{ |(k, v)| k == 'sig' }.sort.map{ |a| a.join('=') }
+  end
+
+  def cache_key uri
+    Digest::MD5.hexdigest(uri)
+  end
+
+  def cache_get uri
+    return unless cache
+    start_time = Time.now
+    cache[cache_key(uri)].tap{ |result|
+      log_handler.call(Event::CacheHit.new(Time.now - start_time, uri)) if
+        result
+    }
+  end
+
+  def fetch meth, uri, payload
+    RestClient::Request.execute(:method => meth, :url => uri,
+                                :headers => build_headers,
+                                :payload => payload).body.
+      tap{ |result|
+        cache[cache_key(uri)] = result if cache && meth == :get
+      }
+  end
+
+  def merge_data lhs, rhs
+    [lhs, rhs].each{ |hash|
+      return rhs.reject{ |k, v| k == 'paging' } if
+        !hash.kind_of?(Hash) || !hash['data'].kind_of?(Array)
+    }
+    lhs['data'].unshift(*rhs['data'])
+    lhs
   end
 end

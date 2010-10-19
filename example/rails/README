@@ -1,6 +1,0 @@
-
-Please fill config/rest-graph.yaml with your app_id, secret, and canvas to
-see if this example is working or not. This is supposed to be used in an
-iframe canvas page.
-
-The default setup is designed for standalone site with Facebook JavaScript SDK.

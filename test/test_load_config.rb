@@ -13,7 +13,7 @@ describe RestGraph::LoadConfig do
     RR.verify
   end
 
-  it 'would honor rails config' do
+  should 'honor rails config' do
     ::Rails = Object.new
     mock(Rails).env { 'test' }
     mock(Rails).root{ File.dirname(__FILE__) }

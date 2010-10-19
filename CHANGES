@@ -1,20 +1,209 @@
 = rest-graph changes history
 
 == rest-graph ?
+
 * Introduce RestGraph#multi to do multiple api call concurrently.
   to use this feature, you'll need to run RestGraph inside a eventmachine
   event loop and install em-http. (And you may want async-rack if you're
   doing rack application too.)
 
-== rest-graph 1.4.1 -- ?
+== rest-graph 1.5.1 -- ?
 
-* Added RestGraph#parse_signed_request!
+* [TestUtil] A collection of tools integrated with RR to ease the pain of
+             testing. There are 3 levels of tools to stub the result of
+             calling APIs. The highest level is TestUtil.login(1234) which
+             would stub a number of results to pretend the user 1234 is
+             logged-in.
 
-* Added RestGraph#url to generate desired API request URL,
+             The second level are the get/post/put/delete methods for
+             TestUtil. For example, to make rg.get('1234') return a
+             particular value (such as a hash {'a' => 1}), use
+             TestUtil.get('1234'){ {'a' => 1} } to set it up to return
+             the specified value (typically a hash).
+
+             The third level is for setting default_data and default_response
+             for TestUtil. The default_data is the default value for rg.data,
+             which includes the access_token and the user_id (uid). The
+             default_response is the response given by any RestGraph API call
+             (e.g. get, post) when no explicit response has been defined in
+             the second level.
+
+             To use TestUtil, remember to install RR (gem install rr) and
+             require 'rest-graph/test_util'. Then put
+             RestGraph::TestUtil.setup before any test case starts, and put
+             RestGraph::TestUtil.teardown after any test case ends. Setup
+             would stub default_data and default_response for you, and
+             teardown would remove any stubs on RestGraph. For Rails, you
+             might want to put these in test_helper.rb under "setup" and
+             "teardown" block, just as the name suggested. For bacon or
+             rspec style testing, these can be placed in the "before" and
+             "after" blocks.
+
+             In addition, you can get the API calls history via
+             RestGraph::TestUtil.history. This would get cleaned up in
+             RestGraph::TestUtil.teardown as well.
+
+== rest-graph 1.5.0 -- 2010-10-11
+
+* [RestGraph] Make sure RestGraph::Error#message is string, that way,
+              irb could print out error message correctly. Introduced
+              RestGraph::Error#error for original error hash. Thanks Bluce.
+
+* [RestGraph] Make RestGraph#inspect honor default attributes, see:
+http://groups.google.com/group/rest-graph/browse_thread/thread/7ad5c81fbb0334e8
+
+* [RestGraph] Introduced RestGraph::Error::AccessToken,
+                         RestGraph::Error::InvalidAccessToken,
+                         RestGraph::Error::MissingAccessToken.
+              RestGraph::Error::AccessToken is the parent of the others,
+              and RestGraph::Error is the parent of all above.
+
+* [RestGraph] Add RestGraph#next_page and RestGraph#prev_page.
+              To get next page for a result from Facebook, example:
+
+                rg.next_page(rg.get('me/feed'))
+
+* [RestGraph] Add RestGraph#for_pages that would crawl from page 1 to
+              a number of pages you specified. For example, this might
+              crawl down all the feeds:
+
+                rg.for_pages(rg.get('me/feed'), 1000)
+
+* [RestGraph] Added RestGraph#secret_old_rest, see:
+http://www.nivas.hr/blog/2010/09/03/facebook-php-sdk-access-token-signing-bug/
+
+If you're getting this error from calling old_rest:
+
+  The method you are calling or the FQL table you are querying cannot be
+  called using a session secret or by a desktop application.
+
+Then try secret_old_rest instead. The problem is that the access_token
+should be formatted by "#{app_id}|#{secret}" instead of the usual one.
+
+* [RestGraph] Added RestGraph#strict.
+              In some API, e.g. admin.getAppProperties, Facebook returns
+              broken JSON, which is double encoded, and is not a well-formed
+              JSON. That case, we'll need to double parse the JSON to get
+              the correct result. For example, Facebook might return this:
+
+                "{\"app_id\":\"123\"}"
+
+              instead of the correct one:
+
+                {"app_id":"123"}
+
+              P.S. This doesn't matter for people who don't use :auto_decode.
+              So under non-strict mode, which is the default, rest-graph
+              would handle this for you.
+
+* [RestGraph] Fallback to ruby-hmac gem if we have an old openssl lib when
+              parsing signed_request which requires HMAC SHA256.
+              (e.g. Mac OS 10.5) Thanks Barnabas Debreczeni!
+
+* [RailsUtil] Only rescue RestGraph::Error::AccessToken in controller,
+              make other errors raise through.
+
+* [RailsUtil] Remove bad fbs in cookies when doing new authorization.
+* [RailsUtil] Make signed_request and session higher priority than
+              fbs in cookies. Since Facebook is not deleting bad fbs,
+              I guess? Thanks Barnabas Debreczeni!
+
+* [RailsUtil] URI.encode before URI.parse for broken URL Facebook passed.
+
+== rest-graph 1.4.6 -- 2010-09-01
+
+* [RestGraph] Now it will try to pick yajl-ruby or json gem from memory first,
+              if it's not there, then try to load one and try to pick one
+              again. This way, it won't force you to load two gems at the
+              same time if you've installed them both. In addition, there's
+              a bug in yajl/json_gem pointed out at:
+              http://github.com/brianmario/yajl-ruby/issues/31
+              So we're using Nicolas' patch to use yajl directly to workaround
+              this issue when we've chosen yajl-ruby json backend.
+
+* [RestGraph] Only cache GET request, don't cache POST/PUT/DELETE
+
+* [RestGrahp] Add RestGraph#lighten and RestGraph#lighten! to remove any
+              handler and cache object to make it serializable.
+
+* [RailsUtil] Add ensure_authorized option which enforces the user has
+              authorized to the application.
+
+* [RailsUtil] Unified rest_graph_storage_key, which used in cookies/session
+              storage, and the key would depend on app_id, just like Facebook
+              JavaScript SDK which use fbs_[app_id] as the name of cookie.
+              This way, you are able to run different applications with
+              different permissions in one Rails application.
+
+* [RailsUtil] Now rest_graph_authorize defaults to do redirect.
+              Previously, you'll need to use:
+                `rest_graph_authorize(message, true)`
+              Now it's:
+                `rest_graph_authorize(message)`
+
+== rest-graph 1.4.5 -- 2010-08-07
+
+* [RestGraph] Treat oauth_token as access_token as well. This came from
+              Facebook's new signed_request. Why didn't they choose
+              consistent name? Why different signature algorithm?
+
+* [RailsUtil] Fixed a bug that didn't reject signed_request in redirect_uri.
+              Now code, session, and signed_request are rejected.
+
+* [RailsUtil] Added write_handler and check_handler option to write/check
+              fbs with user code, instead of using sessions/cookies.
+              That way, you can save fbs into memcache or somewhere.
+
+== rest-graph 1.4.4 -- 2010-08-06
+
+* [RailsUtil] Fixed a bug that empty query appends a question mark,
+              that confuses Facebook, so that redirect_uri didn't match.
+
+== rest-graph 1.4.3 -- 2010-08-06
+
+* [RestGraph] Fixed a bug in RestGraph#fbs, which didn't join '&'.
+              Thanks, Andrew.
+
+* [RailsUtil] Fixed a bug that wrongly rewrites request URI.
+              Previously it is processed by regular expressions,
+              now we're using URI.parse to handle this. Closed #4.
+              Thanks, Justin.
+
+* [RailsUtil] Favor Request#fullpath over Request#request_uri,
+              which came from newer Rack and thus for Rails 3.
+
+== rest-graph 1.4.2 -- 2010-08-05
+
+* [RestGraph] Added RestGraph#fbs to generate fbs with correct sig,
+              to be used for future parse_fbs! See the bug in RailsUtil.
+
+* [RailsUtil] Added iframe and write_cookies option.
+* [RailsUtil] Fixed a bug that write_session didn't parse because parse_fbs!
+              reject the fbs due to missing sig.
+* [RailsUtil] Fixed a bug that in Rails 3, must call safe_html to prevent
+              unintended HTML escaping. Thanks, Justin.
+
+* Thanks a lot, Andrew.
+
+== rest-graph 1.4.1 -- 2010-08-04
+
+* [RestGraph] Call error_handler when response contains error_code as well,
+  which came from FQL response. Thanks Florent.
+
+* [RestGraph] Added RestGraph#parse_signed_request!
+
+* [RestGraph] Added RestGraph#url to generate desired API request URL,
   in case you'll want to use different HTTP client, such as em-http-request,
   or pass the API request to different process of data fetcher.
 
+* [RestGraph] Added an :cache option that allow you to pass a cache
+  object, which should respond to [] and []= for reading and writing.
+  The cache key would be MD5 hexdigest from the URL being called.
+  pass :cache => Rails.cache to rest_graph_setup when using RailsUtil.
+
+* [RailsUtil] Pass :cache => Rails.cache to rest_graph_setup to enable caching.
 * [RailsUtil] Favor signed_request over session in rest_graph_setup
+* [RailsUtil] Now it's possible to setup all options in rest-graph.yaml.
 
 == rest-graph 1.4.0 -- 2010-07-15
 
