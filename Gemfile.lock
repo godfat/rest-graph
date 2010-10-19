@@ -3,9 +3,9 @@ GEM
   specs:
     addressable (2.2.2)
     bacon (1.1.0)
-    bones (3.4.7)
+    bones (3.5.0)
       little-plugger (>= 1.1.2)
-      loquacious (>= 1.6.4)
+      loquacious (>= 1.7.0)
       rake (>= 0.8.7)
     crack (0.1.8)
     json (1.4.6)
