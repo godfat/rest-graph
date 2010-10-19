@@ -12,7 +12,7 @@ describe RestGraph do
   end
 
   after do
-    reset_webmock
+    WebMock.reset_webmock
   end
 
   should 'return correct oauth url' do

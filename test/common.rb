@@ -11,7 +11,7 @@ require 'bacon'
 require 'yaml'
 
 include RR::Adapters::RRMethods
-include WebMock
+include WebMock::API
 WebMock.disable_net_connect!
 Bacon.summary_on_exit
 

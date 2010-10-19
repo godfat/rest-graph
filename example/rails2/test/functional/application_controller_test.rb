@@ -5,7 +5,7 @@ require 'webmock'
 WebMock.disable_net_connect!
 
 class ApplicationControllerTest < ActionController::TestCase
-  include WebMock
+  include WebMock::API
 
   def setup
     body = rand(2) == 0 ? '{"error":{"type":"OAuthException"}}' :
@@ -16,7 +16,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def teardown
-    reset_webmock
+    WebMock.reset_webmock
   end
 
   def test_index
@@ -87,7 +87,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_cache
-    reset_webmock
+    WebMock.reset_webmock
     stub_request(:get, 'https://graph.facebook.com/cache').
       to_return(:body => '{"message":"ok"}')
 
@@ -97,7 +97,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_handler
-    reset_webmock
+    WebMock.reset_webmock
     stub_request(:get, 'https://graph.facebook.com/me?access_token=aloha').
       to_return(:body => '["snowman"]')
 
@@ -110,7 +110,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_session
-    reset_webmock
+    WebMock.reset_webmock
     stub_request(:get, 'https://graph.facebook.com/me?access_token=wozilla').
       to_return(:body => '["fireball"]')
 
@@ -123,7 +123,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_cookies
-    reset_webmock
+    WebMock.reset_webmock
     stub_request(:get, 'https://graph.facebook.com/me?access_token=blizzard').
       to_return(:body => '["yeti"]')
 
