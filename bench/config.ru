@@ -8,13 +8,32 @@ require 'async-rack'
 
 require 'rest-graph'
 
-use ContentType
-use Reloader
+use Rack::ContentType
+use Rack::Reloader
 
-run Builder.new{
+module RG
+  module_function
+  def create env
+    RestGraph.new(:log_handler =>
+      RG.method(:log).to_proc.curry[env['rack.logger']])
+  end
+
+  def log logger, event
+    message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
+    case event
+      when RestGraph::Event::Requested
+        logger.debug(message + "requesting #{event.url}")
+
+      when RestGraph::Event::CacheHit
+        logger.debug(message + "cache hit' #{event.url}")
+    end
+  end
+end
+
+run Rack::Builder.new{
   map('/async'){
     run lambda{ |env|
-      RestGraph.new.multi(*([[:get, id]]*times)){ |r|
+      RG.create(env).multi(*([[:get, id]]*times)){ |r|
         env['async.callback'].call [200, {}, r.map(&:inspect)]
       }
       throw :async
@@ -22,7 +41,7 @@ run Builder.new{
   }
   map('/sync'){
     run lambda{ |env|
-      [200, {}, (0...times).map{ RestGraph.new.get(id) }.map(&:inspect)]
+      [200, {}, (0...times).map{ RG.create(env).get(id) }.map(&:inspect)]
     }
   }
 }
