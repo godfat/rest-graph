@@ -1,5 +1,5 @@
 
-id = 'spellbook'
+id = '4'
 times = 10
 require 'open-uri'
 
