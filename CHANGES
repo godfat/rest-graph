@@ -1,12 +1,5 @@
 = rest-graph changes history
 
-== rest-graph ?
-
-* Introduce RestGraph#multi to do multiple api call concurrently.
-  to use this feature, you'll need to run RestGraph inside a eventmachine
-  event loop and install em-http. (And you may want async-rack if you're
-  doing rack application too.)
-
 == rest-graph 1.5.1 -- ?
 
 * [TestUtil] A collection of tools integrated with RR to ease the pain of
@@ -42,6 +35,11 @@
              In addition, you can get the API calls history via
              RestGraph::TestUtil.history. This would get cleaned up in
              RestGraph::TestUtil.teardown as well.
+
+* [RestGraph] Introduce RestGraph#multi to do multiple api call concurrently.
+              to use this feature, you'll need to run RestGraph inside an
+              eventmachine event loop and install em-http. (And you may want
+              async-rack if you're doing rack application too.)
 
 == rest-graph 1.5.0 -- 2010-10-11
 
