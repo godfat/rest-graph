@@ -19,7 +19,7 @@ describe RestGraph do
       rg.send(kind, {'paging' => []}).should == nil
       rg.send(kind, {'paging' => {}}).should == nil
 
-      mock(rg).request({}, [:get, 'zzz']){ ['ok'] }
+      mock(rg).request({}, [:get, 'zzz']){ 'ok' }
       rg.send(kind, {'paging' => {type => 'zzz'}}).should == 'ok'
     }
   end
@@ -37,17 +37,17 @@ describe RestGraph do
 
       (2..4).each{ |pages|
         # merge data
-        mock(rg).request({}, [:get, 'zzz']){ [{'data' => ['y']}] }
+        mock(rg).request({}, [:get, 'zzz']){ {'data' => ['y']} }
         rg.for_pages(data, pages, kind).should == {'data' => %w[z y]}
 
         # this data cannot be merged
-        mock(rg).request({}, [:get, 'zzz']){ [{'data' => 'y'}] }
+        mock(rg).request({}, [:get, 'zzz']){ {'data' => 'y'} }
         rg.for_pages(data, pages, kind).should == {'data' => %w[z]}
       }
 
-      mock(rg).request({}, [:get, 'zzz']){ [{'paging' => {type => 'yyy'},
-                                             'data' => ['y']}] }
-      mock(rg).request({}, [:get, 'yyy']){ [{'data' => ['x']}] }
+      mock(rg).request({}, [:get, 'zzz']){ {'paging' => {type => 'yyy'},
+                                            'data' => ['y']} }
+      mock(rg).request({}, [:get, 'yyy']){ {'data' => ['x']} }
       rg.for_pages(data, 3, kind).should == {'data' => %w[z y x]}
     }
   end
