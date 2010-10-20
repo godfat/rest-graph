@@ -32,4 +32,16 @@ run Rack::Builder.new{
       [200, {}, (0...times).map{ RG.create(env).get(id) }.map(&:inspect)]
     }
   }
+  map('/'){
+    run lambda{ |env|
+      [200, {'Content-Type' => 'text/html'},
+        [<<-HTML
+<html><body>
+  go to <a href="/async">/async</a> for em-http-request (multi) result,<br/>
+  go to <a href="/sync">/sync</a> for rest-client result.<br/>
+</body></html>
+HTML
+        ]]
+    }
+  }
 }
