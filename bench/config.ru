@@ -14,19 +14,7 @@ use Rack::Reloader
 module RG
   module_function
   def create env
-    RestGraph.new(:log_handler =>
-      RG.method(:log).to_proc.curry[env['rack.logger']])
-  end
-
-  def log logger, event
-    message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
-    case event
-      when RestGraph::Event::Requested
-        logger.debug(message + "requesting #{event.url}")
-
-      when RestGraph::Event::CacheHit
-        logger.debug(message + "cache hit' #{event.url}")
-    end
+    RestGraph.new(:log_method => env['rack.logger'].method(:debug))
   end
 end
 

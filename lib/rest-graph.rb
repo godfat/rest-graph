@@ -279,13 +279,12 @@ class RestGraph < RestGraphStruct
       EM::HttpRequest.new(graph_server + path).
         send(method, {:query => query}.merge(opts)){ |c|
           c.callback{
-            log_handler.call(
-              Event::Requested.new(Time.now - start_time, c.uri))
+            log(Event::Requested.new(Time.now - start_time, c.uri))
           }
         }
     }
     EM::MultiRequest.new(reqs){ |m|
-      log_handler.call(Event::Requested.new(Time.now - start_time,
+      log(Event::Requested.new(Time.now - start_time,
         m.responses.values.flatten.map(&:uri).join(', ')))
 
       yield(m.responses.values.flatten.map(&:response).
