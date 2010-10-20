@@ -259,13 +259,13 @@ class RestGraph < RestGraphStruct
     multi([:delete, path, query, opts]){ |results| yield(results.first) }
   end
 
-  def apost   path, payload, query={}, opts={}
+  def apost   path, payload={}, query={}, opts={}
     multi([:post,   path, query, {:body => payload}.merge(opts)]){ |results|
       yield(results.first)
     }
   end
 
-  def aput    path, payload, query={}, opts={}
+  def aput    path, payload={}, query={}, opts={}
     multi([:put,    path, query, {:body => payload}.merge(opts)]){ |results|
       yield(results.first)
     }
