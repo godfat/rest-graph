@@ -15,7 +15,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2010-10-19 00:00:00 +08:00
+date: 2010-10-20 00:00:00 +08:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -31,12 +31,27 @@ dependencies:
         - 6
         - 1
         version: 1.6.1
-  type: :runtime
+  type: :development
   version_requirements: *id001
+- !ruby/object:Gem::Dependency 
+  name: em-http-request
+  prerelease: false
+  requirement: &id002 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 0
+        - 2
+        - 14
+        version: 0.2.14
+  type: :development
+  version_requirements: *id002
 - !ruby/object:Gem::Dependency 
   name: rack
   prerelease: false
-  requirement: &id002 !ruby/object:Gem::Requirement 
+  requirement: &id003 !ruby/object:Gem::Requirement 
     none: false
     requirements: 
     - - ">="
@@ -47,11 +62,11 @@ dependencies:
         - 1
         version: 1.2.1
   type: :development
-  version_requirements: *id002
+  version_requirements: *id003
 - !ruby/object:Gem::Dependency 
   name: yajl-ruby
   prerelease: false
-  requirement: &id003 !ruby/object:Gem::Requirement 
+  requirement: &id004 !ruby/object:Gem::Requirement 
     none: false
     requirements: 
     - - ">="
@@ -62,24 +77,9 @@ dependencies:
         - 8
         version: 0.7.8
   type: :development
-  version_requirements: *id003
-- !ruby/object:Gem::Dependency 
-  name: json
-  prerelease: false
-  requirement: &id004 !ruby/object:Gem::Requirement 
-    none: false
-    requirements: 
-    - - ">="
-      - !ruby/object:Gem::Version 
-        segments: 
-        - 1
-        - 4
-        - 6
-        version: 1.4.6
-  type: :development
   version_requirements: *id004
 - !ruby/object:Gem::Dependency 
-  name: json_pure
+  name: json
   prerelease: false
   requirement: &id005 !ruby/object:Gem::Requirement 
     none: false
@@ -94,9 +94,24 @@ dependencies:
   type: :development
   version_requirements: *id005
 - !ruby/object:Gem::Dependency 
-  name: ruby-hmac
+  name: json_pure
   prerelease: false
   requirement: &id006 !ruby/object:Gem::Requirement 
+    none: false
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        segments: 
+        - 1
+        - 4
+        - 6
+        version: 1.4.6
+  type: :development
+  version_requirements: *id006
+- !ruby/object:Gem::Dependency 
+  name: ruby-hmac
+  prerelease: false
+  requirement: &id007 !ruby/object:Gem::Requirement 
     none: false
     requirements: 
     - - ">="
@@ -107,11 +122,11 @@ dependencies:
         - 0
         version: 0.4.0
   type: :development
-  version_requirements: *id006
+  version_requirements: *id007
 - !ruby/object:Gem::Dependency 
   name: rr
   prerelease: false
-  requirement: &id007 !ruby/object:Gem::Requirement 
+  requirement: &id008 !ruby/object:Gem::Requirement 
     none: false
     requirements: 
     - - ">="
@@ -122,11 +137,11 @@ dependencies:
         - 0
         version: 1.0.0
   type: :development
-  version_requirements: *id007
+  version_requirements: *id008
 - !ruby/object:Gem::Dependency 
   name: webmock
   prerelease: false
-  requirement: &id008 !ruby/object:Gem::Requirement 
+  requirement: &id009 !ruby/object:Gem::Requirement 
     none: false
     requirements: 
     - - ">="
@@ -137,11 +152,11 @@ dependencies:
         - 0
         version: 1.4.0
   type: :development
-  version_requirements: *id008
+  version_requirements: *id009
 - !ruby/object:Gem::Dependency 
   name: bacon
   prerelease: false
-  requirement: &id009 !ruby/object:Gem::Requirement 
+  requirement: &id010 !ruby/object:Gem::Requirement 
     none: false
     requirements: 
     - - ">="
@@ -152,11 +167,11 @@ dependencies:
         - 0
         version: 1.1.0
   type: :development
-  version_requirements: *id009
+  version_requirements: *id010
 - !ruby/object:Gem::Dependency 
   name: bones
   prerelease: false
-  requirement: &id010 !ruby/object:Gem::Requirement 
+  requirement: &id011 !ruby/object:Gem::Requirement 
     none: false
     requirements: 
     - - ">="
@@ -167,7 +182,7 @@ dependencies:
         - 0
         version: 3.5.0
   type: :development
-  version_requirements: *id010
+  version_requirements: *id011
 description: A super simple Facebook Open Graph API client
 email: dev (XD) cardinalblue.com
 executables: []
@@ -183,6 +198,7 @@ extra_rdoc_files:
 - LICENSE
 - README
 - TODO
+- bench/config.ru
 - rest-graph.gemspec
 files: 
 - .specification
@@ -195,6 +211,8 @@ files:
 - README.rdoc
 - Rakefile
 - TODO
+- bench/config.ru
+- bench/rainbows.rb
 - example/rails2/README
 - example/rails2/Rakefile
 - example/rails2/app/controllers/application_controller.rb
@@ -231,6 +249,7 @@ files:
 - test/test_handler.rb
 - test/test_load_config.rb
 - test/test_misc.rb
+- test/test_multi.rb
 - test/test_oauth.rb
 - test/test_old.rb
 - test/test_page.rb
@@ -279,6 +298,7 @@ test_files:
 - test/test_handler.rb
 - test/test_load_config.rb
 - test/test_misc.rb
+- test/test_multi.rb
 - test/test_oauth.rb
 - test/test_old.rb
 - test/test_page.rb

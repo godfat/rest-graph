@@ -15,10 +15,10 @@ Bones{
 
   version RestGraph::VERSION
 
-  depend_on 'rest-client'
-
+  depend_on 'rest-client'    , :development => true
   depend_on 'em-http-request', :development => true
-  depend_on 'rack'           , :development => true
+
+  depend_on 'rack'     , :development => true
 
   depend_on 'yajl-ruby', :development => true
   depend_on 'json'     , :development => true

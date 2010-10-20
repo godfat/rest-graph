@@ -8,6 +8,10 @@ GEM
       loquacious (>= 1.7.0)
       rake (>= 0.8.7)
     crack (0.1.8)
+    em-http-request (0.2.14)
+      addressable (>= 2.0.0)
+      eventmachine (>= 0.12.9)
+    eventmachine (0.12.10)
     json (1.4.6)
     json_pure (1.4.6)
     little-plugger (1.1.2)
@@ -30,10 +34,11 @@ PLATFORMS
 DEPENDENCIES
   bacon
   bones
+  em-http-request
   json
   json_pure
   rack
-  rest-client
+  rest-client (>= 1.6)
   rr
   ruby-hmac
   webmock

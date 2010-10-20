@@ -1,9 +1,11 @@
 
 source 'http://rubygems.org'
 
-gem 'rest-client'
-
 group :test do
+  # pick one http client
+  gem 'rest-client', '>=1.6'
+  gem 'em-http-request'
+
   # optional
   gem 'rack'
 
