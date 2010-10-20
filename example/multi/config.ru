@@ -2,11 +2,7 @@
 id = '4'
 times = 10
 
-require 'em-http-request'
-require 'rest-client'
-
 require 'async-rack'
-
 require 'rest-graph'
 
 use Rack::ContentType

@@ -1,17 +1,16 @@
 
-# gem
-require 'rest_client'
+# optional http client
+begin; require 'restclient'     ; rescue LoadError; end
+begin; require 'em-http-request'; rescue LoadError; end
+
+# optional gem
+begin; require 'rack'           ; rescue LoadError; end
 
 # stdlib
 require 'digest/md5'
 require 'openssl'
 
 require 'cgi'
-
-# optional gem
-begin
-  require 'rack'
-rescue LoadError; end
 
 # the data structure used in RestGraph
 RestGraphStruct = Struct.new(:auto_decode, :strict,
