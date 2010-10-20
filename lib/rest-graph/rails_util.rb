@@ -136,7 +136,7 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_options_new
-    @rest_graph_options_new ||= {:log_handler => method(:rest_graph_log)}
+    @rest_graph_options_new ||= {:log_method => logger.method(:debug)}
   end
   # ==================== end options utility =======================
 
@@ -268,17 +268,6 @@ module RestGraph::RailsUtil
 
 
   # ==================== begin misc ================================
-  def rest_graph_log event
-    message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
-    case event
-      when RestGraph::Event::Requested
-        logger.debug(message + "requesting #{event.url}")
-
-      when RestGraph::Event::CacheHit
-        logger.debug(message + "cache hit' #{event.url}")
-    end
-  end
-
   def rest_graph_normalized_request_uri
     uri = URI.encode(
             if rest_graph_in_canvas?

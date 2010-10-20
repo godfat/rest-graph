@@ -74,7 +74,8 @@ describe RestGraph do
                       ' secret=nil,'                                 \
                       ' data=\{\},'                                  \
                       ' cache=nil,'                                  \
-                      ' error_handler=#<Proc:.+>,'                   \
-                      ' log_handler=nil>')
+                      ' log_method=nil,'                             \
+                      ' log_handler=nil,'                            \
+                      ' error_handler=#<Proc:.+>>')
   end
 end
