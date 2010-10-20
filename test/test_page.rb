@@ -32,24 +32,24 @@ describe RestGraph do
 
       # invalid pages or just the page itself
       (-1..1).each{ |page|
-        rg.for_pages(data, page, kind).should == data
+        rg.for_pages(data, page, {}, kind).should == data
       }
 
       (2..4).each{ |pages|
         # merge data
         stub_request(:get, 'zzz').to_return(:body => '{"data":["y"]}')
-        rg.for_pages(data, pages, kind).should == {'data' => %w[z y]}
+        rg.for_pages(data, pages, {}, kind).should == {'data' => %w[z y]}
 
         # this data cannot be merged
         stub_request(:get, 'zzz').to_return(:body => '{"data":"y"}')
-        rg.for_pages(data, pages, kind).should == {'data' => %w[z]}
+        rg.for_pages(data, pages, {}, kind).should == {'data' => %w[z]}
       }
 
       stub_request(:get, 'zzz').to_return(:body =>
         '{"paging":{"'+type+'":"yyy"},"data":["y"]}')
       stub_request(:get, 'yyy').to_return(:body => '{"data":["x"]}')
 
-      rg.for_pages(data, 3, kind).should == {'data' => %w[z y x]}
+      rg.for_pages(data, 3, {}, kind).should == {'data' => %w[z y x]}
     }
   end
 end
