@@ -43,4 +43,16 @@ describe 'RestGraph#multi' do
       }
     }
   end
+
+  # should 'for_pages with :async => true' do
+  # end
+  #
+  # should 'cache in multi' do
+  # end
+  #
+  # should 'logging' do
+  # end
+  #
+  # should 'error handler?' do
+  # end
 end
