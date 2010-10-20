@@ -234,75 +234,62 @@ class RestGraph < RestGraphStruct
   end
 
   def get    path, query={}, opts={}
-    request(:get   , url(path, query, graph_server), opts)
+    request(opts, [:get   , url(path, query, graph_server)])
   end
 
   def delete path, query={}, opts={}
-    request(:delete, url(path, query, graph_server), opts)
+    request(opts, [:delete, url(path, query, graph_server)])
   end
 
   def post   path, payload={}, query={}, opts={}
-    request(:post  , url(path, query, graph_server), opts, payload)
+    request(opts, [:post  , url(path, query, graph_server), payload])
   end
 
   def put    path, payload={}, query={}, opts={}
-    request(:put   , url(path, query, graph_server), opts, payload)
+    request(opts, [:put   , url(path, query, graph_server), payload])
   end
 
   # request by eventmachine (em-http)
 
   def aget    path, query={}, opts={}
-    multi([:get,    path, query, opts]){ |results| yield(results.first) }
+    multi([[:get,    path, query]], opts){ |results| yield(results.first) }
   end
 
   def adelete path, query={}, opts={}
-    multi([:delete, path, query, opts]){ |results| yield(results.first) }
+    multi([[:delete, path, query]], opts){ |results| yield(results.first) }
   end
 
   def apost   path, payload={}, query={}, opts={}
-    multi([:post,   path, query, {:body => payload}.merge(opts)]){ |results|
+    multi([[:post,   path, query, payload]], opts){ |results|
       yield(results.first)
     }
   end
 
   def aput    path, payload={}, query={}, opts={}
-    multi([:put,    path, query, {:body => payload}.merge(opts)]){ |results|
+    multi([[:put,    path, query, payload]], opts){ |results|
       yield(results.first)
     }
   end
 
-  def multi *requests
-    start_time = Time.now
-    reqs = requests.map{ |(method, path, query, opts)|
-      query ||= {}; opts ||= {}
-      EM::HttpRequest.new(graph_server + path).
-        send(method, {:query => query}.merge(opts)){ |c|
-          c.callback{
-            log(Event::Requested.new(Time.now - start_time, c.uri))
-          }
-        }
-    }
-    EM::MultiRequest.new(reqs){ |m|
-      log(Event::Requested.new(Time.now - start_time,
-        m.responses.values.flatten.map(&:uri).join(', ')))
-
-      yield(m.responses.values.flatten.map(&:response).
-              map(&method(:post_request)))
-    }
+  def multi reqs, opts={}, &callback
+    request({:async => true}.merge(opts),
+      *reqs.map{ |(meth, path, query, payload)|
+        [meth, url(path, query || {}, graph_server), payload]
+      }, &callback)
   end
 
 
 
 
 
-  def next_page hash, opts={}
+  def next_page hash, opts={}, &callback
     return unless hash['paging'].kind_of?(Hash) && hash['paging']['next']
-    request(:get, hash['paging']['next']    , opts)
+    request(opts, [:get, hash['paging']['next']], &callback)
   end
 
-  def prev_page hash, opts={}
+  def prev_page hash, opts={}, &callback
     return unless hash['paging'].kind_of?(Hash) && hash['paging']['previous']
-    request(:get, hash['paging']['previous'], opts)
+    request(opts, [:get, hash['paging']['previous']], &callback)
   end
   alias_method :previous_page, :prev_page
 
@@ -372,8 +359,8 @@ class RestGraph < RestGraphStruct
   def authorize! opts={}
     query = {:client_id => app_id, :client_secret => secret}.merge(opts)
     self.data = Rack::Utils.parse_query(
-                  request(:get, url('oauth/access_token', query),
-                          :suppress_decode => true))
+                  request({:suppress_decode => true}.merge(opts),
+                          [:get, url('oauth/access_token', query)]))
   end
 
 
@@ -384,9 +371,9 @@ class RestGraph < RestGraphStruct
 
   def old_rest path, query={}, opts={}
     request(
-      :get,
-      url("method/#{path}", {:format => 'json'}.merge(query), old_server),
-      opts)
+      opts,
+      [:get,
+      url("method/#{path}", {:format => 'json'}.merge(query), old_server)])
   end
 
   def secret_old_rest path, query={}, opts={}
@@ -394,10 +381,10 @@ class RestGraph < RestGraphStruct
   end
   alias_method :broken_old_rest, :secret_old_rest
 
-  def exchange_sessions opts={}
-    query = {:client_id => app_id, :client_secret => secret,
-             :type => 'client_cred'}.merge(opts)
-    request(:post, url('oauth/exchange_sessions', query))
+  def exchange_sessions query={}, opts={}, &callback
+    q = {:client_id => app_id, :client_secret => secret,
+         :type => 'client_cred'}.merge(query)
+    request(opts, [:post, url('oauth/exchange_sessions', q)], &callback)
   end
 
   def fql code, query={}, opts={}
@@ -414,11 +401,41 @@ class RestGraph < RestGraphStruct
 
 
   private
-  def request meth, uri, opts={}, payload=nil
+  def request opts, *reqs, &callback
+    if opts[:async]
+      request_em(opts, reqs, &callback)
+    else
+      request_rc(opts, *reqs.first, &callback)
+    end
+  end
+
+  def request_em opts, reqs
     start_time = Time.now
-    post_request(cache_get(uri) || fetch(meth, uri, payload), opts)
+    rs = reqs.map{ |(meth, uri, payload)|
+      r = EM::HttpRequest.new(uri).send(meth, :body => payload){ |c|
+        c.callback{ log(Event::Requested.new(Time.now - start_time, uri)) }
+      }
+      if cached = cache_get(uri)
+        r.instance_variable_set('@response', cached)
+        r.succeed
+        EM.next_tick{ r.succeed }
+      end
+      r
+    }
+    EM::MultiRequest.new(rs){ |m|
+      log(Event::Requested.new(Time.now - start_time,
+        m.responses.values.flatten.map(&:uri).join(', ')))
+
+      yield(m.responses.values.flatten.map(&:response).
+              map(&method(:post_request)))
+    }
+  end
+
+  def request_rc opts, meth, uri, payload=nil, &cb
+    start_time = Time.now
+    post_request(cache_get(uri) || fetch(meth, uri, payload), opts, &cb)
   rescue RestClient::Exception => e
-    post_request(e.http_body, opts)
+    post_request(e.http_body, opts, &cb)
   ensure
     log(Event::Requested.new(Time.now - start_time, uri))
   end
@@ -437,16 +454,16 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, opts={}
+  def post_request result, opts={}, &callback
     if auto_decode && !opts[:suppress_decode]
       decoded = self.class.json_decode("[#{result}]").first
       check_error(if strict || !decoded.kind_of?(String)
                     decoded
                   else
                     self.class.json_decode(decoded)
-                  end)
+                  end, &callback)
     else
-      result
+      block_given? ? yield(result) : result
     end
   end
 
@@ -460,7 +477,7 @@ class RestGraph < RestGraphStruct
         hash['error_code']) # from fql
       error_handler.call(hash)
     else
-      hash
+      block_given? ? yield(hash) : hash
     end
   end
 

@@ -14,13 +14,11 @@ describe 'RestGraph#multi' do
   end
 
   should 'do multi query with em-http-request' do
-    # TODO: wait for Addressable::URI#normalize! remove trailing ?
-    # http://github.com/sporkmonger/addressable/issues/5
-    url = 'https://graph.facebook.com/me?'
+    url = 'https://graph.facebook.com/me'
     stub_request(:get, url).to_return(:body => '{"data":"get"}')
     stub_request(:put, url).to_return(:body => '{"data":"put"}')
     EM.run{
-      RestGraph.new.multi([:get, 'me'], [:put, 'me']){ |results|
+      RestGraph.new.multi([[:get, 'me'], [:put, 'me']]){ |results|
         results.should == [{'data' => 'get'}, {'data' => 'put'}]
         EM.stop
       }
@@ -28,7 +26,7 @@ describe 'RestGraph#multi' do
   end
 
   should 'call aget, aput family with multi' do
-    url = 'https://graph.facebook.com/me?'
+    url = 'https://graph.facebook.com/me'
     %w[aget adelete apost aput].each{ |meth|
       stub_request("#{meth[1..-1]}".to_sym, url).
         to_return(:body => "{\"data\":\"#{meth}\"}")
