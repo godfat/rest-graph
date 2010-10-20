@@ -19,8 +19,9 @@ RestGraphStruct = Struct.new(:auto_decode, :strict,
                              :accept, :lang,
                              :app_id, :secret,
                              :data, :cache,
-                             :error_handler,
-                             :log_handler) unless defined?(::RestGraphStruct)
+                             :log_method,
+                             :log_handler,
+                             :error_handler) unless defined?(RestGraphStruct)
 
 class RestGraph < RestGraphStruct
   EventStruct = Struct.new(:duration, :url)           unless
@@ -93,11 +94,10 @@ class RestGraph < RestGraphStruct
     def default_secret      ; nil                          ; end
     def default_data        ; {}                           ; end
     def default_cache       ; nil                          ; end
+    def default_log_method  ; nil                          ; end
+    def default_log_handler ; nil                          ; end
     def default_error_handler
       lambda{ |error| raise ::RestGraph::Error.parse(error) }
-    end
-    def default_log_handler
-      lambda{ |event| }
     end
   end
   extend DefaultAttributes
@@ -208,7 +208,8 @@ class RestGraph < RestGraphStruct
   end
 
   def lighten!
-    [:cache, :error_handler, :log_handler].each{ |obj| send("#{obj}=", nil) }
+    [:cache, :log_method, :log_handler, :error_handler].each{ |obj|
+      send("#{obj}=", nil) }
     self
   end
 
@@ -217,7 +218,7 @@ class RestGraph < RestGraphStruct
   end
 
   def inspect
-    super.gsub(/(\w+)=([^,]+)/){ |match|
+    super.gsub(/(\w+)=([^,>]+)/){ |match|
       value = $2 == 'nil' ? self.class.send("default_#{$1}").inspect : $2
       "#{$1}=#{value}"
     }
@@ -374,7 +375,7 @@ class RestGraph < RestGraphStruct
   rescue RestClient::Exception => e
     post_request(e.http_body, opts)
   ensure
-    log_handler.call(Event::Requested.new(Time.now - start_time, uri))
+    log(Event::Requested.new(Time.now - start_time, uri))
   end
 
   def build_query_string query={}
@@ -434,8 +435,7 @@ class RestGraph < RestGraphStruct
     return unless cache
     start_time = Time.now
     cache[cache_key(uri)].tap{ |result|
-      log_handler.call(Event::CacheHit.new(Time.now - start_time, uri)) if
-        result
+      log(Event::CacheHit.new(Time.now - start_time, uri)) if result
     }
   end
 
@@ -455,5 +455,20 @@ class RestGraph < RestGraphStruct
     }
     lhs['data'].unshift(*rhs['data'])
     lhs
+  end
+
+  def log event
+    if log_handler
+      log_handler.call(event)
+    elsif log_method
+      message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
+      case event
+        when RestGraph::Event::Requested
+          log_method.call(message + "requesting #{event.url}")
+
+        when RestGraph::Event::CacheHit
+          log_method.call(message + "cache hit' #{event.url}")
+      end
+    end
   end
 end
