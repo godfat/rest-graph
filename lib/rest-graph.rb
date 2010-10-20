@@ -241,11 +241,11 @@ class RestGraph < RestGraphStruct
     request(:delete, url(path, query, graph_server), opts)
   end
 
-  def post   path, payload, query={}, opts={}
+  def post   path, payload={}, query={}, opts={}
     request(:post  , url(path, query, graph_server), opts, payload)
   end
 
-  def put    path, payload, query={}, opts={}
+  def put    path, payload={}, query={}, opts={}
     request(:put   , url(path, query, graph_server), opts, payload)
   end
 
