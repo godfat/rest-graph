@@ -289,13 +289,11 @@ class RestGraph < RestGraphStruct
   end
   alias_method :previous_page, :prev_page
 
-  def for_pages hash, pages=1, kind=:next_page, opts={}
+  def for_pages hash, pages=1, kind=:next_page, opts={}, &cb
     return hash if pages <= 1
-    if result = send(kind, hash, opts)
-      for_pages(merge_data(result, hash), pages - 1, kind, opts)
-    else
-      hash
-    end
+    send(kind, hash, opts){ |result|
+      for_pages(merge_data(result, hash), pages - 1, kind, opts, &cb)
+    } || hash
   end
 
 
