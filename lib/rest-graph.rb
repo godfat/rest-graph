@@ -420,7 +420,7 @@ class RestGraph < RestGraphStruct
         r.succeed
       else
         r.callback{
-          cache[cache_key(uri)] = r.response if cache && meth == :get
+          cache_for(uri, r.response, meth)
           log(Event::Requested.new(Time.now - start_time, uri))
         }
       end
@@ -510,13 +510,15 @@ class RestGraph < RestGraphStruct
     }
   end
 
+  def cache_for uri, result, meth
+    cache[cache_key(uri)] = result if cache && meth == :get
+  end
+
   def fetch meth, uri, payload
     RestClient::Request.execute(:method => meth, :url => uri,
                                 :headers => build_headers,
                                 :payload => payload).body.
-      tap{ |result|
-        cache[cache_key(uri)] = result if cache && meth == :get
-      }
+      tap{ |result| cache_for(uri, result, meth) }
   end
 
   def merge_data lhs, rhs
