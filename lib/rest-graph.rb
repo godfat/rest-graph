@@ -426,7 +426,6 @@ class RestGraph < RestGraphStruct
                   map(&method(:post_request))
       yield(results.size == 1 ? results.first : results)
     }
-    []
   end
 
   def request_rc opts, meth, uri, payload=nil, &cb
