@@ -414,13 +414,15 @@ class RestGraph < RestGraphStruct
   def request_em opts, reqs
     start_time = Time.now
     rs = reqs.map{ |(meth, uri, payload)|
-      r = EM::HttpRequest.new(uri).send(meth, :body => payload){ |c|
-        c.callback{ log(Event::Requested.new(Time.now - start_time, uri)) }
-      }
+      r = EM::HttpRequest.new(uri).send(meth, :body => payload)
       if cached = cache_get(uri)
         r.instance_variable_set('@response', cached)
         r.succeed
-        EM.next_tick{ r.succeed }
+      else
+        r.callback{
+          cache[cache_key(uri)] = r.response if cache && meth == :get
+          log(Event::Requested.new(Time.now - start_time, uri))
+        }
       end
       r
     }
