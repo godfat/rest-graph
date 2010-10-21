@@ -39,7 +39,6 @@ class RestGraph < RestGraphStruct
   class Event::CacheHit  < Event; end
 
   class Error < RuntimeError
-    class BadJson     < Error; end
     class AccessToken < Error; end
     class InvalidAccessToken < AccessToken; end
     class MissingAccessToken < AccessToken; end
@@ -47,7 +46,7 @@ class RestGraph < RestGraphStruct
     attr_reader :error, :url
     def initialize error, url
       @error, @url = error, url
-      super(error.inspect)
+      super("#{error.inspect} from #{url}")
     end
 
     module Util
@@ -478,7 +477,7 @@ class RestGraph < RestGraphStruct
       block_given? ? yield(result) : result
     end
   rescue ParseError => error
-    error_handler.call(Error::BadJson.new(error, uri)) if error_handler
+    error_handler.call(error, uri) if error_handler
   end
 
   def check_sig_and_return_data cookies

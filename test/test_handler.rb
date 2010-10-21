@@ -47,7 +47,8 @@ describe RestGraph do
         RestGraph.new.get('me')
       rescue ::RestGraph::Error => e
         e.error  .should == @error_hash
-        e.message.should == @error_hash.inspect
+        e.message.should ==
+          "#{@error_hash.inspect} from https://graph.facebook.com/me"
       end
     end
   end
@@ -81,7 +82,10 @@ describe RestGraph do
         RestGraph.new.fql(@bad_fql_query)
       rescue ::RestGraph::Error => e
         e.error  .should == @fql_error_hash
-        e.message.should == @fql_error_hash.inspect
+        e.message.should ==
+          "#{@fql_error_hash.inspect} from "                             \
+          "https://api.facebook.com/method/fql.query?format=json&query=" \
+          "#{CGI.escape(@bad_fql_query)}"
       end
     end
   end
