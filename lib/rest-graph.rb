@@ -416,8 +416,11 @@ class RestGraph < RestGraphStruct
     rs = reqs.map{ |(meth, uri, payload)|
       r = EM::HttpRequest.new(uri).send(meth, :body => payload)
       if cached = cache_get(uri)
+        # TODO: this is hack!!
         r.instance_variable_set('@response', cached)
-        r.succeed
+        r.instance_variable_set('@state'   , :finish)
+        r.on_request_complete
+        r.succeed(r)
       else
         r.callback{
           cache_for(uri, r.response, meth)
