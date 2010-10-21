@@ -433,6 +433,7 @@ class RestGraph < RestGraphStruct
       else
         log(Event::MultiDone.new(Time.now - start_time,
           clients.map(&:uri).join(', ')))
+        yield(results)
       end
     }
   end
