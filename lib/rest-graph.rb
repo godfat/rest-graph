@@ -520,7 +520,9 @@ class RestGraph < RestGraphStruct
   def log event
     if log_handler
       log_handler.call(event)
-    elsif log_method
+    end
+
+    if log_method
       message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
       case event
         when RestGraph::Event::Requested
