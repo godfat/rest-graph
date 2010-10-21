@@ -29,7 +29,11 @@ class RestGraph < RestGraphStruct
   Attributes  = RestGraphStruct.members.map(&:to_sym) unless
     defined?(::RestGraph::Attributes)
 
-  class Event < EventStruct; end
+  class Event < EventStruct
+    # self.class.name[/(?<=::)\w+$/] if RUBY_VERSION >= '1.9.2'
+    def name; self.class.name[/::\w+$/].tr(':', ''); end
+    def to_s; "RestGraph: spent #{sprintf('%f', duration)} #{name} #{url}";end
+  end
   class Event::MultiDone < Event; end
   class Event::Requested < Event; end
   class Event::CacheHit  < Event; end
@@ -522,19 +526,7 @@ class RestGraph < RestGraphStruct
   end
 
   def log event
-    if log_handler
-      log_handler.call(event)
-    end
-
-    if log_method
-      message = "DEBUG: RestGraph: spent #{sprintf('%f', event.duration)} "
-      case event
-        when RestGraph::Event::Requested
-          log_method.call(message + "requesting #{event.url}")
-
-        when RestGraph::Event::CacheHit
-          log_method.call(message + "cache hit' #{event.url}")
-      end
-    end
+    log_handler.call(event)             if log_handler
+    log_method .call("DEBUG: #{event}") if log_method
   end
 end
