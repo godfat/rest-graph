@@ -51,10 +51,11 @@ describe RestGraph do
   end
 
   should 'call post_request after request' do
-    stub_request(:put, 'https://graph.facebook.com/feed/me').
+    url = 'https://graph.facebook.com/feed/me'
+    stub_request(:put, url).
       with(:body => 'message=hi%20there').to_return(:body => '[]')
 
-    mock.proxy(rg = RestGraph.new).post_request('[]', {})
+    mock.proxy(rg = RestGraph.new).post_request('[]', url, {})
     rg.put('feed/me', :message => 'hi there').
       should == []
   end

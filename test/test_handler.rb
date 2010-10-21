@@ -30,7 +30,7 @@ describe RestGraph do
 
   describe 'with Graph API' do
     before do
-      @id    = lambda{ |obj| obj }
+      @id    = lambda{ |obj, url| obj }
       @error = '{"error":{"type":"Exception","message":"(#2500)"}}'
       @error_hash = RestGraph.json_decode(@error)
 
@@ -60,7 +60,7 @@ describe RestGraph do
     #                  {"key":"query","value":
     #                     "SELECT name FROM bad_table WHERE uid=12345"}]}
     before do
-      @id             = lambda{ |obj| obj }
+      @id             = lambda{ |obj, url| obj }
       @fql_error      = '{"error_code":603,"error_msg":"Unknown table: bad"}'
       @fql_error_hash = RestGraph.json_decode(@fql_error)
 

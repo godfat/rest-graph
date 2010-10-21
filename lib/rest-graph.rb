@@ -39,26 +39,27 @@ class RestGraph < RestGraphStruct
   class Event::CacheHit  < Event; end
 
   class Error < RuntimeError
+    class BadJson     < Error; end
     class AccessToken < Error; end
     class InvalidAccessToken < AccessToken; end
     class MissingAccessToken < AccessToken; end
 
-    attr_reader :error
-    def initialize error
-      @error = error
+    attr_reader :error, :url
+    def initialize error, url
+      @error, @url = error, url
       super(error.inspect)
     end
 
     module Util
       extend self
-      def parse error
-        return Error.new(error) unless error.kind_of?(Hash)
+      def parse error, url=''
+        return Error.new(error, url) unless error.kind_of?(Hash)
         if    invalid_token?(error)
-          InvalidAccessToken.new(error)
+          InvalidAccessToken.new(error, url)
         elsif missing_token?(error)
-          MissingAccessToken.new(error)
+          MissingAccessToken.new(error, url)
         else
-          Error.new(error)
+          Error.new(error, url)
         end
       end
 
@@ -101,7 +102,7 @@ class RestGraph < RestGraphStruct
     def default_log_method  ; nil                          ; end
     def default_log_handler ; nil                          ; end
     def default_error_handler
-      lambda{ |error| raise ::RestGraph::Error.parse(error) }
+      lambda{ |error, url| raise ::RestGraph::Error.parse(error, url) }
     end
   end
   extend DefaultAttributes
@@ -428,7 +429,9 @@ class RestGraph < RestGraphStruct
     }
     EM::MultiRequest.new(rs){ |m|
       clients = m.responses.values.flatten
-      results = clients.map(&:response).map(&method(:post_request))
+      results = clients.map{ |client|
+        post_request(client.response, client.uri)
+      }
 
       if results.size == 1
         yield(results.first)
@@ -442,9 +445,9 @@ class RestGraph < RestGraphStruct
 
   def request_rc opts, meth, uri, payload=nil, &cb
     start_time = Time.now
-    post_request(cache_get(uri) || fetch(meth, uri, payload), opts, &cb)
+    post_request(cache_get(uri) || fetch(meth, uri, payload), uri, opts, &cb)
   rescue RestClient::Exception => e
-    post_request(e.http_body, opts, &cb)
+    post_request(e.http_body, uri, opts, &cb)
   ensure
     log(Event::Requested.new(Time.now - start_time, uri))
   end
@@ -463,28 +466,30 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, opts={}, &cb
+  def post_request result, uri='', opts={}, &cb
     if auto_decode && !opts[:suppress_decode]
       decoded = self.class.json_decode("[#{result}]").first
       check_error(if strict || !decoded.kind_of?(String)
                     decoded
                   else
                     self.class.json_decode(decoded)
-                  end, &cb)
+                  end, uri, &cb)
     else
       block_given? ? yield(result) : result
     end
+  rescue ParseError => error
+    error_handler.call(Error::BadJson.new(error, uri)) if error_handler
   end
 
   def check_sig_and_return_data cookies
     cookies if secret && calculate_sig(cookies) == cookies['sig']
   end
 
-  def check_error hash
+  def check_error hash, uri
     if error_handler && hash.kind_of?(Hash) &&
        (hash['error'] ||    # from graph api
         hash['error_code']) # from fql
-      error_handler.call(hash)
+      error_handler.call(hash, uri)
     else
       block_given? ? yield(hash) : hash
     end
