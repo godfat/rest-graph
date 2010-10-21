@@ -427,7 +427,8 @@ class RestGraph < RestGraphStruct
       r
     }
     EM::MultiRequest.new(rs){ |m|
-      clients = m.responses.values.flatten
+      # TODO: how to deal with the failed?
+      clients = m.responses[:succeeded]
       results = clients.map{ |client|
         post_request(client.response, client.uri)
       }
