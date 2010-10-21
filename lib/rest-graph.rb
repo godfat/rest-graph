@@ -436,7 +436,7 @@ class RestGraph < RestGraphStruct
         post_request(client.response, client.uri)
       }
 
-      if results.size == 1
+      if reqs.size == 1
         yield(results.first)
       else
         log(Event::MultiDone.new(Time.now - start_time,
