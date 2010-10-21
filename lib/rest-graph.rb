@@ -30,6 +30,7 @@ class RestGraph < RestGraphStruct
     defined?(::RestGraph::Attributes)
 
   class Event < EventStruct; end
+  class Event::MultiDone < Event; end
   class Event::Requested < Event; end
   class Event::CacheHit  < Event; end
 
@@ -420,12 +421,15 @@ class RestGraph < RestGraphStruct
       r
     }
     EM::MultiRequest.new(rs){ |m|
-      log(Event::Requested.new(Time.now - start_time,
-        m.responses.values.flatten.map(&:uri).join(', ')))
+      clients = m.responses.values.flatten
+      results = clients.map(&:response).map(&method(:post_request))
 
-      results = m.responses.values.flatten.map(&:response).
-                  map(&method(:post_request))
-      yield(results.size == 1 ? results.first : results)
+      if results.size == 1
+        yield(results.first)
+      else
+        log(Event::MultiDone.new(Time.now - start_time,
+          clients.map(&:uri).join(', ')))
+      end
     }
   end
 
