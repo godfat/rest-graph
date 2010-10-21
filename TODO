@@ -1,5 +1,7 @@
 = rest-graph todo list
 
+* error_handler can't be turned off
+
 * test for rails util for writing cookie
 
 * more docs?
