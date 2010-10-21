@@ -37,6 +37,7 @@ class RestGraph < RestGraphStruct
   class Event::MultiDone < Event; end
   class Event::Requested < Event; end
   class Event::CacheHit  < Event; end
+  class Event::Failed    < Event; end
 
   class Error < RuntimeError
     class AccessToken < Error; end
@@ -425,6 +426,9 @@ class RestGraph < RestGraphStruct
         r.callback{
           cache_for(uri, r.response, meth)
           log(Event::Requested.new(Time.now - start_time, uri))
+        }
+        r.error{
+          log(Event::Failed.new(Time.now - start_time, uri))
         }
       end
       r
