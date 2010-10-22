@@ -45,7 +45,7 @@ class RestGraph < RestGraphStruct
     class MissingAccessToken < AccessToken; end
 
     attr_reader :error, :url
-    def initialize error, url
+    def initialize error, url=''
       @error, @url = error, url
       super("#{error.inspect} from #{url}")
     end
