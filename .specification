@@ -4,9 +4,9 @@ version: !ruby/object:Gem::Version
   prerelease: false
   segments: 
   - 1
-  - 5
-  - 1
-  version: 1.5.1
+  - 6
+  - 0
+  version: 1.6.0
 platform: ruby
 authors: 
 - Cardinal Blue
@@ -15,7 +15,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2010-10-20 00:00:00 +08:00
+date: 2010-10-22 00:00:00 +08:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -198,7 +198,6 @@ extra_rdoc_files:
 - LICENSE
 - README
 - TODO
-- bench/config.ru
 - rest-graph.gemspec
 files: 
 - .specification
@@ -211,8 +210,8 @@ files:
 - README.rdoc
 - Rakefile
 - TODO
-- bench/config.ru
-- bench/rainbows.rb
+- example/multi/config.ru
+- example/multi/rainbows.rb
 - example/rails2/README
 - example/rails2/Rakefile
 - example/rails2/app/controllers/application_controller.rb

@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.5.1 -- ?
+== rest-graph 1.6.0 -- ?
 
 * [TestUtil] A collection of tools integrated with RR to ease the pain of
              testing. There are 3 levels of tools to stub the result of
