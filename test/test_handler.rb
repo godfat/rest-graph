@@ -82,10 +82,9 @@ describe RestGraph do
         RestGraph.new.fql(@bad_fql_query)
       rescue ::RestGraph::Error => e
         e.error  .should == @fql_error_hash
-        e.message.should ==
-          "#{@fql_error_hash.inspect} from "                             \
-          "https://api.facebook.com/method/fql.query?format=json&query=" \
-          "#{CGI.escape(@bad_fql_query)}"
+        e.message.should.start_with?(
+          "#{@fql_error_hash.inspect} from "          \
+          "https://api.facebook.com/method/fql.query?")
       end
     end
   end
