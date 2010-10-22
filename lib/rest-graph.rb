@@ -285,22 +285,33 @@ class RestGraph < RestGraphStruct
 
 
   def next_page hash, opts={}, &cb
-    return unless hash['paging'].kind_of?(Hash) && hash['paging']['next']
-    request(opts, [:get, hash['paging']['next']], &cb)
+    if hash['paging'].kind_of?(Hash) && hash['paging']['next']
+      request(opts, [:get, hash['paging']['next']], &cb)
+    else
+      yield(nil) if block_given?
+    end
   end
 
   def prev_page hash, opts={}, &cb
-    return unless hash['paging'].kind_of?(Hash) && hash['paging']['previous']
-    request(opts, [:get, hash['paging']['previous']], &cb)
+    if hash['paging'].kind_of?(Hash) && hash['paging']['previous']
+      request(opts, [:get, hash['paging']['previous']], &cb)
+    else
+      yield(nil) if block_given?
+    end
   end
   alias_method :previous_page, :prev_page
 
   def for_pages hash, pages=1, opts={}, kind=:next_page, &cb
-    return hash if pages <= 1
-    send(kind, hash, opts){ |result|
-      yield(result) if block_given?
-      for_pages(merge_data(result, hash), pages - 1, opts, kind, &cb)
-    } || hash
+    if    pages == 1
+      hash
+    elsif pages  > 1
+      send(kind, hash, opts){ |result|
+        yield(result) if block_given?
+        for_pages(merge_data(result, hash), pages - 1, opts, kind, &cb)
+      } || hash
+    else
+      yield(nil) if block_given?
+    end
   end
 
 
