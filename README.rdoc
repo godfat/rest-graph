@@ -146,7 +146,7 @@ options for RestGraph instance are also valid options for rest_graph_setup.
                   # This means if the access_token is not there,
                   # then do auto_authorize.
 
-                  :write_session          => false     , # default false
+                  :write_session          => true      , # default false
                   :write_cookies          => false     , # default false
                   :write_handler          =>
                     lambda{ |fbs| @cache[uid] = fbs }  , # default nil
