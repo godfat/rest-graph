@@ -303,15 +303,12 @@ class RestGraph < RestGraphStruct
 
   def for_pages hash, pages=1, opts={}, kind=:next_page, &cb
     if pages > 1
-      send(kind, hash, opts){ |result|
-        yield(result) if block_given?
-        for_pages(merge_data(result, hash), pages - 1, opts, kind, &cb)
-      } || hash
+      merge_data(send(kind, hash, opts){ |result|
+        yield(result.freeze) if block_given?
+        for_pages(result, pages - 1, opts, kind, &cb) if result
+      }, hash)
     else
-      if block_given?
-        yield(hash)
-        yield(nil)
-      end
+      yield(nil) if block_given?
       hash
     end
   end
