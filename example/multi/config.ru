@@ -18,7 +18,7 @@ end
 run Rack::Builder.new{
   map('/async'){
     run lambda{ |env|
-      RG.create(env).multi(*([[:get, id]]*times)){ |r|
+      RG.create(env).multi([[:get, id]] * times){ |r|
         env['async.callback'].call [200, {}, r.map(&:inspect)]
       }
       throw :async
