@@ -302,15 +302,17 @@ class RestGraph < RestGraphStruct
   alias_method :previous_page, :prev_page
 
   def for_pages hash, pages=1, opts={}, kind=:next_page, &cb
-    if    pages == 1
-      hash
-    elsif pages  > 1
+    if pages > 1
       send(kind, hash, opts){ |result|
         yield(result) if block_given?
         for_pages(merge_data(result, hash), pages - 1, opts, kind, &cb)
       } || hash
     else
-      yield(nil) if block_given?
+      if block_given?
+        yield(hash)
+        yield(nil)
+      end
+      hash
     end
   end
 

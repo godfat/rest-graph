@@ -30,8 +30,10 @@ describe RestGraph do
       kind = "#{type}_page"
       data = {'paging' => {type => 'zzz'}, 'data' => ['z']}
 
-      rg.for_pages(data, 1, {}, kind).should == data
-      rg.for_pages(data, 0, {}, kind).should == nil
+      # invalid pages or just the page itself
+      (-1..1).each{ |page|
+        rg.for_pages(data, page, {}, kind).should == data
+      }
 
       (2..4).each{ |pages|
         # merge data
