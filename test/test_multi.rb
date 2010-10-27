@@ -44,17 +44,23 @@ describe 'RestGraph#multi' do
     }
   end
 
-  should 'for_pages with callback' do
+  should 'for_pages' do
     rg = RestGraph.new
+
+    args = [is_a(Hash), is_a(Array)]
+    mock.proxy(rg).request_em(*args) # at least one time
+    stub.proxy(rg).request_em(*args)
+
     %w[next previous].each{ |type|
       kind = "#{type}_page"
-      data = {'paging' => {type => 'zzz'}, 'data' => ['z']}
+      data = {'paging' => {type => 'http://z'}, 'data' => ['z']}
 
       # invalid pages or just the page itself
+      # not really need network
       nils = 0
       ranges = -1..1
       ranges.each{ |page|
-        rg.for_pages(data, page, {}, kind){ |r|
+        rg.for_pages(data, page, {:async => true}, kind){ |r|
           if r
             r.should == data
           else
@@ -66,36 +72,45 @@ describe 'RestGraph#multi' do
 
       (2..4).each{ |pages|
         # merge data
-        stub_request(:get, 'zzz').to_return(:body => '{"data":["y"]}')
+        stub_request(:get, 'z').to_return(:body => '{"data":["y"]}')
         expects = [{'data' => %w[y]}, nil]
-        rg.for_pages(data, pages, {}, kind){ |r|
-          r.should == expects.shift
-        }.should == {'data' => %w[z y]}
-        expects.empty?.should == true
+
+        EM.run{
+          rg.for_pages(data, pages, {:async => true}, kind){ |r|
+            r.should == expects.shift
+            EM.stop if expects.empty?
+          }
+        }
 
         # this data cannot be merged
-        stub_request(:get, 'zzz').to_return(:body => '{"data":"y"}')
+        stub_request(:get, 'z').to_return(:body => '{"data":"y"}')
         expects = [{'data' => 'y'}, nil]
-        rg.for_pages(data, pages, {}, kind){ |r|
-          r.should == expects.shift
-        }.should == {'data' => %w[z]}
-        expects.empty?.should == true
+
+        EM.run{
+          rg.for_pages(data, pages, {:async => true}, kind){ |r|
+            r.should == expects.shift
+            EM.stop if expects.empty?
+          }
+        }
       }
 
-      stub_request(:get, 'zzz').to_return(:body =>
-        '{"paging":{"'+type+'":"yyy"},"data":["y"]}')
+      stub_request(:get, 'z').to_return(:body =>
+        '{"paging":{"'+type+'":"http://yyy"},"data":["y"]}')
       stub_request(:get, 'yyy').to_return(:body => '{"data":["x"]}')
-
       expects = [{'data' => %w[y]}, {'data' => %w[x]}, nil]
-      rg.for_pages(data, 3, {}, kind){ |rr|
-        if rr
-          r = rr.dup
-          r.delete('paging')
-        else
-          r = rr
-        end
-        r.should == expects.shift
-      }.should == {'data' => %w[z y x]}
+
+      EM.run{
+        rg.for_pages(data, 3, {:async => true}, kind){ |rr|
+          if rr
+            r = rr.dup
+            r.delete('paging')
+          else
+            r = rr
+          end
+          r.should == expects.shift
+          EM.stop if expects.empty?
+        }
+      }
     }
   end
 
