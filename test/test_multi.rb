@@ -101,6 +101,7 @@ describe 'RestGraph#multi' do
 
       EM.run{
         rg.for_pages(data, 3, {:async => true}, kind){ |rr|
+          rr.frozen?.should == true
           if rr
             r = rr.dup
             r.delete('paging')
