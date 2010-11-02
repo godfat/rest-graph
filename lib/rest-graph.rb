@@ -11,9 +11,10 @@ require 'digest/md5'
 require 'openssl'
 
 require 'cgi'
+require 'timeout'
 
 # the data structure used in RestGraph
-RestGraphStruct = Struct.new(:auto_decode, :strict,
+RestGraphStruct = Struct.new(:auto_decode, :strict, :timeout,
                              :graph_server, :old_server,
                              :accept, :lang,
                              :app_id, :secret,
@@ -91,6 +92,7 @@ class RestGraph < RestGraphStruct
     extend self
     def default_auto_decode ; true                         ; end
     def default_strict      ; false                        ; end
+    def default_timeout     ; 10                           ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
     def default_old_server  ; 'https://api.facebook.com/'  ; end
     def default_accept      ; 'text/javascript'            ; end
@@ -415,11 +417,13 @@ class RestGraph < RestGraphStruct
 
   private
   def request opts, *reqs, &cb
-    if opts[:async]
-      request_em(opts, reqs, &cb)
-    else
-      request_rc(opts, *reqs.first, &cb)
-    end
+    Timeout.timeout(timeout){
+      if opts[:async]
+        request_em(opts, reqs, &cb)
+      else
+        request_rc(opts, *reqs.first, &cb)
+      end
+    }
   end
 
   def request_em opts, reqs
