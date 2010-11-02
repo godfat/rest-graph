@@ -41,6 +41,11 @@
               eventmachine event loop and install em-http. (And you may want
               async-rack if you're doing rack application too.)
 
+* [RestGraph] Added an timeout option, which makes rest-graph raise a
+              Timeout::Error when any of the API call exceeds the timeout
+              limit. This might have some issues in Rubinius 1.1, I'm not
+              sure why.
+
 == rest-graph 1.5.0 -- 2010-10-11
 
 * [RestGraph] Make sure RestGraph::Error#message is string, that way,
