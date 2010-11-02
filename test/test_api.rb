@@ -23,7 +23,7 @@ describe RestGraph do
       :headers => {'Accept'          => 'text/plain',
                    'Accept-Language' => 'zh-tw',
                    'Accept-Encoding' => 'gzip, deflate', # this is by ruby
-                  }.merge(RUBY_VERSION <= '1.9.0' ?
+                  }.merge(RUBY_VERSION < '1.9.2' ?
                   {} :
                   {'User-Agent'      => 'Ruby'})).       # this is by ruby
       to_return(:body => '{"data": []}')

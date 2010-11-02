@@ -298,7 +298,7 @@ module RestGraph::RailsUtil
 
   def rest_graph_extract_options options, method
     result = options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }
-    return result if result.kind_of?(Hash) # RUBY_VERSION >= 1.9.1
+    return result if result.kind_of?(Hash) # RUBY_VERSION >= 1.9.2
     result.inject({}){ |r, (k, v)| r[k] = v; r }
   end
   # ==================== end misc ================================
