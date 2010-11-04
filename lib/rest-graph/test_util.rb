@@ -48,6 +48,9 @@ module RestGraph::TestUtil
   end
 
   def login id=default_data['uid']
+    teardown
+    setup
+
              uid = id.to_s
          expires = '123456789'
           app_id = RestGraph.default_app_id || '5678'
@@ -60,6 +63,7 @@ module RestGraph::TestUtil
                           'session_key' =>  session_key}
 
     get('me'){ user(uid) }
+    self
   end
 
   def user id

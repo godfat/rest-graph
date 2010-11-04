@@ -59,4 +59,16 @@ describe RestGraph::TestUtil do
     rg.authorized?.should == true
     rg.get('me').should == RestGraph::TestUtil.user('1829')
   end
+
+  should 'reset before login' do
+    RestGraph::TestUtil.login(1234).login(1829)
+    rg = RestGraph.new
+    rg.data['uid'].should == '1829'
+    rg.authorized?.should == true
+    rg.get('me').should == RestGraph::TestUtil.user('1829')
+    RestGraph::TestUtil.login(1234)
+    rg.data['uid'].should == '1234'
+    rg.authorized?.should == true
+    rg.get('me').should == RestGraph::TestUtil.user('1234')
+  end
 end
