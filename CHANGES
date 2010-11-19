@@ -1,6 +1,48 @@
 = rest-graph changes history
 
-== rest-graph 1.6.0 -- ?
+== rest-graph 1.6.0 -- 2010-11-19
+
+* [RestGraph] Added em-http as an alternate for HTTP client. So rest-client
+              is no longer a must-have dependency. Pass :async => true to
+              RestGraph#get/delete/post/put will pick em-http to do the
+              request instead of rest-client. Callback would be the block
+              passed to that particular method. There are short hands for
+              this, too: use RestGraph#aget/adelete/apost/aput.
+
+              Additionally, callback style also works for rest-client. e.g.
+
+                rg. get('me')                                 # rest-client
+                rg. get('me', {}, :async => true){ |result| } # em-http
+                rg.aget('me')                    { |result| } # em-http
+                rg. get('me')                    { |result| } # rest-client
+
+              So you can always use callback style to ease porting from
+              blocking mode (synchronized) to non-blocking mode (evented).
+
+* [RestGraph] Introduced RestGraph#multi to do multiple API call concurrently.
+              To use this feature, you'll need to run RestGraph inside an
+              EventMachine event loop and install em-http. (And you may want
+              async-rack if you're doing Rack application too.)
+
+* [RestGraph] Added a timeout option, which makes rest-graph raise a
+              Timeout::Error when any of the API call exceeds the timeout
+              limit. This might have some issues in Rubinius 1.1, I'm not
+              sure why.
+
+* [RestGraph] Added a log_method option, which would be used for default
+              logging template, which is extracted from RailsUtil. So the
+              log_method in RailsUtil would be `logger.method(:debug)',
+              while in a terminal, you might want `method(:puts)'.
+
+              Previously, you can only use log_handler for logging, which
+              you need to write your custom logging template. Now for common
+              logging, using log_method is enough. On the other hand,
+              log_handler could be used for event handling.
+
+* [RestGraph] Introduced Event::MultiDone and Event::Failed. Those event
+              objects would be passed to log_handler and/or log_method.
+              The former means a multi-request is done, the latter means
+              a request is failed.
 
 * [TestUtil] A collection of tools integrated with RR to ease the pain of
              testing. There are 3 levels of tools to stub the result of
@@ -35,16 +77,6 @@
              In addition, you can get the API calls history via
              RestGraph::TestUtil.history. This would get cleaned up in
              RestGraph::TestUtil.teardown as well.
-
-* [RestGraph] Introduce RestGraph#multi to do multiple api call concurrently.
-              to use this feature, you'll need to run RestGraph inside an
-              eventmachine event loop and install em-http. (And you may want
-              async-rack if you're doing rack application too.)
-
-* [RestGraph] Added an timeout option, which makes rest-graph raise a
-              Timeout::Error when any of the API call exceeds the timeout
-              limit. This might have some issues in Rubinius 1.1, I'm not
-              sure why.
 
 == rest-graph 1.5.0 -- 2010-10-11
 
