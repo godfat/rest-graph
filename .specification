@@ -15,7 +15,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2010-10-22 00:00:00 +08:00
+date: 2010-11-19 00:00:00 +08:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -44,8 +44,8 @@ dependencies:
         segments: 
         - 0
         - 2
-        - 14
-        version: 0.2.14
+        - 15
+        version: 0.2.15
   type: :development
   version_requirements: *id002
 - !ruby/object:Gem::Dependency 
@@ -134,8 +134,8 @@ dependencies:
         segments: 
         - 1
         - 0
-        - 0
-        version: 1.0.0
+        - 2
+        version: 1.0.2
   type: :development
   version_requirements: *id008
 - !ruby/object:Gem::Dependency 
@@ -148,9 +148,9 @@ dependencies:
       - !ruby/object:Gem::Version 
         segments: 
         - 1
-        - 4
-        - 0
-        version: 1.4.0
+        - 6
+        - 1
+        version: 1.6.1
   type: :development
   version_requirements: *id009
 - !ruby/object:Gem::Dependency 
@@ -179,8 +179,8 @@ dependencies:
         segments: 
         - 3
         - 5
-        - 0
-        version: 3.5.0
+        - 1
+        version: 3.5.1
   type: :development
   version_requirements: *id011
 description: A super simple Facebook Open Graph API client
@@ -256,6 +256,7 @@ files:
 - test/test_rest-graph.rb
 - test/test_serialize.rb
 - test/test_test_util.rb
+- test/test_timeout.rb
 has_rdoc: true
 homepage: http://github.com/cardinalblue/rest-graph
 licenses: []
@@ -305,3 +306,4 @@ test_files:
 - test/test_rest-graph.rb
 - test/test_serialize.rb
 - test/test_test_util.rb
+- test/test_timeout.rb
