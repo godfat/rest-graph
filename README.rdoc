@@ -20,12 +20,19 @@ A super simple Facebook Open Graph API client
 
 == REQUIREMENTS:
 
-* Tested with MRI 1.8.7 and 1.9.2 and Rubinius 1.1.0
-* gem install rest-client
-* gem install yajl-ruby (optional)
-* gem install json      (optional)
-* gem install json_pure (optional)
-* gem install rack      (optional, to parse access_token in HTTP_COOKIE)
+* Tested with MRI 1.8.7 and 1.9.2 and Rubinius 1.1.1
+
+* (must) pick one HTTP client:
+  - gem install rest-client
+  - gem install em-http-request
+
+* (optional) pick one JSON parser/generator:
+  - gem install yajl-ruby
+  - gem install json
+  - gem install json_pure
+
+* (optional) parse access_token in HTTP_COOKIE
+  - gem install rack
 
 == INSTALL:
 
@@ -77,7 +84,7 @@ adds the following two methods to your Controllers:
 New RestGraph objects can read their default setup configuration from a
 YAML configuration file.
 
-* {Sample}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
+* {Example}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
 
 To enable, just require anywhere:
 
@@ -118,6 +125,10 @@ Here are ALL the available options for new instance of RestGraph.
         # is the default unless you're using RailsUtil and enabled
         # auto_authorize. That way, RailsUtil would do redirect instead
         # of raising an exception.
+
+        :log_method    => method(:puts),
+        # This way, any log message would be output by puts. If you want to
+        # change the log format, use log_handler instead. See below:
 
         :log_handler   => lambda{ |event|
           Rails.logger.
