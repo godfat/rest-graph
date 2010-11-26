@@ -1,7 +1,6 @@
 = rest-graph todo list
 
 == RailsUtil
-* if :write_cookies is false, don't check rest-graph cookie
 * provide a :validate_access_token or so option
 * test for rails util for writing cookie
 
