@@ -7,7 +7,7 @@ end
 
 describe RestGraph::Error do
   after do
-    WebMock.reset_webmock
+    WebMock.reset!
     RR.verify
   end
 

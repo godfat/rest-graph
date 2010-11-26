@@ -16,7 +16,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def teardown
-    WebMock.reset_webmock
+    WebMock.reset!
   end
 
   def test_index
@@ -87,7 +87,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_cache
-    WebMock.reset_webmock
+    WebMock.reset!
     stub_request(:get, 'https://graph.facebook.com/cache').
       to_return(:body => '{"message":"ok"}')
 
@@ -97,7 +97,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_handler
-    WebMock.reset_webmock
+    WebMock.reset!
     stub_request(:get, 'https://graph.facebook.com/me?access_token=aloha').
       to_return(:body => '["snowman"]')
 
@@ -110,7 +110,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_session
-    WebMock.reset_webmock
+    WebMock.reset!
     stub_request(:get, 'https://graph.facebook.com/me?access_token=wozilla').
       to_return(:body => '["fireball"]')
 
@@ -123,7 +123,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def test_cookies
-    WebMock.reset_webmock
+    WebMock.reset!
     stub_request(:get, 'https://graph.facebook.com/me?access_token=blizzard').
       to_return(:body => '["yeti"]')
 

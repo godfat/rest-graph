@@ -5,12 +5,9 @@ else
   require File.dirname(__FILE__) + '/common'
 end
 
-require 'em-http-request'
-load 'webmock/http_lib_adapters/em_http_request.rb'
-
 describe 'RestGraph#multi' do
   after do
-    WebMock.reset_webmock
+    WebMock.reset!
     RR.verify
   end
 

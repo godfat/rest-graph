@@ -3,6 +3,9 @@ require 'rubygems' if RUBY_VERSION < '1.9.2'
 require 'rack'     if RUBY_VERSION < '1.9.2' # autoload broken in 1.8?
 require 'rest-graph'
 
+# need to require this before webmock in order to enable mocking in em-http
+require 'em-http-request'
+
 require 'rr'
 require 'webmock'
 require 'bacon'

@@ -7,7 +7,7 @@ end
 
 describe RestGraph do
   after do
-    WebMock.reset_webmock
+    WebMock.reset!
     RR.verify
   end
 
