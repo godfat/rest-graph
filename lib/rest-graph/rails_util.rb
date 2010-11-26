@@ -223,7 +223,7 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_check_rg_session
-    return if rest_graph.authorized? ||
+    return if rest_graph.authorized? || !rest_graph_oget(:write_session) ||
               !(fbs = session[rest_graph_storage_key])
     rest_graph.parse_fbs!(fbs)
     logger.debug("DEBUG: RestGraph: detected rest-graph session, parsed:" \
@@ -231,7 +231,7 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_check_rg_cookies
-    return if rest_graph.authorized? ||
+    return if rest_graph.authorized? || !rest_graph_oget(:write_cookies) ||
               !(fbs = cookies[rest_graph_storage_key])
     rest_graph.parse_fbs!(fbs)
     logger.debug("DEBUG: RestGraph: detected rest-graph cookies, parsed:" \
