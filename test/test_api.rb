@@ -41,6 +41,16 @@ describe RestGraph do
       post('feed/me', :message => 'hi there').should == 'ok'
   end
 
+  should 'use secret_access_token' do
+    stub_request(:get,
+      'https://graph.facebook.com/me?access_token=1|2').
+      to_return(:body => 'ok')
+
+    RestGraph.new(:auto_decode => false, :access_token => 'wrong',
+                  :app_id => '1', :secret => '2').
+      get('me', {}, :secret => true).should == 'ok'
+  end
+
   should 'suppress auto-decode in an api call' do
     stub_request(:get, 'https://graph.facebook.com/woot').
       to_return(:body => 'bad json')
