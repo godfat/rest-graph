@@ -46,9 +46,11 @@ describe RestGraph do
       'https://graph.facebook.com/me?access_token=1|2').
       to_return(:body => 'ok')
 
-    RestGraph.new(:auto_decode => false, :access_token => 'wrong',
-                  :app_id => '1', :secret => '2').
-      get('me', {}, :secret => true).should == 'ok'
+    rg = RestGraph.new(:auto_decode => false, :access_token => 'wrong',
+                       :app_id => '1', :secret => '2')
+    rg.get('me', {}, :secret => true).should == 'ok'
+    rg.url('me', {}, rg.graph_server, :secret => true).should ==
+      'https://graph.facebook.com/me?access_token=1%7C2'
   end
 
   should 'suppress auto-decode in an api call' do
