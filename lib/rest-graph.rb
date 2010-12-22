@@ -475,7 +475,7 @@ class RestGraph < RestGraphStruct
 
   def build_query_string query={}
     qq = access_token ? {:access_token => access_token}.merge(query) : query
-    q  = qq.select{ |k, v| v }
+    q  = qq.select{ |k, v| v } # compacting the hash
     return '' if q.empty?
     return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
   end
