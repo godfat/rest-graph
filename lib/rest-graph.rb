@@ -237,24 +237,26 @@ class RestGraph < RestGraphStruct
 
   # graph api related methods
 
-  def url path, query={}, server=graph_server
-    "#{server}#{path}#{build_query_string(query)}"
+  def url path, query={}, server=graph_server, opts={}
+    "#{server}#{path}#{build_query_string(query, opts)}"
   end
 
   def get    path, query={}, opts={}, &cb
-    request(opts, [:get   , url(path, query, graph_server)], &cb)
+    request(opts, [:get   , url(path, query, graph_server, opts)], &cb)
   end
 
   def delete path, query={}, opts={}, &cb
-    request(opts, [:delete, url(path, query, graph_server)], &cb)
+    request(opts, [:delete, url(path, query, graph_server, opts)], &cb)
   end
 
   def post   path, payload={}, query={}, opts={}, &cb
-    request(opts, [:post  , url(path, query, graph_server), payload], &cb)
+    request(opts, [:post  , url(path, query, graph_server, opts), payload],
+            &cb)
   end
 
   def put    path, payload={}, query={}, opts={}, &cb
-    request(opts, [:put   , url(path, query, graph_server), payload], &cb)
+    request(opts, [:put   , url(path, query, graph_server, opts), payload],
+            &cb)
   end
 
   # request by eventmachine (em-http)
@@ -278,7 +280,7 @@ class RestGraph < RestGraphStruct
   def multi reqs, opts={}, &cb
     request({:async => true}.merge(opts),
       *reqs.map{ |(meth, path, query, payload)|
-        [meth, url(path, query || {}, graph_server), payload]
+        [meth, url(path, query || {}, graph_server, opts), payload]
       }, &cb)
   end
 
@@ -386,13 +388,13 @@ class RestGraph < RestGraphStruct
     request(
       opts,
       [:get,
-      url("method/#{path}", {:format => 'json'}.merge(query), old_server)],
+       url("method/#{path}", {:format => 'json'}.merge(query),
+           old_server, opts)],
       &cb)
   end
 
   def secret_old_rest path, query={}, opts={}, &cb
-    old_rest(path, {:access_token => secret_access_token}.merge(query), opts,
-      &cb)
+    old_rest(path, query, {:secret => true}.merge(opts), &cb)
   end
   alias_method :broken_old_rest, :secret_old_rest
 
@@ -473,8 +475,9 @@ class RestGraph < RestGraphStruct
     log(Event::Requested.new(Time.now - start_time, uri))
   end
 
-  def build_query_string query={}
-    qq = access_token ? {:access_token => access_token}.merge(query) : query
+  def build_query_string query={}, opts={}
+    token = opts[:secret] ? secret_access_token : access_token
+    qq = token ? {:access_token => token}.merge(query) : query
     q  = qq.select{ |k, v| v } # compacting the hash
     return '' if q.empty?
     return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
