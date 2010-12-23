@@ -492,12 +492,9 @@ class RestGraph < RestGraphStruct
 
   def post_request result, uri='', opts={}, &cb
     if auto_decode && !opts[:suppress_decode]
+                                  # [this].first is not needed for yajl-ruby
       decoded = self.class.json_decode("[#{result}]").first
-      check_error(if strict || !decoded.kind_of?(String)
-                    decoded
-                  else
-                    self.class.json_decode(decoded)
-                  end, uri, &cb)
+      check_error(decoded, uri, &cb)
     else
       block_given? ? yield(result) : result
     end

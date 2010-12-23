@@ -1,5 +1,7 @@
 = rest-graph changes history
 
+== rest-graph 1.7.0 -- ?
+
 == rest-graph 1.6.0 -- 2010-11-19
 
 * [RestGraph] Added em-http as an alternate for HTTP client. So rest-client
