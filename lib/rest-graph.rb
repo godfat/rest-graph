@@ -374,7 +374,7 @@ class RestGraph < RestGraphStruct
   def authorize! opts={}
     query = {:client_id => app_id, :client_secret => secret}.merge(opts)
     self.data = Rack::Utils.parse_query(
-                  request({:suppress_decode => true}.merge(opts),
+                  request({:auto_decode => false}.merge(opts),
                           [:get, url('oauth/access_token', query)]))
   end
 
@@ -491,7 +491,7 @@ class RestGraph < RestGraphStruct
   end
 
   def post_request result, uri='', opts={}, &cb
-    if auto_decode && !opts[:suppress_decode]
+    if decode?(opts)
                                   # [this].first is not needed for yajl-ruby
       decoded = self.class.json_decode("[#{result}]").first
       check_error(decoded, uri, &cb)
@@ -500,6 +500,16 @@ class RestGraph < RestGraphStruct
     end
   rescue ParseError => error
     error_handler.call(error, uri) if error_handler
+  end
+
+  def decode? opts
+    if opts.has_key?(:auto_decode)
+      opts[:auto_decode]
+    elsif opts.has_key?(:suppress_decode)
+      !opts[:suppress_decode]
+    else
+      auto_decode
+    end
   end
 
   def check_sig_and_return_data cookies

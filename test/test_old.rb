@@ -54,7 +54,7 @@ describe RestGraph do
       'https://api.facebook.com/method/notes.create?format=json').
       to_return(:body => body)
 
-    RestGraph.new.old_rest('notes.create', {}, :suppress_decode => true).
+    RestGraph.new.old_rest('notes.create', {}, :auto_decode => false).
       should == body
   end
 

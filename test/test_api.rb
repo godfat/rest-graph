@@ -58,7 +58,7 @@ describe RestGraph do
       to_return(:body => 'bad json')
 
     rg = RestGraph.new(:auto_decode => true)
-    rg.get('woot', {}, :suppress_decode => true).should == 'bad json'
+    rg.get('woot', {}, :auto_decode => false).should == 'bad json'
     rg.auto_decode.should == true
   end
 
