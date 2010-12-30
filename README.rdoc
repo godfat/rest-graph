@@ -88,16 +88,16 @@ YAML configuration file.
 
 To enable, just require anywhere:
 
- require 'rest-graph/auto_load'
+ require 'rest-graph/autoload'
 
 If you are using Rails and rest-graph as a gem, you can include this
 when you specify the gem in your environment file by using:
 
- config.gem 'rest-graph', :lib => 'rest-graph/auto_load'
+ config.gem 'rest-graph', :lib => 'rest-graph/autoload'
 
 Or if using bundler, by adding this line into your Gemfile:
 
- gem 'rest-graph', :require => 'rest-graph/auto_load'
+ gem 'rest-graph', :require => 'rest-graph/autoload'
 
 === Setup options:
 
@@ -189,7 +189,7 @@ options for RestGraph instance are also valid options for rest_graph_setup.
 
 4. Load config automatically
 
-    require 'rest-graph/auto_load'  # under Rails, load config/rest-graph.yaml
+    require 'rest-graph/autoload'  # under Rails, load config/rest-graph.yaml
     rg = RestGraph.new
 
 5. Override directly

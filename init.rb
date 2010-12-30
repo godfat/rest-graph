@@ -1,2 +1,2 @@
 
-require 'rest-graph/auto_load'
+require 'rest-graph/autoload'

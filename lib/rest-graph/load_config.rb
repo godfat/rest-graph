@@ -7,7 +7,7 @@ require 'rest-graph/rails_util' if Object.const_defined?(:Rails)
 
 module RestGraph::LoadConfig
   module_function
-  def auto_load!
+  def autoload!
     RestGraph::LoadConfig.load_if_rails!
   end
 
