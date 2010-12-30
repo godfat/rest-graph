@@ -1,6 +1,26 @@
 = rest-graph changes history
 
-== rest-graph 1.7.0 -- ?
+== rest-graph 1.7.0 -- 2010-12-30
+
+* [RestGraph] Renamed rest-graph/auto_load to rest-graph/autoload; auto_load
+              would be still working for a while.
+
+* [RestGraph] Renamed suppress_decode to auto_decode, and reverse semantics.
+              suppress_decode would still be working for a while.
+
+* [RestGraph] Now for every API call, for example, get/post/fql/url etc,
+              you could pass a :secret => true option to indicate that
+              for this API call, use secret_access_token instead of the
+              normal one.
+
+* [RestGraph] Removed RestGraph#strict option. That is, removed the hack on
+              Facebook's response. It's causing problems...
+
+* [RailsUtil] Don't check cookies/session if write_cookies/write_session is
+              false. That is avoid accidentally checking unwanted fbs.
+
+* [RailsUtil] Extract rest_graph_filter_uri, which would filter session,
+              code, singed_request, etc. on the redirecting URI.
 
 == rest-graph 1.6.0 -- 2010-11-19
 
