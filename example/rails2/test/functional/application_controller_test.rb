@@ -19,6 +19,10 @@ class ApplicationControllerTest < ActionController::TestCase
     WebMock.reset!
   end
 
+  def test_protected
+    assert_nil @controller.public_methods.find{ |m| m.to_s =~ /^rest_graph/ }
+  end
+
   def test_index
     get(:index)
     assert_response :redirect

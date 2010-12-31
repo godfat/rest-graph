@@ -34,6 +34,9 @@ module RestGraph::RailsUtil
     controller.rescue_from(::RestGraph::Error::AccessToken,
                            :with => :rest_graph_on_error)
     controller.helper(::RestGraph::RailsUtil::Helper)
+    controller.instance_methods.select{ |method|
+      method.to_s =~ /^rest_graph/
+    }.each{ |method| controller.send(:protected, method) }
   end
 
   def rest_graph_setup options={}
