@@ -440,7 +440,7 @@ class RestGraph < RestGraphStruct
         r.succeed(r)
       else
         r.callback{
-          cache_for(uri, r.response, meth)
+          cache_for(uri, r.response, meth, opts)
           log(Event::Requested.new(Time.now - start_time, uri))
         }
         r.error{
@@ -453,7 +453,7 @@ class RestGraph < RestGraphStruct
       # TODO: how to deal with the failed?
       clients = m.responses[:succeeded]
       results = clients.map{ |client|
-        post_request(client.response, client.uri)
+        post_request(client.response, client.uri, opts)
       }
 
       if reqs.size == 1
@@ -468,7 +468,8 @@ class RestGraph < RestGraphStruct
 
   def request_rc opts, meth, uri, payload=nil, &cb
     start_time = Time.now
-    post_request(cache_get(uri) || fetch(meth, uri, payload), uri, opts, &cb)
+    post_request(cache_get(uri) || fetch(meth, uri, payload, opts),
+                 uri, opts, &cb)
   rescue RestClient::Exception => e
     post_request(e.http_body, uri, opts, &cb)
   ensure
@@ -490,7 +491,7 @@ class RestGraph < RestGraphStruct
     headers
   end
 
-  def post_request result, uri='', opts={}, &cb
+  def post_request result, uri, opts, &cb
     if decode?(opts)
                                   # [this].first is not needed for yajl-ruby
       decoded = self.class.json_decode("[#{result}]").first
@@ -546,15 +547,21 @@ class RestGraph < RestGraphStruct
     }
   end
 
-  def cache_for uri, result, meth
-    cache[cache_key(uri)] = result if cache && meth == :get
+  def cache_for uri, result, meth, opts
+    return if !cache || meth != :get
+
+    if opts[:expires_in].kind_of?(Fixnum) && cache.method(:store).arity == -3
+      cache.store(cache_key(uri), result, :expires_in => opts[:expires_in])
+    else
+      cache[cache_key(uri)] = result
+    end
   end
 
-  def fetch meth, uri, payload
+  def fetch meth, uri, payload, opts
     RestClient::Request.execute(:method => meth, :url => uri,
                                 :headers => build_headers,
                                 :payload => payload).body.
-      tap{ |result| cache_for(uri, result, meth) }
+      tap{ |result| cache_for(uri, result, meth, opts) }
   end
 
   def merge_data lhs, rhs
