@@ -26,7 +26,7 @@ end
 module RestGraph::RailsUtil
   module Helper
     def rest_graph
-      controller.rest_graph
+      controller.send(:rest_graph)
     end
   end
 

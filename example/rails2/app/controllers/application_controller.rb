@@ -61,6 +61,8 @@ class ApplicationController < ActionController::Base
     render :text => YAML.dump([cache_nil, cache])
   end
 
+  def helper; end
+
   private
   def filter_common
     rest_graph_setup(:auto_authorize => true, :canvas => '')

@@ -150,4 +150,10 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal [nil, {'a' => 'b'}], YAML.load(@response.body)
   end
+
+  def test_helper
+    get(:helper)
+    assert_response :success
+    assert_equal RestGraph.default_app_id, @response.body.strip
+  end
 end
