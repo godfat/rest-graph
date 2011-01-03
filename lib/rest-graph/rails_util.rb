@@ -43,6 +43,12 @@ module RestGraph::RailsUtil
     rest_graph_options_ctl.merge!(rest_graph_extract_options(options, :reject))
     rest_graph_options_new.merge!(rest_graph_extract_options(options, :select))
 
+    # we'll need to reinitialize rest_graph with the new options,
+    # otherwise if you're calling rest_graph before rest_graph_setup,
+    # you'll end up with default options without the ones you've passed
+    # into rest_graph_setup.
+    rest_graph.send(:initialize, rest_graph_options_new)
+
     rest_graph_check_params_signed_request # canvas
     rest_graph_check_params_session        # i think it would be deprecated
     rest_graph_check_cookie                # for js sdk (canvas or not)

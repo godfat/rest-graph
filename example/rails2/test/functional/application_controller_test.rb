@@ -144,4 +144,10 @@ class ApplicationControllerTest < ActionController::TestCase
   rescue => e
     assert_equal RestGraph::Error, e.class
   end
+
+  def test_reinitailize
+    get(:reinitialize)
+    assert_response :success
+    assert_equal [nil, {'a' => 'b'}], YAML.load(@response.body)
+  end
 end

@@ -54,6 +54,13 @@ class ApplicationController < ActionController::Base
     raise RestGraph::Error.new("don't rescue me")
   end
 
+  def reinitialize
+    cache_nil = rest_graph.cache
+    rest_graph_setup(:cache => {'a' => 'b'})
+    cache     = rest_graph.cache
+    render :text => YAML.dump([cache_nil, cache])
+  end
+
   private
   def filter_common
     rest_graph_setup(:auto_authorize => true, :canvas => '')
