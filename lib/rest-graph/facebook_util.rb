@@ -46,9 +46,17 @@ module RestGraph::FacebookUtil
 
   USER_PERMISSIONS = PERMISSIONS.reject{|perm| perm.start_with?('friends_')}
 
+  def fix_fql_multi result
+    result.inject({}){ |r, i| r[i['name']] = i['fql_result_set']; r }
+  end
+
+  def fix_permission result
+    result.first && result.first.select{ |k, v| v == 1 }.keys
+  end
+
   def permissions uid, selected_permissions=PERMISSIONS
-    fql(permissions_fql(uid, selected_permissions),
-        {}, :secret => true).first.select{ |k, v| v == 1 }.keys
+    fix_permission(
+      fql(permissions_fql(uid, selected_permissions), {}, :secret => true))
   end
 
   def user_permissions uid
