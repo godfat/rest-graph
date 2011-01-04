@@ -51,7 +51,8 @@ module RestGraph::FacebookUtil
   end
 
   def fix_permission result
-    result.first && result.first.select{ |k, v| v == 1 }.keys
+    # Hash[] is for ruby 1.8.7
+    result.first && Hash[result.first.select{ |k, v| v == 1 }].keys
   end
 
   def permissions uid, selected_permissions=PERMISSIONS
