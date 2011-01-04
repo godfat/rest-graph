@@ -50,13 +50,13 @@ module RestGraph::FacebookUtil
     result.inject({}){ |r, i| r[i['name']] = i['fql_result_set']; r }
   end
 
-  def fix_permission result
+  def fix_permissions result
     # Hash[] is for ruby 1.8.7
     result.first && Hash[result.first.select{ |k, v| v == 1 }].keys
   end
 
   def permissions uid, selected_permissions=PERMISSIONS
-    fix_permission(
+    fix_permissions(
       fql(permissions_fql(uid, selected_permissions), {}, :secret => true))
   end
 

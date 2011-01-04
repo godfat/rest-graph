@@ -17,7 +17,7 @@ describe RestGraph::FacebookUtil do
   end
 
   should 'fix_permission' do
-    RestGraph.new.fix_permission(@res).should == %w[publish_stream]
+    RestGraph.new.fix_permissions(@res).should == %w[publish_stream]
   end
 
   should 'fix_fql_multi' do
