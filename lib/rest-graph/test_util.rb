@@ -2,6 +2,8 @@
 require 'rest-graph'
 require 'rr'
 
+require 'uri'
+
 module RestGraph::TestUtil
   extend RR::Adapters::RRMethods
 
@@ -14,7 +16,21 @@ module RestGraph::TestUtil
 
       stub(rg).fetch{ |meth, uri, payload|
         history << [meth, uri, payload]
-        RestGraph.json_encode(default_response)
+        http     = 'https?://[\w\d]+(\.[\w\d]+)+/'
+        response = case uri
+                     when %r{#{http}method/fql.query}
+                       [default_response]
+                     when %r{#{http}method/fql.multiquery}
+                       RestGraph.json_decode(
+                         Rack::Utils.parse_query(
+                           URI.parse(uri).query)['queries']).keys.map{ |q|
+                             {'name' => q,
+                               'fql_result_set' => [default_response]}
+                           }
+                     else
+                       default_response
+                   end
+        RestGraph.json_encode(response)
       }
     }
     self
