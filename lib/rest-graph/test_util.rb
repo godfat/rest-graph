@@ -18,8 +18,6 @@ module RestGraph::TestUtil
         history << [meth, uri, payload]
         http     = 'https?://[\w\d]+(\.[\w\d]+)+/'
         response = case uri
-                     when %r{#{http}method/fql.query}
-                       [default_response]
                      when %r{#{http}method/fql.multiquery}
                        RestGraph.json_decode(
                          Rack::Utils.parse_query(
@@ -27,6 +25,8 @@ module RestGraph::TestUtil
                              {'name' => q,
                                'fql_result_set' => [default_response]}
                            }
+                     when %r{#{http}method/\w+\.\w+}
+                       [default_response]
                      else
                        default_response
                    end
