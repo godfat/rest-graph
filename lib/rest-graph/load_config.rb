@@ -28,12 +28,12 @@ module RestGraph::LoadConfig
 
     mod = Module.new
     mod.module_eval(defaults.inject([]){ |r, (k, v)|
+      # quote strings, leave others free (e.g. false, numbers, etc)
       r << <<-RUBY
-             def default_#{k}
-               # quote strings, leave others free (e.g. false, numbers, etc)
-               #{v.kind_of?(String) ? "'#{v}'" : v}
-             end
-             RUBY
+        def default_#{k}
+          #{v.kind_of?(String) ? "'#{v}'" : v}
+        end
+      RUBY
     }.join)
 
     RestGraph.send(:extend, mod)
