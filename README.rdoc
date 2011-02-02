@@ -274,7 +274,7 @@ Call functionality from Facebook's old REST API:
 
 === Utility Methods:
 
-==== parse_xxxx
+==== parse_???
 
 All the methods that obtain an access_token will automatically save it.
 
@@ -303,7 +303,7 @@ available, depending on how the access_token was obtained).
 
 Read from the rest-graph.yaml file.
 
- RestGraph.default_xxxx
+ RestGraph.default_???
 
 === Other ways of getting an access token
 
