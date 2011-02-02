@@ -1,4 +1,4 @@
 
 require 'rest-graph/load_config'
 
-RestGraph::LoadConfig.autoload!
+RestGraph::LoadConfig.autoload

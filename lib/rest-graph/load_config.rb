@@ -7,21 +7,21 @@ require 'rest-graph/rails_util' if Object.const_defined?(:Rails)
 
 module RestGraph::LoadConfig
   module_function
-  def autoload!
-    RestGraph::LoadConfig.load_if_rails!
+  def autoload
+    RestGraph::LoadConfig.load_if_rails
   end
 
-  def load_if_rails!
+  def load_if_rails
     return unless Object.const_defined?(:Rails)
     root = Rails.root
     file = ["#{root}/config/rest-graph.yaml", # YAML should use .yaml
             "#{root}/config/rest-graph.yml"].find{|path| File.exist?(path)}
     return unless file
 
-    RestGraph::LoadConfig.load_config!(file, Rails.env)
+    RestGraph::LoadConfig.load_config(file, Rails.env)
   end
 
-  def load_config! file, env
+  def load_config file, env
     config   = YAML.load(ERB.new(File.read(file)).result(binding))
     defaults = config[env]
     return unless defaults
