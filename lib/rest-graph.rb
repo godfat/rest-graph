@@ -246,6 +246,8 @@ class RestGraph < RestGraphStruct
   #                     # default: auto_decode in rest-graph instance
   #        secret: Bool # use secret_acccess_token or not
   #                     # default: false
+  #         cache: Bool # use cache or not; if it's false, update cache, too
+  #                     # default: true
   #    expires_in: Int  # control when would the cache be expired
   #                     # default: nothing
   #         async: Bool # use eventmachine for http client or not
