@@ -15,8 +15,8 @@ describe RestGraph::ConfigUtil do
 
   should 'honor rails config' do
     ::Rails = Object.new
-    mock(Rails).env { 'test' }
-    mock(Rails).root{ File.dirname(__FILE__) }
+    mock(Rails).env { 'test' }.times(2)
+    mock(Rails).root{ File.dirname(__FILE__) }.times(2)
 
     check = lambda{
       RestGraph.default_app_id.should ==   41829
@@ -25,16 +25,18 @@ describe RestGraph::ConfigUtil do
       RestGraph.default_lang.should        == 'zh-tw'
     }
 
-    TestHelper.ensure_rollback{
-      RestGraph::ConfigUtil.load_config_for_rails
-      check.call
-    }
+    [RestGraph::ConfigUtil, RestGraph].each{ |const|
+      TestHelper.ensure_rollback{
+        const.load_config_for_rails
+        check.call
+      }
 
-    TestHelper.ensure_rollback{
-      RestGraph::ConfigUtil.load_config(
-        "#{File.dirname(__FILE__)}/config/rest-graph.yaml",
-        'test')
-      check.call
+      TestHelper.ensure_rollback{
+        const.load_config(
+          "#{File.dirname(__FILE__)}/config/rest-graph.yaml",
+          'test')
+        check.call
+      }
     }
   end
 end

@@ -6,7 +6,8 @@ require 'rest-graph/core'
 require 'rest-graph/rails_util' if Object.const_defined?(:Rails)
 
 module RestGraph::ConfigUtil
-  module_function
+  extend self
+
   def autoload
     RestGraph::ConfigUtil.load_config_for_rails
   end
@@ -39,3 +40,5 @@ module RestGraph::ConfigUtil
     RestGraph.send(:extend, mod)
   end
 end
+
+RestGraph.send(:extend, RestGraph::ConfigUtil)
