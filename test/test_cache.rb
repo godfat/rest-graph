@@ -29,6 +29,14 @@ describe RestGraph do
       mock(@cache).store(@rg.send(:cache_key, @url), @body, :expires_in => 3)
       @rg.get('cache', {}, :expires_in => 3).should == @body
     end
+
+    should 'update cache if there is cache option set to false/nil' do
+      @rg.get('cache')                     .should == @body
+      stub_request(:get, @url).to_return(:body => @body.reverse).times(1)
+      @rg.get('cache')                     .should == @body
+      @rg.get('cache', {}, :cache => false).should == @body.reverse
+      @rg.get('cache')                     .should == @body.reverse
+    end
   end
 
   should 'not cache post/put/delete' do
