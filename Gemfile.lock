@@ -1,19 +1,21 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    addressable (2.2.2)
+    addressable (2.2.4)
     bacon (1.1.0)
-    bones (3.5.4)
-      little-plugger (>= 1.1.2)
-      loquacious (>= 1.7.0)
-      rake (>= 0.8.7)
+    bones (3.6.2)
+      little-plugger (= 1.1.2)
+      loquacious (= 1.7.0)
+      rake (= 0.8.7)
     crack (0.1.8)
-    em-http-request (0.2.15)
+    em-http-request (0.3.0)
       addressable (>= 2.0.0)
+      escape_utils
       eventmachine (>= 0.12.9)
+    escape_utils (0.1.9)
     eventmachine (0.12.10)
-    json (1.4.6)
-    json_pure (1.4.6)
+    json (1.5.1)
+    json_pure (1.5.1)
     little-plugger (1.1.2)
     loquacious (1.7.0)
     mime-types (1.16)
@@ -23,10 +25,10 @@ GEM
       mime-types (>= 1.16)
     rr (1.0.2)
     ruby-hmac (0.4.0)
-    webmock (1.6.1)
+    webmock (1.6.2)
       addressable (>= 2.2.2)
       crack (>= 0.1.7)
-    yajl-ruby (0.7.8)
+    yajl-ruby (0.7.9)
 
 PLATFORMS
   ruby
