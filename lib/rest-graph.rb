@@ -546,6 +546,10 @@ class RestGraph < RestGraphStruct
     cookies.reject{ |(k, v)| k == 'sig' }.sort.map{ |a| a.join('=') }
   end
 
+  def cache_assign uri, value
+    cache[cache_key(uri)] = value
+  end
+
   def cache_key uri
     Digest::MD5.hexdigest(uri)
   end
@@ -564,7 +568,7 @@ class RestGraph < RestGraphStruct
     if opts[:expires_in].kind_of?(Fixnum) && cache.method(:store).arity == -3
       cache.store(cache_key(uri), result, :expires_in => opts[:expires_in])
     else
-      cache[cache_key(uri)] = result
+      cache_assign(uri, result)
     end
   end
 
