@@ -1,5 +1,5 @@
 
-require 'rest-graph'
+require 'rest-graph/core'
 
 class RestGraph
   module DefaultAttributes

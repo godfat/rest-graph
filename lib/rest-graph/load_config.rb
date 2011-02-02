@@ -2,7 +2,7 @@
 require 'erb'
 require 'yaml'
 
-require 'rest-graph'
+require 'rest-graph/core'
 require 'rest-graph/rails_util' if Object.const_defined?(:Rails)
 
 module RestGraph::LoadConfig

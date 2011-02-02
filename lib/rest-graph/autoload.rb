@@ -1,4 +1,3 @@
 
-require 'rest-graph/load_config'
-
-RestGraph::LoadConfig.autoload
+require 'rest-graph'
+puts "[DEPRECATED] require 'rest-graph/autoload' is deprecated"

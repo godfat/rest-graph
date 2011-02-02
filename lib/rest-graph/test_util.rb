@@ -1,5 +1,5 @@
 
-require 'rest-graph'
+require 'rest-graph/core'
 require 'rr'
 
 require 'uri'

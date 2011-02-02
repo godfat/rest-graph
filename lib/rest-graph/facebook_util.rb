@@ -1,5 +1,5 @@
 
-require 'rest-graph'
+require 'rest-graph/core'
 
 module RestGraph::FacebookUtil
   PERMISSIONS = %w[
