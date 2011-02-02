@@ -112,10 +112,7 @@ class RestGraph < RestGraphStruct
   # Fallback to ruby-hmac gem in case system openssl
   # lib doesn't support SHA256 (OSX 10.5)
   def self.hmac_sha256 key, data
-    # for ruby version >= 1.8.7, we can simply pass sha256,
-    # instead of OpenSSL::Digest::Digest.new('sha256')
-    # i'll go back to original implementation once all old systems died
-    OpenSSL::HMAC.digest(OpenSSL::Digest::Digest.new('sha256'), key, data)
+    OpenSSL::HMAC.digest('sha256', key, data)
   rescue RuntimeError
     require 'hmac-sha2'
     HMAC::SHA256.digest(key, data)
