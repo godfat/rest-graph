@@ -1,5 +1,5 @@
 
 require 'rest-graph/core'
-require 'rest-graph/load_config'
+require 'rest-graph/config_util'
 
-RestGraph::LoadConfig.autoload
+RestGraph::ConfigUtil.autoload

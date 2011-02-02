@@ -185,8 +185,8 @@ options for RestGraph instance are also valid options for rest_graph_setup.
 
 3. Load from a YAML file
 
-    require 'rest-graph/load_config'
-    RestGraph::LoadConfig.load_config('path/to/rest-graph.yaml', 'production')
+    require 'rest-graph/config_util'
+    RestGraph::ConfigUtil.load('path/to/rest-graph.yaml', 'production')
     rg = RestGraph.new
 
 4. Load config automatically

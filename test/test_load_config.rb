@@ -5,9 +5,9 @@ else
   require File.dirname(__FILE__) + '/common'
 end
 
-require 'rest-graph/load_config'
+require 'rest-graph/config_util'
 
-describe RestGraph::LoadConfig do
+describe RestGraph::ConfigUtil do
 
   after do
     RR.verify
@@ -26,12 +26,12 @@ describe RestGraph::LoadConfig do
     }
 
     TestHelper.ensure_rollback{
-      RestGraph::LoadConfig.load_if_rails
+      RestGraph::ConfigUtil.load_if_rails
       check
     }
 
     TestHelper.ensure_rollback{
-      RestGraph::LoadConfig.load_config(
+      RestGraph::ConfigUtil.load(
         "#{File.dirname(__FILE__)}/config/rest-graph.yaml",
         'test')
       check
