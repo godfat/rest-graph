@@ -241,6 +241,15 @@ class RestGraph < RestGraphStruct
     "#{server}#{path}#{build_query_string(query, opts)}"
   end
 
+  # extra options:
+  #   auto_decode: Bool # decode with json or not in this method call
+  #                     # default: auto_decode in rest-graph instance
+  #        secret: Bool # use secret_acccess_token or not
+  #                     # default: false
+  #         async: Bool # use eventmachine for http client or not
+  #                     # default: false, but true in aget family
+  #    expires_in: Int  # control when would the cache be expired
+  #                     # default: nothing
   def get    path, query={}, opts={}, &cb
     request(opts, [:get   , url(path, query, graph_server, opts)], &cb)
   end
