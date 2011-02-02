@@ -32,10 +32,12 @@ describe RestGraph do
 
     should 'update cache if there is cache option set to false' do
       @rg.get('cache')                     .should == @body
-      stub_request(:get, @url).to_return(:body => @body.reverse).times(1)
+      stub_request(:get, @url).to_return(:body => @body.reverse).times(2)
       @rg.get('cache')                     .should == @body
       @rg.get('cache', {}, :cache => false).should == @body.reverse
       @rg.get('cache')                     .should == @body.reverse
+      @rg.cache = nil
+      @rg.get('cache', {}, :cache => false).should == @body.reverse
     end
   end
 

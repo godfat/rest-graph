@@ -549,6 +549,7 @@ class RestGraph < RestGraphStruct
   end
 
   def cache_assign uri, value
+    return unless cache
     cache[cache_key(uri)] = value
   end
 
