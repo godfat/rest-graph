@@ -219,6 +219,19 @@ options for RestGraph instance are also valid options for rest_graph_setup.
  # GET https://graph.facebook.com/me?metadata=1&access_token=TOKEN
  rg.get('me', :metadata => '1')
 
+ # extra options:
+ #   auto_decode: Bool # decode with json or not in this method call
+ #                     # default: auto_decode in rest-graph instance
+ #        secret: Bool # use secret_acccess_token or not
+ #                     # default: false
+ #         cache: Bool # use cache or not; if it's false, update cache, too
+ #                     # default: true
+ #    expires_in: Int  # control when would the cache be expired
+ #                     # default: nothing
+ #         async: Bool # use eventmachine for http client or not
+ #                     # default: false, but true in aget family
+ rg.get('me', {:metadata => '1'}, :secret => true, expires_in => 600)
+
 ==== post
  rg.post('me/feed', :message => 'bread!')
 
