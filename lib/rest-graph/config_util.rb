@@ -8,7 +8,7 @@ require 'rest-graph/rails_util' if Object.const_defined?(:Rails)
 module RestGraph::ConfigUtil
   extend self
 
-  def autoload
+  def load_config_for_all
     RestGraph::ConfigUtil.load_config_for_rails
   end
 

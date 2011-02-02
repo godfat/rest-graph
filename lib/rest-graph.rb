@@ -2,4 +2,4 @@
 require 'rest-graph/core'
 require 'rest-graph/config_util'
 
-RestGraph::ConfigUtil.autoload
+RestGraph::ConfigUtil.load_config_for_all
