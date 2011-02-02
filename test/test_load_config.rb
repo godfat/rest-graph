@@ -26,12 +26,12 @@ describe RestGraph::ConfigUtil do
     }
 
     TestHelper.ensure_rollback{
-      RestGraph::ConfigUtil.load_if_rails
+      RestGraph::ConfigUtil.load_config_for_rails
       check
     }
 
     TestHelper.ensure_rollback{
-      RestGraph::ConfigUtil.load(
+      RestGraph::ConfigUtil.load_config(
         "#{File.dirname(__FILE__)}/config/rest-graph.yaml",
         'test')
       check
