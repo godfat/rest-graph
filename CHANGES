@@ -1,12 +1,22 @@
 = rest-graph changes history
 
-== rest-graph 1.7.1 -- ?
+== rest-graph 1.8.0 -- ?
+
+* [RestGraph] Now require 'rest-graph/autoload' is deprecated, simply use
+              require 'rest-graph' would require anything you "might" or
+              might not want. Use require 'rest-graph/core' for core
+              functionality instead.
 
 * [RestGraph] Now RestGraph#get/post has two extra cache options, one is
               `expires_in', to indicate how long does this result should be
               cached. Another one is `cache', if passing false, it means
               the cache should be updated with this request, no matter it's
               cached or not before.
+
+* [ConfigUtil] LoadConfig is renamed to ConfigUtil, and autoload is removed.
+
+* [ConfigUtil] ConfigUtil is extended into RestGraph, so RestGraph.load_config
+               is equivalent to ConfigUtil.load_config.
 
 * [RailsUtil] Now rest-graph related methods are all private or protected,
               this would avoid them being treated as Rails actions.
@@ -18,9 +28,7 @@
 * [TestUtil] Fixed stub format for method/fql.multiquery. Facebook has weird
              and inconsistent format for different API.
 
-* [FacebookUtil] Some very Facebook specific utilities. Use:
-                     require 'rest-graph/facebook_util'
-                 to enable it.
+* [FacebookUtil] Added some very Facebook specific utilities.
 
 == rest-graph 1.7.0 -- 2010-12-30
 
