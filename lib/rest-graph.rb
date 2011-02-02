@@ -431,6 +431,11 @@ class RestGraph < RestGraphStruct
   private
   def request opts, *reqs, &cb
     Timeout.timeout(timeout){
+      reqs.each{ |(meth, uri, payload)|
+        next if meth != :get
+        cache_assign(uri, nil)
+      } if opts[:cache] == false
+
       if opts[:async]
         request_em(opts, reqs, &cb)
       else
