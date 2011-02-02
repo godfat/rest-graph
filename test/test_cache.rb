@@ -30,7 +30,7 @@ describe RestGraph do
       @rg.get('cache', {}, :expires_in => 3).should == @body
     end
 
-    should 'update cache if there is cache option set to false/nil' do
+    should 'update cache if there is cache option set to false' do
       @rg.get('cache')                     .should == @body
       stub_request(:get, @url).to_return(:body => @body.reverse).times(1)
       @rg.get('cache')                     .should == @body
