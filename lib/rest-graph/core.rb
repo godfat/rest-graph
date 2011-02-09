@@ -350,6 +350,7 @@ class RestGraph < RestGraphStruct
     self.data = json &&
       check_sig_and_return_data(self.class.json_decode(json))
   rescue ParseError
+    self.data = nil
   end
 
   def fbs
@@ -363,9 +364,12 @@ class RestGraph < RestGraphStruct
     sig,  json = [sig_encoded, json_encoded].map{ |str|
       "#{str.tr('-_', '+/')}==".unpack('m').first
     }
-    self.data = self.class.json_decode(json) if
-      secret && self.class.hmac_sha256(secret, json_encoded) == sig
+    self.data = check_sig_and_return_data(
+                  self.class.json_decode(json).merge('sig' => sig)){
+                    self.class.hmac_sha256(secret, json_encoded)
+                  }
   rescue ParseError
+    self.data = nil
   end
 
 
@@ -527,7 +531,11 @@ class RestGraph < RestGraphStruct
   end
 
   def check_sig_and_return_data cookies
-    cookies if secret && calculate_sig(cookies) == cookies['sig']
+    cookies if secret && if block_given?
+                           yield
+                         else
+                           calculate_sig(cookies)
+                         end == cookies['sig']
   end
 
   def check_error hash, uri

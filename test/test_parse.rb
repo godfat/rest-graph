@@ -58,7 +58,7 @@ describe RestGraph do
   should 'parse json correctly' do
     rg = RestGraph.new
 
-    rg.parse_json!('bad json').should == nil
+    rg.parse_json!('bad json')    .should == nil
     rg.parse_json!('{"no":"sig"}').should == nil
     rg.parse_json!('{"feed":"me","sig":"bddd192cf27f22c05f61c8bea24fa4b7"}').
       should == nil
@@ -66,6 +66,9 @@ describe RestGraph do
     rg = RestGraph.new(:secret => 'bread')
     rg.parse_json!('{"feed":"me","sig":"20393e7823730308938a86ecf1c88b14"}').
       should == {'feed' => 'me', 'sig' => "20393e7823730308938a86ecf1c88b14"}
+    rg.data.empty?.should == false
+    rg.parse_json!('bad json')
+    rg.data.empty?.should == true
   end
 
   should 'parse signed_request' do
@@ -85,6 +88,7 @@ describe RestGraph do
 
     signed_request = "#{encode[sig[0..-4]+'bad']}.#{json_encoded}"
     rg.parse_signed_request!(signed_request).should == nil
+    rg.data                                 .should == {}
   end
 
   should 'fallback to ruby-hmac if Digest.new raise an runtime error' do
@@ -102,7 +106,9 @@ describe RestGraph do
   should 'parse fbs from facebook response which lacks sig...' do
     rg = RestGraph.new(:access_token => 'a', :secret => 'z')
     rg.parse_fbs!(rg.fbs)                           .should.kind_of?(Hash)
+    rg.data.empty?.should == false
     rg.parse_fbs!(rg.fbs.sub(/sig\=\w+/, 'sig=abc')).should == nil
+    rg.data.empty?.should == true
   end
 
   should 'generate correct fbs with additional parameters' do
