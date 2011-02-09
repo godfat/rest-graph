@@ -67,7 +67,7 @@ adds the following two methods to your Controllers:
 
 === Example usage:
 
- class MyController
+ class MyController < ActionController::Base
    include RestGraph::RailsUtil
    before_filter :setup
 
