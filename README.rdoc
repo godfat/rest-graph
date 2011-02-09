@@ -69,15 +69,18 @@ adds the following two methods to your Controllers:
 
  class MyController
    include RestGraph::RailsUtil
-   before_filter do
+   before_filter :setup
+
+   def myaction
+     @medata = rest_graph.get('me')
+   end
+
+   private
+   def setup
      rest_graph_setup(:app_id               => '123',
                       :canvas               => 'mycanvas',
                       :auto_authorize_scope => 'email')
                       # See below for more options
-   end
-
-   def myaction
-     @medata = rest_graph.get('me')
    end
  end
 
