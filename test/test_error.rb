@@ -48,4 +48,13 @@ describe RestGraph::Error do
     error.should.not.kind_of?(RestGraph::Error::AccessToken)
     error.should    .kind_of?(RestGraph::Error)
   end
+
+  should 'nuke cache upon errors' do
+    stub_request(:get, 'https://graph.facebook.com/me').
+      to_return(:body => '{"error":"wrong"}').times(2)
+
+    rg = RestGraph.new(:cache => {}, :error_handler => lambda{|e,u|})
+    rg.get('me'); rg.get('me')
+    rg.cache.values.should == [nil]
+  end
 end

@@ -542,6 +542,7 @@ class RestGraph < RestGraphStruct
     if error_handler && hash.kind_of?(Hash) &&
        (hash['error'] ||    # from graph api
         hash['error_code']) # from fql
+      cache_assign(uri, nil)
       error_handler.call(hash, uri)
     else
       block_given? ? yield(hash) : hash
