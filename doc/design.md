@@ -52,7 +52,10 @@ Either one is welcomed.
 
 ## Name
 
-rest-graph is named after the first dependency rest-client.
+[rest-graph][] is named after its first dependency [rest-client][].
+
+[rest-graph]: https://github.com/cardinalblue/rest-graph
+[rest-client]: https://github.com/archiloque/rest-client
 
 ## License
 
