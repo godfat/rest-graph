@@ -1,4 +1,4 @@
 pkg
-doc
+rdoc
 *.rbc
 .bundle
