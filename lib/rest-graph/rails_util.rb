@@ -1,6 +1,13 @@
 
 require 'rest-graph/core'
 
+if Rails::VERSION::MAJOR >= 3
+  require 'active_support/cache'
+
+else # cannot cherry-pick in rails 2?
+  require 'active_support'
+end
+
 class RestGraph
   module DefaultAttributes
     def default_canvas                ; ''   ; end
