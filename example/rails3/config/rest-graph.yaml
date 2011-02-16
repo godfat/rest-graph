@@ -1,0 +1,11 @@
+
+development: &default
+  app_id: '123'
+  secret: '456'
+  canvas: 'can'
+
+production:
+  *default
+
+test:
+  *default

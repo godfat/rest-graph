@@ -1,7 +1,11 @@
 
 ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require 'test_help'
+require File.expand_path('../../config/environment', __FILE__)
+begin
+  require 'rails/test_help'
+rescue LoadError # for rails2
+  require 'test_help'
+end
 
 class ActiveSupport::TestCase
   def normalize_query query

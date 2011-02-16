@@ -75,7 +75,7 @@ class ApplicationControllerTest < ActionController::TestCase
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \
         'scope=bogus&'                                              \
         'redirect_uri=http%3A%2F%2Ftest.host%2Foptions'),
-      normalize_url((assigns(:rest_graph_authorize_url))))
+      normalize_url(assigns(:rest_graph_authorize_url)))
   end
 
   def test_no_auto

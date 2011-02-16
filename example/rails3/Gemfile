@@ -1,0 +1,10 @@
+
+gem 'rails', '3.0.4'
+
+gem 'rest-client' # for rest-graph
+gem 'rest-graph'
+
+group 'test' do
+  gem 'rr'
+  gem 'webmock'
+end
