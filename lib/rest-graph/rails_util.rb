@@ -2,11 +2,20 @@
 require 'rest-graph/core'
 
 if Rails::VERSION::MAJOR >= 3
-  require 'active_support/cache'
-
-else # cannot cherry-pick in rails 2?
-  require 'active_support'
+  class RestGraph
+    class Railtie < Rails::Railtie
+      initializer 'rest-graph' do |app|
+        RestGraph::RailsUtil.init(app)
+      end
+    end
+  end
 end
+
+# this cannot be put here because of load order,
+# so put in the bottom of this file to load up for rails2.
+# if Rails::VERSION::MAJOR == 2
+#   ::RestGraph::RailsUtil.init(Rails)
+# end
 
 class RestGraph
   module DefaultAttributes
@@ -30,9 +39,12 @@ class RestGraph
   end
 end
 
-::ActiveSupport::Cache::Store.send(:include, ::RestGraph::RailsCache)
-
 module RestGraph::RailsUtil
+  def self.init app=Rails
+    ActiveSupport::Cache::Store.send(:include, RestGraph::RailsCache)
+    RestGraph::ConfigUtil.load_config_for_rails(app)
+  end
+
   module Helper
     def rest_graph
       controller.send(:rest_graph)
@@ -326,4 +338,8 @@ module RestGraph::RailsUtil
     Hash[options.send(method){ |(k, v)| RestGraph::Attributes.member?(k) }]
   end
   # ==================== end misc ================================
+end
+
+if Rails::VERSION::MAJOR == 2
+  RestGraph::RailsUtil.init(Rails)
 end

@@ -3,18 +3,17 @@ require 'erb'
 require 'yaml'
 
 require 'rest-graph/core'
-require 'rest-graph/rails_util' if Object.const_defined?(:Rails)
 
 module RestGraph::ConfigUtil
   extend self
 
   def load_config_for_all
-    RestGraph::ConfigUtil.load_config_for_rails
+    RestGraph::ConfigUtil.load_config_for_rails if
+      Object.const_defined?(:Rails)
   end
 
-  def load_config_for_rails
-    return unless Object.const_defined?(:Rails)
-    root = Rails.root
+  def load_config_for_rails app=Rails
+    root = app.root
     file = ["#{root}/config/rest-graph.yaml", # YAML should use .yaml
             "#{root}/config/rest-graph.yml"].find{|path| File.exist?(path)}
     return unless file
