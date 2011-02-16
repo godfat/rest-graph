@@ -1,5 +1,5 @@
 
-# Design
+# Rails
 
 ## Introduction
 
