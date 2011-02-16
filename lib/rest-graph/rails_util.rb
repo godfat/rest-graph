@@ -122,7 +122,7 @@ module RestGraph::RailsUtil
 
   # override this if you want the simple redirect_to
   def rest_graph_authorize_redirect
-    if !rest_graph_oget(:iframe)
+    unless rest_graph_in_canvas?
       redirect_to @rest_graph_authorize_url
     else
       # for rails 3

@@ -151,7 +151,6 @@ options for RestGraph instance are also valid options for rest_graph_setup.
                   # == All the above RestGraph options, plus
                   #
                   :canvas                 => 'mycanvas', # default ''
-                  :iframe                 => true      , # default false
                   :auto_authorize         => true      , # default false
                   :auto_authorize_scope   => 'email'   , # default ''
                   :auto_authorize_options => {}        , # default {}
@@ -173,12 +172,9 @@ options for RestGraph instance are also valid options for rest_graph_setup.
                     lambda{       @cache[uid] })         # default nil
                   # If we're not using Facebook JavaScript SDK,
                   # then we'll need to find a way to store the fbs,
-                  # which contains access_token and/or user id.
-                  # In a FBML canvas application, it seems session
-                  # doesn't work right, so you'll need cookies or
-                  # your custom handler to store it. In a standalone
-                  # site or iframe canvas application, you might want
-                  # to just use the Rails (or other framework) session.
+                  # which contains access_token and/or user id. In a
+                  # standalone site or iframe canvas application, you might
+                  # want to just use the Rails (or other framework) session.
 
 === Alternate ways to setup RestGraph:
 

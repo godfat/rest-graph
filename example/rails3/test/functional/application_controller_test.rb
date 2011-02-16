@@ -36,7 +36,7 @@ class ApplicationControllerTest < ActionController::TestCase
 
   def test_canvas
     get(:canvas)
-    assert_response :redirect
+    assert_response :success
     assert_equal(
       normalize_url(
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \
@@ -47,7 +47,7 @@ class ApplicationControllerTest < ActionController::TestCase
 
   def test_diff_canvas
     get(:diff_canvas)
-    assert_response :redirect
+    assert_response :success
     assert_equal(
       normalize_url(
         'https://graph.facebook.com/oauth/authorize?client_id=123&' \

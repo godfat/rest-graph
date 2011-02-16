@@ -74,7 +74,6 @@ class ApplicationController < ActionController::Base
 
   def filter_iframe_canvas
     rest_graph_setup(:canvas               => 'zzz',
-                     :iframe               => true,
                      :auto_authorize       => true)
   end
 
