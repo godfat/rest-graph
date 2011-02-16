@@ -1,4 +1,6 @@
 
+source 'http://rubygems.org'
+
 gem 'rails', '3.0.4'
 
 gem 'rest-client' # for rest-graph
