@@ -40,9 +40,13 @@ A lightweight Facebook Graph API client
 
  gem install rest-graph
 
-or if you want rails plugin and bleeding edge
+Or if you want rails plugin and bleeding edge, in Rails3's Gemfile:
 
- script/plugin install git://github.com/cardinalblue/rest-graph.git
+ gem 'rest-graph', :git => 'git://github.com/cardinalblue/rest-graph.git
+
+if Rails2:
+
+ ./script/plugin install git://github.com/cardinalblue/rest-graph.git
 
 == QUICK START:
 
@@ -95,14 +99,14 @@ To enable, just require anywhere:
 
  require 'rest-graph'
 
-If you are using Rails and rest-graph as a gem, you can include this
+Or if you're using bundler, add this line into Gemfile:
+
+ gem 'rest-graph'
+
+Or if you are using Rails2 and rest-graph as a gem, you can include this
 when you specify the gem in your environment file by using:
 
  config.gem 'rest-graph'
-
-Or if using bundler, by adding this line into your Gemfile:
-
- gem 'rest-graph'
 
 === Setup options:
 
