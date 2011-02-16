@@ -110,5 +110,21 @@ module Rails
   end
 end
 
+# begin copied from http://gembundler.com/rails23.html
+class Rails::Boot
+  def run
+    load_initializer
+
+    Rails::Initializer.class_eval do
+      def load_gems
+        @bundler_loaded ||= Bundler.require(:default, Rails.env.to_sym)
+      end
+    end
+
+    Rails::Initializer.run(:set_load_path)
+  end
+end
+# end copied from http://gembundler.com/rails23.html
+
 # All that for this:
 Rails.boot!
