@@ -18,6 +18,17 @@
 * [ConfigUtil] ConfigUtil is extended into RestGraph, so RestGraph.load_config
                is equivalent to ConfigUtil.load_config.
 
+*  [RailsUtil] Now FBML canvas is no longer supported. Setting iframe in
+               rest-graph.yaml or pass to rest_graph_setup(:iframe => true)
+               would be a no-op. Setting :canvas => 'name' should imply we're
+               using iframe. This make it less trouble to find how to do the
+               redirect correctly.
+
+*  [RailsUtil] Now it should work better with Rails3. Previously, the load
+               order problem would make rest-graph.yaml is not auto-picked.
+               For now we're using Railtie initializer to make it load better.
+               Rails2 should not be affected with this change.
+
 *  [RailsUtil] Now rest-graph related methods are all private or protected,
                this would avoid them being treated as Rails actions.
 
