@@ -43,9 +43,9 @@ module RestGraph::RailsUtil
     # skip if included already, any better way to detect this?
     return if controller.respond_to?(:rest_graph, true)
 
-    controller.rescue_from(::RestGraph::Error::AccessToken,
+    controller.rescue_from(RestGraph::Error::AccessToken,
                            :with => :rest_graph_on_error)
-    controller.helper(::RestGraph::RailsUtil::Helper)
+    controller.helper(RestGraph::RailsUtil::Helper)
     controller.instance_methods.select{ |method|
       method.to_s =~ /^rest_graph/
     }.each{ |method| controller.send(:protected, method) }
