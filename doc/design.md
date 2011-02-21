@@ -88,8 +88,8 @@ Target usages are as following:
   For example, how to get the access token, how to authenticate to Facebook,
   and how to use different settings (e.g. app_id, secret, etc) in different
   environments.  In this case, you'll want `require 'rest-graph/rails_util'`
-  and `require 'rest-graph/config_util'`.  See below for usages of those
-  two extra utilities.
+  (if your web framework is Rails) and `require 'rest-graph/config_util'`.
+  See below for usages of those two extra utilities.
 
 ## File Structure
 
