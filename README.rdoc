@@ -91,7 +91,7 @@ adds the following two methods to your controllers:
 === Default setup
 
 New RestGraph objects can read their default setup configuration from a
-YAML configuration file.
+YAML configuration file. Which is the same as passing to rest_graph_setup.
 
 * {Example}[http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml]
 
@@ -102,11 +102,6 @@ To enable, just require anywhere:
 Or if you're using bundler, add this line into Gemfile:
 
  gem 'rest-graph'
-
-Or if you are using Rails2 and rest-graph as a gem, you can include this
-when you specify the gem in your environment file by using:
-
- config.gem 'rest-graph'
 
 === Setup options:
 
