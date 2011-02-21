@@ -77,7 +77,7 @@ please file a ticket on our [issue tracker][].
 
 Target usages are as following:
 
-* No matter where rest-graph should be used, for convenience and laziness,
+* No matter where rest-graph whould be used, for convenience and laziness,
   just `require 'rest-graph'`.  Then you're good to go.
 
 * Used in backend engine or non-web application.  You might only want the
