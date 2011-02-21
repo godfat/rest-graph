@@ -133,4 +133,4 @@
 
   That's it!
 
-15. More information on customizing RestGraph and its functions are to be found here: <https://github.com/godfat/rest-graph>
+15. More information on customizing RestGraph and its functions are to be found here: <https://github.com/cardinalblue/rest-graph>
