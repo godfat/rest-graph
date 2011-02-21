@@ -16,7 +16,7 @@ A lightweight Facebook Graph API client
 
 * Simple Graph API call
 * Simple FQL call
-* Utility to extract access_token and check sig in cookies
+* Utility to extract access_token and check sig in cookies/signed_request
 
 == REQUIREMENTS:
 
