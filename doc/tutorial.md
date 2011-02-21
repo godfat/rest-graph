@@ -22,15 +22,11 @@
 
       # for rest-graph
       gem 'rest-client'
-      gem 'json'        # or gem 'yajl-ruby'
+      gem 'json'        # you can also use other JSON parsers/generators, i.e. 'yajl-ruby' or 'json_pure'
 
 
-5. You will also have to declare the requirement in the /config/environment.rb file. Please add this to the end of the file:
 
-      require 'rest-graph/auto_load'
-
-
-6. Create the rest-graph.yaml file in your /config directory and fill it with your FB app data. If you want to run your application in a canvas, declare the canvas name and set the 'iframe' value to true. If you don't, just don't mention any of these :)
+5. Create the rest-graph.yaml file in your /config directory and fill it with your FB app data. If you want to run your application in a canvas, declare also the canvas name.
 
   Example:
 
@@ -44,23 +40,22 @@
         secret: 'YYYYYYYYYYYYYYYYYYYYYYYYYYY'
         canvas: 'yourcanvasname'
         callback_host: 'my.production.host.com'
-        iframe: true
 
 
-  If you push to Heroku your production callback_host should be `yourappname.heroku.com`. You can use a tunnel for your development environment and test your application without struggling to push it to Heroku every time you make some changes. You'll find more information on the tunneling here: <http://tunnlr.com/>.
+  If you push to Heroku your production callback_host should be `yourappname.heroku.com`. You can also access your app directly running `rails s` in your console, but if you are behind a NAT (you don't have an external IP), you will have to use a service called a tunnel in order to make your application accessible to the outer world (and Facebook callbacks). You'll find more information on the tunneling here: <http://tunnlr.com/>.
 
-7. Let's create a first controller for your app - ScratchController.
+6. Let's create a first controller for your app - ScratchController.
 
       rails g controller Scratch
 
-8. The next step will be to include rest-graph to your controller. You should put these two lines in:
+7. The next step will be to include rest-graph to your controller. You should put these two lines in:
 
       require 'rest-graph/auto_load'
       include RestGraph::RailsUtil
 
   Now you can make use of the RestGraph commands :)
 
-9. So now you need to setup the access to your application in the controller. RestGraph can do it for you using the data from your rest-graph.yaml file. All you need to do is to run rest_graph_setup function. Let's use it as a before_filter.
+8. So now you need to setup the access to your application in the controller. RestGraph can do it for you using the data from your rest-graph.yaml file. All you need to do is to run rest_graph_setup function. Let's use it as a before_filter.
 
   Add this line after the `include RestGraph::RailsUtil`:
 
@@ -78,21 +73,21 @@
 
   You can now perform all kind of Graph API operations using the rest_graph object.
 
-10. Ok! Your controller is ready to make use of all the beauty that comes with RestGraph! You can prepare a first sample action now.
+9. Ok! Your controller is ready to make use of all the beauty that comes with RestGraph! You can prepare a first sample action now.
 
       def me
         render :text => rest_graph.get('me').inspect
       end
 
-11. Save your controller and go to the /config/routes.rb file to set up the default routing. For now you will just need this line:
+10. Save your controller and go to the /config/routes.rb file to set up the default routing. For now you will just need this line:
 
       match ':controller/:action'
 
-12. You can now push your app to Heroku and try to open <http://yourappname.heroku.com/scratch/me> in your browser. If you are logged in your Facebook account, this address should redirect you to the authorization page and ask if you want to let your application access your private information. After you confirm, you should be redirected straight to your 'me' action which is supposed to show the basic information about you in a hash.
+11. You can now push your app to Heroku and try to open <http://yourappname.heroku.com/scratch/me> in your browser. If you are logged in your Facebook account, this address should redirect you to the authorization page and ask if you want to let your application access your private information. After you confirm, you should be redirected straight to your 'me' action which is supposed to show the basic information about you in a hash.
 
   Tada!
 
-13. I guess you are also quite curious about how to get to some other data about your users. It's very easy. You can add another sample action to your controller:
+12. I guess you are also quite curious about how to get to some other data about your users. It's very easy. You can add another sample action to your controller:
 
       def feed
         render :text => rest_graph.get('me/home').inspect
@@ -101,7 +96,7 @@
   If you will push the changes to heroku and go to <http://yourappname/scratch/feed>, the page should give you a hash with all the data from your feed now.
 
 
-14. Ok. Now let's try to access your Facebook wall. You need to add a new action to your controller:
+13. Ok. Now let's try to access your Facebook wall. You need to add a new action to your controller:
 
       def wall
         render :text => rest_graph.get('me/feed').inspect
@@ -128,7 +123,7 @@
 
   Remember. Anytime you need to get data of a new kind, you need to ask user for a certain permission first and that means you need to declare this permission in your scope array!
 
-15. What else? If you know how to deal with hashes then you will definitely know how to get any kind of data you want using the rest_graph object. Let's say you want to get a last object from a user's wall (last in terms of time, last posted, so the first on the wall and therefore first to Ruby). Let's take a look at the /scratch/feed page. The hash which is printed on this page has 2 keys - data and paging. Let's leave the paging key aside. What's more interesting here comes as a value of 'data'. So the last object in any user's wall will be simply:
+14. What else? If you know how to deal with hashes then you will definitely know how to get any kind of data you want using the rest_graph object. Let's say you want to get a last object from a user's wall (last in terms of time, last posted, so the first on the wall and therefore first to Ruby). Let's take a look at the /scratch/feed page. The hash which is printed on this page has 2 keys - data and paging. Let's leave the paging key aside. What's more interesting here comes as a value of 'data'. So the last object in any user's wall will be simply:
 
       rest_graph.get('me/feed')['data'].first
 
@@ -137,3 +132,5 @@
       rest_graph.get('me/feed')['data'].first['from']['name']
 
   That's it!
+
+15. More information on customizing RestGraph and its functions are to be found here: <https://github.com/godfat/rest-graph>
