@@ -2,10 +2,10 @@
 
 1. Before you start I strongly recommend reading these:
 
-  * Apps on Facebook.com -> [http://developers.facebook.com/docs/guides/canvas/](http://developers.facebook.com/docs/guides/canvas/)
-  * Graph API -> [http://developers.facebook.com/docs/reference/api/](http://developers.facebook.com/docs/reference/api/)
-  * Authentication -> [http://developers.facebook.com/docs/authentication/](http://developers.facebook.com/docs/authentication/)
-  * Heroku: Building a Facebook Application -> [http://devcenter.heroku.com/articles/facebook/](http://devcenter.heroku.com/articles/facebook)
+  * Apps on Facebook.com -> <http://developers.facebook.com/docs/guides/canvas/>
+  * Graph API -> <http://developers.facebook.com/docs/reference/api/>
+  * Authentication -> <http://developers.facebook.com/docs/authentication/>
+  * Heroku: Building a Facebook Application -> <http://devcenter.heroku.com/articles/facebook/>
 
 
 2. Go to [FB Developers website](http://facebook.com/developers "FB Developers website") and create a new FB app. Set its canvas name, canvas url and your site URL. Set the canvas type to iframe.
@@ -47,7 +47,7 @@
         iframe: true
 
 
-  If you push to Heroku your production callback_host should be `yourappname.heroku.com`. You can use a tunnel for your development environment and test your application without struggling to push it to Heroku every time you make some changes. You'll find more information on the tunneling here: [http://tunnlr.com/](http://tunnlr.com/).
+  If you push to Heroku your production callback_host should be `yourappname.heroku.com`. You can use a tunnel for your development environment and test your application without struggling to push it to Heroku every time you make some changes. You'll find more information on the tunneling here: <http://tunnlr.com/>.
 
 7. Let's create a first controller for your app - ScratchController.
 
@@ -88,7 +88,7 @@
 
       match ':controller/:action'
 
-12. You can now push your app to Heroku and try to open [http://yourappname.heroku.com/scratch/me](http://yourappname.heroku.com/scratch/me) in your browser. If you are logged in your Facebook account, this address should redirect you to the authorization page and ask if you want to let your application access your private information. After you confirm, you should be redirected straight to your 'me' action which is supposed to show the basic information about you in a hash.
+12. You can now push your app to Heroku and try to open <http://yourappname.heroku.com/scratch/me> in your browser. If you are logged in your Facebook account, this address should redirect you to the authorization page and ask if you want to let your application access your private information. After you confirm, you should be redirected straight to your 'me' action which is supposed to show the basic information about you in a hash.
 
   Tada!
 
@@ -98,7 +98,7 @@
         render :text => rest_graph.get('me/home').inspect
       end
 
-  If you will push the changes to heroku and go to [http://yourappname/scratch/feed](http://yourappname/scratch/feed), the page should give you a hash with all the data from your feed now.
+  If you will push the changes to heroku and go to <http://yourappname/scratch/feed>, the page should give you a hash with all the data from your feed now.
 
 
 14. Ok. Now let's try to access your Facebook wall. You need to add a new action to your controller:
@@ -116,7 +116,7 @@
       scope = []
       scope << 'read_stream'
 
-  The only permission you need right now is the 'read_stream' permission. You can find out more about different kinds of user permissions here: [http://developers.facebook.com/docs/authentication/permissions/](http://developers.facebook.com/docs/authentication/permissions/)
+  The only permission you need right now is the 'read_stream' permission. You can find out more about different kinds of user permissions here: <http://developers.facebook.com/docs/authentication/permissions/>
 
   You also need to add the auto_authorize_scope argument to the rest_graph_setup. It will look this way now:
 
