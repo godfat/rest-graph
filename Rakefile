@@ -40,6 +40,7 @@ Bones{
    ignore_file   '.gitignore'
   rdoc.include   ['\w+']
   rdoc.exclude   ['test', 'doc', 'Rakefile', 'example']
+  rdoc.main      'README'
   rdoc.dir       'rdoc'
 }
 
