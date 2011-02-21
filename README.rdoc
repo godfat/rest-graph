@@ -22,7 +22,7 @@ A lightweight Facebook Graph API client
 
 * Tested with MRI 1.8.7 and 1.9.2 and Rubinius 1.1.1.
   Because of development gems can't work well on JRuby,
-  let me know if rest-graph is working in JRuby, thanks!
+  let me know if rest-graph is working on JRuby, thanks!
 
 * (must) pick one HTTP client:
   - gem install rest-client
@@ -40,11 +40,11 @@ A lightweight Facebook Graph API client
 
  gem install rest-graph
 
-Or if you want rails plugin and bleeding edge, in Rails3's Gemfile:
+Or if you want development version, put this in Gemfile:
 
  gem 'rest-graph', :git => 'git://github.com/cardinalblue/rest-graph.git
 
-if Rails2:
+Or as a Rails2 plugin:
 
  ./script/plugin install git://github.com/cardinalblue/rest-graph.git
 
@@ -59,9 +59,9 @@ if Rails2:
 === Obtaining an access token
 
 If you are using Rails, we recommend that you include a module called
-RestGraph::RailsUtil into your Controllers. (Your code contributions
+RestGraph::RailsUtil into your controllers. (Your code contributions
 for other Ruby frameworks would be appreciated!). RestGraph::RailsUtil
-adds the following two methods to your Controllers:
+adds the following two methods to your controllers:
 
  rest_graph_setup:   Attempts to find an access_token from the environment
                      and initializes a RestGraph object with it.
