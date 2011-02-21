@@ -21,8 +21,8 @@
       gem 'rest-graph'
 
       # for rest-graph
-      gem 'rest-client', '>=1.6'
-      gem 'json'
+      gem 'rest-client'
+      gem 'json'        # or gem 'yajl-ruby'
 
 
 5. You will also have to declare the requirement in the /config/environment.rb file. Please add this to the end of the file:
