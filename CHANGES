@@ -36,6 +36,9 @@
                for rest_graph. This is fixed by reinitialize rest_graph in
                rest_graph_setup.
 
+*  [RailsUtil] You can use rest_graph_js_redirect to do full page redirect
+               in canvas iframe.
+
 *   [TestUtil] Fixed stub format for method/fql.multiquery. Facebook has weird
                and inconsistent format for different API.
 
