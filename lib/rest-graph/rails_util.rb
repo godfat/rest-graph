@@ -141,7 +141,7 @@ module RestGraph::RailsUtil
       </script>
       <noscript>
         <meta http-equiv="refresh" content="0;url=#{
-          CGI.escape_html(redirect_url)}"/>
+          CGI.escapeHTML(redirect_url)}"/>
         <meta http-equiv="window-target" content="_top"/>
       </noscript>
       </head>
@@ -156,7 +156,7 @@ module RestGraph::RailsUtil
     <<-HTML
     <div>
       Please
-      <a href="#{CGI.escape_html(redirect_url)}" target="_top">authorize</a>
+      <a href="#{CGI.escapeHTML(redirect_url)}" target="_top">authorize</a>
       if this page is not automatically redirected.
     </div>
     HTML
