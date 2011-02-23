@@ -53,7 +53,7 @@ end
 
 desc 'Run example tests'
 task 'test:example' => ['gem:install'] do
-  %w[rails2 rails3].each{ |framework|
+  %w[rails3 rails2].each{ |framework|
     opts = Rake.application.options
     args = (opts.singleton_methods - [:rakelib, 'rakelib']).map{ |arg|
              if arg.to_s !~ /=$/ && opts.send(arg)
