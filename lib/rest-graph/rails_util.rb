@@ -125,32 +125,41 @@ module RestGraph::RailsUtil
     unless rest_graph_in_canvas?
       redirect_to @rest_graph_authorize_url
     else
-      # for rails 3
-      @rest_graph_safe_url = if ''.respond_to?(:html_safe)
-                               @rest_graph_authorize_url.html_safe
-                             else
-                               @rest_graph_authorize_url
-                             end
-
-      render :inline => <<-HTML
-      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-      <html>
-        <head>
-        <script type="text/javascript">
-          window.top.location.href = '<%= @rest_graph_safe_url %>'
-        </script>
-        <noscript>
-          <meta http-equiv="refresh" content="0;url=<%= h @rest_graph_authorize_url %>" />
-          <meta http-equiv="window-target" content="_top" />
-        </noscript>
-        </head>
-        <body>
-          <div>Please <a href="<%= h @rest_graph_authorize_url %>" target="_top">authorize</a> if this page is not automatically redirected.</div>
-        </body>
-      </html>
-      HTML
+      rest_graph_js_redirect(@rest_graph_authorize_url,
+                              rest_graph_authorize_body)
     end
+  end
+
+  def rest_graph_js_redirect redirect_url, body=''
+    render :inline => <<-HTML
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html>
+      <head>
+      <script type="text/javascript">
+        window.top.location.href = '#{redirect_url}'
+      </script>
+      <noscript>
+        <meta http-equiv="refresh" content="0;url=#{
+          CGI.escape_html(redirect_url)}"/>
+        <meta http-equiv="window-target" content="_top"/>
+      </noscript>
+      </head>
+      <body>
+        #{body}
+      </bodt>
+    </html>
+    HTML
+  end
+
+  def rest_graph_authorize_body redirect_url=@rest_graph_authorize_url
+    <<-HTML
+    <div>
+      Please
+      <a href="#{CGI.escape_html(redirect_url)}" target="_top">authorize</a>
+      if this page is not automatically redirected.
+    </div>
+    HTML
   end
 
   module_function
