@@ -19,6 +19,23 @@ class ApplicationControllerTest < ActionController::TestCase
     WebMock.reset!
   end
 
+  def assert_url expected
+    assert_equal(expected, normalize_url(assigns(:rest_graph_authorize_url)))
+    if @response.status == 200 # js redirect
+      assert_equal(
+        expected,
+        @response.body.match(/window\.top\.location\.href = '(.+?)'/)[1])
+
+      assert_equal(
+        CGI.escapeHTML(expected),
+        @response.body.match(/content="0;url=(.+?)"/)[1])
+
+      assert_equal(
+        CGI.escapeHTML(expected),
+        @response.body.match(/<a href="(.+?)" target="_top">/)[1])
+    end
+  end
+
   def test_index
     get(:index)
     assert_response :redirect
@@ -27,7 +44,7 @@ class ApplicationControllerTest < ActionController::TestCase
       'https://graph.facebook.com/oauth/authorize?client_id=123&' \
       'scope=&redirect_uri=http%3A%2F%2Ftest.host%2F')
 
-    assert_equal(url, normalize_url(assigns(:rest_graph_authorize_url)))
+    assert_url(url)
   end
 
   def test_canvas
@@ -39,7 +56,7 @@ class ApplicationControllerTest < ActionController::TestCase
       'scope=publish_stream&'                                     \
       'redirect_uri=http%3A%2F%2Fapps.facebook.com%2Fcan%2Fcanvas')
 
-    assert_equal(url, normalize_url(assigns(:rest_graph_authorize_url)))
+    assert_url(url)
   end
 
   def test_diff_canvas
@@ -51,7 +68,7 @@ class ApplicationControllerTest < ActionController::TestCase
       'scope=email&'                                              \
       'redirect_uri=http%3A%2F%2Fapps.facebook.com%2FToT%2Fdiff_canvas')
 
-    assert_equal(url, normalize_url(assigns(:rest_graph_authorize_url)))
+    assert_url(url)
   end
 
   def test_iframe_canvas
@@ -63,7 +80,7 @@ class ApplicationControllerTest < ActionController::TestCase
       'scope=&'                                                   \
       'redirect_uri=http%3A%2F%2Fapps.facebook.com%2Fzzz%2Fiframe_canvas')
 
-    assert_equal(url, normalize_url(assigns(:rest_graph_authorize_url)))
+    assert_url(url)
   end
 
   def test_options
@@ -75,7 +92,7 @@ class ApplicationControllerTest < ActionController::TestCase
       'scope=bogus&'                                              \
       'redirect_uri=http%3A%2F%2Ftest.host%2Foptions')
 
-    assert_equal(url, normalize_url(assigns(:rest_graph_authorize_url)))
+    assert_url(url)
   end
 
   def test_protected
