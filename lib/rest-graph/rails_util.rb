@@ -1,4 +1,7 @@
 
+require 'cgi'
+require 'uri'
+
 require 'rest-graph/core'
 
 if Rails::VERSION::MAJOR >= 3
