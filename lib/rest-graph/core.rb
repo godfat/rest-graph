@@ -249,6 +249,7 @@ class RestGraph < RestGraphStruct
   #                     # default: nothing
   #         async: Bool # use eventmachine for http client or not
   #                     # default: false, but true in aget family
+  #       headers: Hash # additional hash you want to pass
   def get    path, query={}, opts={}, &cb
     request(opts, [:get   , url(path, query, graph_server, opts)], &cb)
   end
@@ -429,7 +430,6 @@ class RestGraph < RestGraphStruct
 
 
 
-  private
   def request opts, *reqs, &cb
     Timeout.timeout(timeout){
       reqs.each{ |(meth, uri, payload)|
@@ -445,6 +445,7 @@ class RestGraph < RestGraphStruct
     }
   end
 
+  protected
   def request_em opts, reqs
     start_time = Time.now
     rs = reqs.map{ |(meth, uri, payload)|
@@ -501,11 +502,11 @@ class RestGraph < RestGraphStruct
     return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
   end
 
-  def build_headers
+  def build_headers opts={}
     headers = {}
     headers['Accept']          = accept if accept
     headers['Accept-Language'] = lang   if lang
-    headers
+    headers.merge(opts[:headers] || {})
   end
 
   def post_request result, uri, opts, &cb
@@ -586,7 +587,7 @@ class RestGraph < RestGraphStruct
 
   def fetch meth, uri, payload, opts
     RestClient::Request.execute(:method => meth, :url => uri,
-                                :headers => build_headers,
+                                :headers => build_headers(opts),
                                 :payload => payload).body.
       tap{ |result| cache_for(uri, result, meth, opts) }
   end

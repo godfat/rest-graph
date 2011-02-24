@@ -33,6 +33,22 @@ describe RestGraph do
                   :accept => 'text/plain').get('me').should == {'data' => []}
   end
 
+  should 'pass custom headers' do
+    stub_request(:get, 'http://example.com/').with(
+      :headers => {'Accept'          => 'text/javascript',
+                   'Accept-Language' => 'en-us',
+                   'Accept-Encoding' => 'gzip, deflate', # this is by ruby
+                   'X-Forwarded-For' => '127.0.0.1',
+                  }.merge(RUBY_VERSION < '1.9.2' ?
+                  {} :
+                  {'User-Agent'      => 'Ruby'})).       # this is by ruby
+      to_return(:body => '{"data": []}')
+
+    RestGraph.new.request({:headers => {'X-Forwarded-For' => '127.0.0.1'}},
+                          [:get, 'http://example.com']).
+      should == {'data' => []}
+  end
+
   should 'post right' do
     stub_request(:post, 'https://graph.facebook.com/feed/me').
       with(:body => 'message=hi%20there').to_return(:body => 'ok')
