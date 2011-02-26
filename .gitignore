@@ -2,3 +2,5 @@ pkg
 rdoc
 *.rbc
 .bundle
+.yardoc
+Gemfile.lock

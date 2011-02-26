@@ -1,54 +1,27 @@
 # encoding: utf-8
 
-begin
-  require 'bones'
-rescue LoadError
-  abort '### Please install the "bones" gem ###'
-end
+require "#{dir = File.dirname(__FILE__)}/task/gemgem"
+Gemgem.dir = dir
 
-ensure_in_path 'lib'
-proj = 'rest-graph'
-require "#{proj}/version"
+($LOAD_PATH << File.expand_path("#{Gemgem.dir}/lib" )).uniq!
 
-Bones{
-  ruby_opts [''] # silence warning for now
+desc 'Generate gemspec'
+task 'gem:spec' do
+  Gemgem.spec = Gemgem.create do |s|
+    require 'rest-graph/version'
+    s.name        = 'rest-graph'
+    s.version     = RestGraph::VERSION
+    # s.executables = [s.name]
 
-  version RestGraph::VERSION
+    %w[].each{ |g| s.add_runtime_dependency(g) }
+    %w[rest-client em-http-request rack yajl-ruby json json_pure ruby-hmac
+       webmock bacon rr].each{ |g| s.add_development_dependency(g) }
 
-  depend_on 'rest-client'    , :development => true
-  depend_on 'em-http-request', :development => true
+    s.authors     = ['Cardinal Blue', 'Lin Jen-Shin (godfat)']
+    s.email       = ['dev (XD) cardinalblue.com']
+  end
 
-  depend_on 'rack'     , :development => true
-
-  depend_on 'yajl-ruby', :development => true
-  depend_on 'json'     , :development => true
-  depend_on 'json_pure', :development => true
-
-  depend_on 'ruby-hmac', :development => true
-
-  depend_on 'rr'       , :development => true
-  depend_on 'webmock'  , :development => true
-  depend_on 'bacon'    , :development => true
-
-  name    proj
-  url     "http://github.com/cardinalblue/#{proj}"
-  authors ['Cardinal Blue', 'Lin Jen-Shin (aka godfat 真常)']
-  email   'dev (XD) cardinalblue.com'
-
-  history_file   'CHANGES'
-   readme_file   'README.rdoc'
-   ignore_file   '.gitignore'
-  rdoc.include   ['\w+']
-  rdoc.exclude   ['test', 'doc', 'Rakefile', 'example']
-  rdoc.main      'README'
-  rdoc.dir       'rdoc'
-}
-
-CLEAN.include Dir['**/*.rbc']
-
-task :default do
-  Rake.application.options.show_task_pattern = /./
-  Rake.application.display_tasks_and_comments
+  Gemgem.write
 end
 
 desc 'Run example tests'
