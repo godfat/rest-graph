@@ -40,7 +40,8 @@ in the near future, for example, `oauth/access_token` API would not return
 a JSON as typical Graph APIs do, instead, it returns a query string as in
 URL.  In this case, rest-graph uses `Rack::Utils.parse_query` to parse the
 query for you.  If you feel there are more cases rest-graph should handle
-like this, please feel free to file a ticket on our issue tracker on Github.
+like this, please feel free to file a ticket on our [issue tracker][] on
+Github.
 
 * <https://github.com/cardinalblue/rest-graph/issues>
 
@@ -195,3 +196,11 @@ will get you different things.  Here we list all different requires.
 [Mocks Aren't Stubs]: http://martinfowler.com/articles/mocksArentStubs.html
 
 * `require 'rest-graph/facebook_util'`
+
+  Facebook has some very inconsistent behaviour.  This utility is here to
+  fix those inconsistencies, providing you a more comprehensive operation
+  on data.  Also, it has permission list build in, without the trouble
+  looking through Facebook's documentation.
+
+  This utility is not fully and carefully written, please file a ticket
+  on our [issue tracker][] if you want something not presented currently.
