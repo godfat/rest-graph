@@ -114,25 +114,26 @@ Here are ALL the available options for new instance of RestGraph.
 
     rg = RestGraph.new(
            :access_token  => TOKEN                        , # default nil
-           :graph_server  => 'https://graph.facebook.com/', # this is the default
-           :old_server    => 'https://api.facebook.com/'  , # this is the default
-           :accept        => 'text/javascript'            , # this is the default
-           :lang          => 'en-us'                      , # this affect search
+           :graph_server  => 'https://graph.facebook.com/', # this is default
+           :old_server    => 'https://api.facebook.com/'  , # this is default
+           :accept        => 'text/javascript'            , # this is default
+           :lang          => 'en-us'                      , # affect search
            :auto_decode   =>  true                        , # decode by json
-                                                         # default true
+                                                            # default true
            :app_id        => '123'                        , # default nil
            :secret        => '1829'                       , # default nil
 
            :cache         => {}                           ,
-           # A cache for the same API call. Any object quacks like a hash should
-           # work, and Rails.cache works, too. (because of a patch in RailsUtil)
+           # A cache for the same API call. Any object quacks like a hash
+           # should work, and Rails.cache works, too. (because of a patch in
+           # RailsUtil)
 
-           :error_handler => lambda{ |hash| raise ::RestGraph::Error.new(hash) },
+           :error_handler => lambda{|hash| raise RestGraph::Error.new(hash)},
            # This handler callback is only called if auto_decode is
            # set to true, otherwise, it's ignored. And raising exception
            # is the default unless you're using RailsUtil and enabled
-           # auto_authorize. That way, RailsUtil would do redirect instead
-           # of raising an exception.
+           # auto_authorize. That way, RailsUtil would do redirect
+           # instead of raising an exception.
 
            :log_method    => method(:puts),
            # This way, any log message would be output by puts. If you want to
@@ -174,42 +175,42 @@ options for RestGraph instance are also valid options for rest_graph_setup.
                      # then we'll need to find a way to store the fbs,
                      # which contains access_token and/or user id. In a
                      # standalone site or iframe canvas application, you might
-                     # want to just use the Rails (or other framework) session.
+                     # want to just use the Rails (or other framework) session
 
 ### Alternate ways to setup RestGraph:
 
 1. Set upon RestGraph object creation:
 
-       rg = RestGraph.new :app_id => 1234
+    rg = RestGraph.new :app_id => 1234
 
 2. Set via the rest_graph_setup call in a Controller:
 
-       rest_graph_setup :app_id => 1234
+    rest_graph_setup :app_id => 1234
 
 3. Load from a YAML file
 
-       require 'rest-graph/config_util'
-       RestGraph.load_config('path/to/rest-graph.yaml', 'production')
-       rg = RestGraph.new
+    require 'rest-graph/config_util'
+    RestGraph.load_config('path/to/rest-graph.yaml', 'production')
+    rg = RestGraph.new
 
 4. Load config automatically
 
-       require 'rest-graph'  # under Rails, load config/rest-graph.yaml
-       rg = RestGraph.new
+    require 'rest-graph'  # under Rails, would load config/rest-graph.yaml
+    rg = RestGraph.new
 
 5. Override directly
 
-       module MyDefaults
-         def default_app_id
-           '456'
-         end
+    module MyDefaults
+      def default_app_id
+        '456'
+      end
 
-         def default_secret
-           'category theory'
-         end
-       end
-       RestGraph.send(:extend, MyDefaults)
-       rg = RestGraph.new
+      def default_secret
+        'category theory'
+      end
+    end
+    RestGraph.send(:extend, MyDefaults)
+    rg = RestGraph.new
 
 ## API REFERENCE:
 
@@ -236,18 +237,24 @@ options for RestGraph instance are also valid options for rest_graph_setup.
     rg.get('me', {:metadata => '1'}, :secret => true, expires_in => 600)
 
 #### post
+
     rg.post('me/feed', :message => 'bread!')
 
 #### fql
-Make an arbitrary [FQL](http://developers.facebook.com/docs/reference/fql/) query
+
+Make an arbitrary [FQL]() query
+
+[FQL]: http://developers.facebook.com/docs/reference/fql/
 
     rg.fql('SELECT name FROM page WHERE page_id="123"')
 
 #### fql_multi
+
     rg.fql_multi(:q1 => 'SELECT name FROM page WHERE page_id="123"',
-              :q2 => 'SELECT name FROM page WHERE page_id="456"')
+                 :q2 => 'SELECT name FROM page WHERE page_id="456"')
 
 #### old_rest
+
 Call functionality from Facebook's old REST API:
 
     rg.old_rest(
@@ -257,7 +264,7 @@ Call functionality from Facebook's old REST API:
                         :href => 'http://wikipedia.org/',
                         :caption => 'Wikipedia says hi.',
                         :media => [{:type => 'image',
-                                    :src  => 'http://wikipedia.org/favicon.ico',
+                                    :src  => 'http://wikipedia.org/logo.png',
                                     :href => 'http://wikipedia.org/'}]
                        }.to_json,
         :action_links => [{:text => 'Go to Wikipedia',
