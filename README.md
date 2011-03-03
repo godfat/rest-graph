@@ -1,4 +1,4 @@
-# rest-graph 1.8.0
+# rest-graph
 by Cardinal Blue ( <http://cardinalblue.com> )
 
 Tutorial on setting up a sample Facebook application with Rails 3
