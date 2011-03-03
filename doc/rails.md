@@ -3,8 +3,6 @@
 
 ## Introduction
 
-## Step by Step
-
 ## Standalone Website
 
 ## Facebook iframe Canvas
