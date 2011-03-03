@@ -1,9 +1,7 @@
 # rest-graph 1.8.0
 by Cardinal Blue ( <http://cardinalblue.com> )
 
-
-[Features](#features) - [Requirements](#requirements) - [Installation](#installation) - [Quick Start](#quick_start) - [Setup Options](#setup_options) - [API Reference](#api_reference) - [License](#license) - [Sample App and Tutorial For Beginners](http://github.com/cardinalblue/samplergthree).
-
+Tutorial on setting up a sample Facebook application with Rails 3 and RestGraph could be found [here](http://github.com/cardinalblue/samplergthree).
 
 ## LINKS:
 
@@ -16,13 +14,13 @@ by Cardinal Blue ( <http://cardinalblue.com> )
 
 A lightweight Facebook Graph API client
 
-## FEATURES: {#features}
+## FEATURES:
 
 * Simple Graph API call
 * Simple FQL call
 * Utility to extract access_token and check sig in cookies/signed_request
 
-## REQUIREMENTS: {#requirements}
+## REQUIREMENTS:
 
 * Tested with MRI 1.8.7 and 1.9.2 and Rubinius 1.1.1.
   Because of development gems can't work well on JRuby,
@@ -40,7 +38,7 @@ A lightweight Facebook Graph API client
 * (optional) parse access_token in HTTP_COOKIE
   - gem install rack
 
-## INSTALLATION: {#installation}
+## INSTALLATION:
 
     gem install rest-graph
 
@@ -52,7 +50,7 @@ Or as a Rails2 plugin:
 
     ./script/plugin install git://github.com/cardinalblue/rest-graph.git
 
-## QUICK START: {#quick_start}
+## QUICK START:
 
     require 'rest-graph'
     rg = RestGraph.new(:access_token => 'myaccesstokenfromfb')
@@ -107,7 +105,7 @@ Or if you're using bundler, add this line into Gemfile:
 
     gem 'rest-graph'
 
-## SETUP OPTIONS: {#setup_options}
+## SETUP OPTIONS:
 
 Here are ALL the available options for new instance of RestGraph.
 
@@ -210,7 +208,7 @@ options for RestGraph instance are also valid options for rest_graph_setup.
        RestGraph.send(:extend, MyDefaults)
        rg = RestGraph.new
 
-## API REFERENCE: {#api_reference}
+## API REFERENCE:
 
 ### Facebook Graph API:
 
@@ -273,7 +271,7 @@ Call functionality from Facebook's old REST API:
     # usual old_rest with common access token.
     rg.secret_old_rest('admin.getAppProperties', :properties => 'app_id')
 
-### Utility Methods: {#utility_methods}
+### Utility Methods:
 
 #### parse_???
 
@@ -306,7 +304,7 @@ Read from the rest-graph.yaml file.
 
     RestGraph.default_???
 
-### Other ways of getting an access token {#other_ways}
+### Other ways of getting an access token
 
 #### authorize_url
 
@@ -334,7 +332,7 @@ Takes a session key from the old REST API
     # https://graph.facebook.com/oauth/exchange_sessions?sessions=SESSION
     rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
 
-## LICENSE: {#license}
+## LICENSE:
 
   Apache License 2.0
 
