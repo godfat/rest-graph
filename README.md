@@ -2,7 +2,7 @@
 by Cardinal Blue ( <http://cardinalblue.com> )
 
 Tutorial on setting up a sample Facebook application with Rails 3
-and RestGraph could be found on [samplergthree]()
+and RestGraph could be found on [samplergthree][]
 
 [samplergthree]: http://github.com/cardinalblue/samplergthree
 
@@ -242,7 +242,7 @@ options for RestGraph instance are also valid options for rest_graph_setup.
 
 #### fql
 
-Make an arbitrary [FQL]() query
+Make an arbitrary [FQL][] query
 
 [FQL]: http://developers.facebook.com/docs/reference/fql/
 
