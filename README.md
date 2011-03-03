@@ -1,7 +1,10 @@
 # rest-graph 1.8.0
 by Cardinal Blue ( <http://cardinalblue.com> )
 
-Tutorial on setting up a sample Facebook application with Rails 3 and RestGraph could be found [here](http://github.com/cardinalblue/samplergthree).
+Tutorial on setting up a sample Facebook application with Rails 3
+and RestGraph could be found on [samplergthree]()
+
+[samplergthree]: http://github.com/cardinalblue/samplergthree
 
 ## LINKS:
 
@@ -95,7 +98,7 @@ adds the following two methods to your controllers:
 New RestGraph objects can read their default setup configuration from a
 YAML configuration file. Which is the same as passing to rest_graph_setup.
 
-* [Example](http://github.com/cardinalblue/rest-graph/blob/master/test/config/rest-graph.yaml)
+* [Example](test/config/rest-graph.yaml)
 
 To enable, just require anywhere:
 
