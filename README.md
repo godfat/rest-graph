@@ -1,5 +1,5 @@
 # rest-graph
-by Cardinal Blue ( <http://cardinalblue.com> )
+by Cardinal Blue <http://cardinalblue.com>
 
 Tutorial on setting up a sample Facebook application with Rails 3
 and RestGraph could be found on [samplergthree][]. Instead, if you're
