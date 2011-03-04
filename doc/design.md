@@ -176,7 +176,7 @@ will get you different things.  Here we list all different requires.
   unstable.  You might have already tried [webmock][] or [fakeweb][],
   they are good tools, but a bit tedious to use if we're faking graph
   API calls.  That's why `RestGraph::TestUtil` comes into play.  It uses
-  [rr][] to make stubs for API calls, and you can change the data that
+  [RR][] to make stubs for API calls, and you can change the data that
   the stubs provide.  This way, it's a lot easier to test your application.
 
   You can emulate a user login with `RestGraph::TestUtil.login(1234)`,
@@ -191,7 +191,7 @@ will get you different things.  Here we list all different requires.
 [Unit testing]: http://en.wikipedia.org/wiki/Unit_testing
 [webmock]: https://github.com/bblimke/webmock
 [fakeweb]: https://github.com/chrisk/fakeweb
-[rr]: https://github.com/btakita/rr
+[RR]: https://github.com/btakita/rr
 [test.md]: test.md
 [Mocks Aren't Stubs]: http://martinfowler.com/articles/mocksArentStubs.html
 
