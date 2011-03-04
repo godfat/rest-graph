@@ -44,6 +44,9 @@ A lightweight Facebook Graph API client
 * (optional) parse access_token in HTTP_COOKIE
   - gem install rack
 
+* (optional) to use rest-graph/test_util
+  - gem install rr
+
 ## INSTALLATION:
 
     gem install rest-graph

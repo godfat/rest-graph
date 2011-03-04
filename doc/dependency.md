@@ -68,5 +68,11 @@ Anyone needs this? File a ticket on our [issue tracker][]
 
 ## Rack (optional, needed when parsing cookie)
 
-Actually I wonder if anyone would not use [Rack][]. But since it's really an
+Actually I wonder if anyone would not use [Rack][]. But since it's really
 optional, so I'll just leave it as optional.
+
+## RR (optional, needed when using rest-graph/test_util)
+
+test_util is built on top of [RR][], so to use test_util, RR is required.
+
+[RR]: https://github.com/btakita/rr
