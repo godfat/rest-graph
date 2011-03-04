@@ -1,6 +1,6 @@
 The code in this tutorial could be found on [samplergthree][]
 
-[samplergthree]: http://github.com/cardinalblue/samplergthree
+[samplergthree]: https://github.com/cardinalblue/samplergthree
 
 # How to build a Facebook application within Rails 3 using the RestGraph gem
 
