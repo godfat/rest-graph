@@ -6,8 +6,8 @@ and RestGraph could be found on [samplergthree][]. Instead, if you're
 an experienced Ruby programmer, you might also want to look at
 [detailed documents][].
 
-[samplergthree]: http://github.com/cardinalblue/samplergthree
-[detailed documents]: doc
+[samplergthree]: https://github.com/cardinalblue/samplergthree
+[detailed documents]: https://github.com/cardinalblue/rest-graph/blob/master/doc/ToC.md
 
 ## LINKS:
 
