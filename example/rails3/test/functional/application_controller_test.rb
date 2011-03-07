@@ -24,15 +24,18 @@ class ApplicationControllerTest < ActionController::TestCase
     if @response.status == 200 # js redirect
       assert_equal(
         expected,
-        @response.body.match(/window\.top\.location\.href = '(.+?)'/)[1])
+        normalize_url(
+          @response.body.match(/window\.top\.location\.href = '(.+?)'/)[1]))
 
       assert_equal(
         CGI.escapeHTML(expected),
-        @response.body.match(/content="0;url=(.+?)"/)[1])
+        normalize_url(
+          @response.body.match(/content="0;url=(.+?)"/)[1], '&amp;'))
 
       assert_equal(
         CGI.escapeHTML(expected),
-        @response.body.match(/<a href="(.+?)" target="_top">/)[1])
+        normalize_url(
+          @response.body.match(/<a href="(.+?)" target="_top">/)[1], '&amp;'))
     end
   end
 

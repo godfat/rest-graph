@@ -8,11 +8,11 @@ rescue LoadError # for rails2
 end
 
 class ActiveSupport::TestCase
-  def normalize_query query
-    '?' + query[1..-1].split('&').sort.join('&')
+  def normalize_query query, amp='&'
+    '?' + query[1..-1].split(amp).sort.join(amp)
   end
 
-  def normalize_url url
-    url.sub(/\?.+/){ |query| normalize_query(query) }
+  def normalize_url url, amp='&'
+    url.sub(/\?.+/){ |query| normalize_query(query, amp) }
   end
 end
