@@ -28,7 +28,7 @@ A lightweight Facebook Graph API client
 
 ## REQUIREMENTS:
 
-* Tested with MRI 1.8.7 and 1.9.2 and Rubinius 1.1.1.
+* Tested with MRI 1.8.7 and 1.9.2 and Rubinius 1.2.2.
   Because of development gems can't work well on JRuby,
   let me know if rest-graph is working on JRuby, thanks!
 
