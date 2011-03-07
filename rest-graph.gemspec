@@ -14,12 +14,11 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/godfat/}
   s.rdoc_options = ["--main", "README"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.6.1}
   s.summary = %q{A lightweight Facebook Graph API client}
   s.test_files = ["test/test_api.rb", "test/test_cache.rb", "test/test_default.rb", "test/test_error.rb", "test/test_facebook.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_misc.rb", "test/test_multi.rb", "test/test_oauth.rb", "test/test_old.rb", "test/test_page.rb", "test/test_parse.rb", "test/test_rest-graph.rb", "test/test_serialize.rb", "test/test_test_util.rb", "test/test_timeout.rb"]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
