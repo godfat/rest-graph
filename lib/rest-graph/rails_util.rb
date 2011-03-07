@@ -59,7 +59,7 @@ module RestGraph::RailsUtil
     return if controller.respond_to?(:rest_graph, true)
 
     controller.rescue_from(RestGraph::Error::AccessToken,
-                           :with => :rest_graph_on_error)
+                           :with => :rest_graph_on_access_token_error)
     controller.helper(RestGraph::RailsUtil::Helper)
     controller.instance_methods.select{ |method|
       method.to_s =~ /^rest_graph/
@@ -103,9 +103,11 @@ module RestGraph::RailsUtil
     @rest_graph ||= RestGraph.new(rest_graph_options_new)
   end
 
-  def rest_graph_on_error error=nil
+  def rest_graph_on_access_token_error error=nil
     rest_graph_authorize(error, false)
   end
+  alias_method :rest_graph_on_error, # backward compatibility
+               :rest_graph_on_access_token_error
 
   def rest_graph_authorize error=nil, force_redirect=true
     logger.warn("WARN: RestGraph: #{error.inspect}")
