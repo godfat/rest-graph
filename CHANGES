@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.8.0 -- ?
+== rest-graph 1.8.0 -- 2011-03-08
 
 *  [RestGraph] Now require 'rest-graph/autoload' is deprecated, simply use
                require 'rest-graph' would require anything you "might" or
