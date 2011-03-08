@@ -47,6 +47,18 @@ describe RestGraph do
     RestGraph.new.request({:headers => {'X-Forwarded-For' => '127.0.0.1'}},
                           [:get, 'http://example.com']).
       should == {'data' => []}
+
+    EM.run{
+      RestGraph.new.request({:headers => {'X-Forwarded-For' => '127.0.0.1',
+                                          'User-Agent'      => 'Ruby',
+                                          'Accept-Encoding' =>
+                                            'gzip, deflate'},
+                             :async   => true},
+                            [:get, 'http://example.com']){ |result|
+                              result.should == {'data' => []}
+                              EM.stop
+                            }
+    }
   end
 
   should 'post right' do

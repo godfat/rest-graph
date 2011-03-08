@@ -449,7 +449,8 @@ class RestGraph < RestGraphStruct
   def request_em opts, reqs
     start_time = Time.now
     rs = reqs.map{ |(meth, uri, payload)|
-      r = EM::HttpRequest.new(uri).send(meth, :body => payload)
+      r = EM::HttpRequest.new(uri).send(meth, :body => payload,
+                                              :head => build_headers(opts))
       if cached = cache_get(uri)
         # TODO: this is hack!!
         r.instance_variable_set('@response', cached)
