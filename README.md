@@ -53,7 +53,7 @@ A lightweight Facebook Graph API client
 
 Or if you want development version, put this in Gemfile:
 
-    gem 'rest-graph', :git => 'git://github.com/cardinalblue/rest-graph.git
+    gem 'rest-graph', :git => 'git://github.com/cardinalblue/rest-graph.git'
 
 Or as a Rails2 plugin:
 
