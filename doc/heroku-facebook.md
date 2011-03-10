@@ -123,9 +123,12 @@
 
       git push heroku master:master
 
-* Take a look at yourproject.heroku.com
+* Take a look at yourproject.heroku.com. If you have terminal browser lynx
+  installed, you can run this:
 
       lynx yourproject.heroku.com
+
+  Otherwise, just use your favorite browser to view it.
 
 ## Run it on your computer, too
 
@@ -145,7 +148,8 @@
 
       rake db:create
       rake db:migrate
-      rake db:schema:dump
+      rake db:schema:dump  # update schema.rb for reference
+      rake db:test:prepare
 
 * Run Ruby server (WEBrick)
 
@@ -165,4 +169,3 @@
 ### Tutorial
 
 * <https://github.com/cardinalblue/samplergthree>
-* <https://github.com/cardinalblue/rest-graph>
