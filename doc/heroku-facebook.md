@@ -1,11 +1,10 @@
-
 # Setting a Facebook app on Heroku
 
 ## Software Installation and Configuration (1)
 
-### Mac
+### Mac OS
 
-* Install Xcode from the install DVD or Apple website.
+* Install Xcode from the install DVD or Apple website or Mac App Store.
 
 * Install Homebrew (package manager).
 
@@ -16,20 +15,20 @@
 
       brew install git
 
-* Install database. You may pick anything Rails support, but since
-  Heroku uses PostgreSQL, we recommend to use the same software.
+* Install database. You may pick anything that Rails supports, but since
+  Heroku uses PostgreSQL, we recommend to use the same database.
 
       brew install postgresql
       initdb /usr/local/var/postgres
       pg_ctl -D /usr/local/var/postgres start
       createuser --createdb YourProject
 
-* Setup postgres with auto-starting after booted.
+* Setup postgres to auto-start after boot.
 
       cp `brew --prefix postgresql`/org.postgresql.postgres.plist ~/Library/LaunchAgents/
       launchctl load -w ~/Library/LaunchAgents/org.postgresql.postgres.plist
 
-* or start up postgres manually:
+* ...or start up postgres manually:
 
       pg_ctl -D /usr/local/var/postgres start
 
@@ -37,7 +36,7 @@
 
       brew install ruby
 
-### Ubuntu
+### Ubuntu (Linux)
 
 * Install various tools
 
@@ -47,8 +46,8 @@
 
       sudo apt-get install git
 
-* Install database. You may pick anything Rails support, but since
-  Heroku uses PostgreSQL, we recommend to use the same software.
+* Install database. You may pick anything Rails supports, but since
+  Heroku uses PostgreSQL, we recommend to use the same database.
 
       sudo apt-get install postgresql libpq-dev
       sudo /etc/init.d/postgresql restart
@@ -77,17 +76,19 @@
 
 ### General (OS-independent)
 
+* Depending on the OS and your configuration, you may need to prefix with "sudo" to install the gems and run the bundler.
+
 * Configure Git (~/.gitconfig)
 
       git config --global user.name  'Your Name'
       git config --global user.email 'your@email.com'
 
-* Install gems (sudo or not is depending on the OS or your choice)
+* Install gems 
 
       echo 'gem: --no-ri --no-rdoc' >> ~/.gemrc
       gem install rails pg heroku
 
-  Note: if pg failed to install, try this:
+  Note: on newer Macs, if pg fails to install, try this:
 
       env ARCHFLAGS='-arch x86_64' gem install pg
 
@@ -96,7 +97,7 @@
       ssh-keygen -t rsa -C 'your@email.com'
       heroku keys:add ~/.ssh/id_rsa.pub
 
-## Creating an application on Heroku
+## Create a Rails application and push to Heroku
 
 * Rails 3 project
 
@@ -109,17 +110,17 @@
       git add .
       git commit -m 'first commit'
 
-* Switch to PostgreSQL. Change `gem 'sqlite3'` to `gem 'pg'` and run:
+* Switch to PostgreSQL. Edit the Gemfile and change `gem 'sqlite3'` to `gem 'pg'`:
 
       bundle check
       git add Gemfile Gemfile.lock
       git commit -m 'switch to postgresql'
 
-* Heroku application
+* Set up the Heroku application
 
       heroku create 'YourProject'
 
-* Pusing to Heroku
+* Push to Heroku
 
       git push heroku master:master
 
@@ -130,7 +131,7 @@
 
   Otherwise, just use your favorite browser to view it.
 
-## Run it on your computer, too
+## For development, set up the application to run locally on your computer
 
 * Edit `config/database.yml` with following:
 
@@ -155,12 +156,12 @@
 
       rails server
 
-* or Run Thin server (need to update Gemfile with `gem 'thin'`)
+* or run Thin server (need to update Gemfile with `gem 'thin'`)
 
       gem install thin
       rails server thin
 
-## Building a Facebook Application
+## Create a Facebook Application
 
 * <http://devcenter.heroku.com/articles/facebook>
 
