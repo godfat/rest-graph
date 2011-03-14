@@ -56,7 +56,11 @@
   You might need to edit `pg_hba.conf` to make sure _YourProject_ has the
   access to your local database. For example, has the following line:
 
-      local all YourProject trust
+      local        all        YourProject        trust
+
+  And make sure there's **NO** this line: (it conflicts with the above)
+
+      local        all        all                ident
 
 * Install Ruby 1.9.2
 
@@ -83,7 +87,7 @@
       git config --global user.name  'Your Name'
       git config --global user.email 'your@email.com'
 
-* Install gems 
+* Install gems
 
       echo 'gem: --no-ri --no-rdoc' >> ~/.gemrc
       gem install rails pg heroku
