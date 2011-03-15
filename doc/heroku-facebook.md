@@ -162,7 +162,7 @@
       rake db:create
       rake db:migrate
       rake db:schema:dump  # update schema.rb for reference
-      rake db:test:prepare
+      rake db:test:prepare # sometimes this is needed to run tests
 
 * Run Ruby server (WEBrick)
 
