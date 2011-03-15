@@ -27,6 +27,12 @@ The code in this tutorial could be found on [samplergthree][]
         # these gems are used in rest-graph
         gem 'rest-client', '>=1.6'
         gem 'json'        # you may also use other JSON parsers/generators, i.e. 'yajl-ruby' or 'json_pure'
+        
+   And run:
+
+        sudo bundle install
+
+   (Note that if you are on Windows you will have to omit `sudo`)        
 
 
 5. In order to configure your Rails application for the Facebook application you created, you must create a rest-graph.yaml file in your /config directory and fill it with your Facebook configuration. If you plan to run your application in the Facebook canvas, also provide a canvas name.
