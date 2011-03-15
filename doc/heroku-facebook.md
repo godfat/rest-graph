@@ -128,11 +128,11 @@
       git add Gemfile Gemfile.lock
       git commit -m 'switch to postgresql'
 
-* Set up the Heroku application (you'll need a Heroku account)
+* Set up the Heroku application
 
       heroku create 'YourProject'
 
-* Push to Heroku
+* Push to Heroku. (from local master branch to remote master branch)
 
       git push heroku master:master
 
