@@ -64,6 +64,10 @@
 
       local        all        all                ident
 
+  You should restart postgresql after updating `pg_hba.conf`
+
+      sudo /etc/init.d/postgresql restart
+
 * Install Ruby 1.9.2
 
       bash < <( curl http://rvm.beginrescueend.com/releases/rvm-install-head )
