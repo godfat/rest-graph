@@ -54,7 +54,8 @@
       sudo /etc/init.d/postgresql restart
       sudo -u postgres createuser --createdb YourProject
 
-  You might need to edit `pg_hba.conf` to make sure _YourProject_ has the
+  You might need to edit `pg_hba.conf` (the path would be something like this:
+  /etc/postgresql/8.4/main/pg_hba.conf) to make sure _YourProject_ has the
   access to your local database. For example, has the following line:
 
       local        all        YourProject        trust
