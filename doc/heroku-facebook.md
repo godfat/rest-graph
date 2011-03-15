@@ -86,7 +86,9 @@
 
 ### General (OS-independent)
 
-* Depending on the OS and your configuration, you may need to prefix with "sudo" to install the gems and run the bundler.
+* Depending on the OS and your configuration, you may need to prefix with
+  "sudo" to install the gems. You don't have to if you're following the
+  instructions above to install Ruby (RVM or Homebrew), or running on Windows.
 
 * Configure Git (~/.gitconfig)
 
