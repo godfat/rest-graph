@@ -187,36 +187,36 @@ options for RestGraph instance are also valid options for rest_graph_setup.
 
 1. Set upon RestGraph object creation:
 
-    rg = RestGraph.new :app_id => 1234
+        rg = RestGraph.new :app_id => 1234
 
 2. Set via the rest_graph_setup call in a Controller:
 
-    rest_graph_setup :app_id => 1234
+        rest_graph_setup :app_id => 1234
 
 3. Load from a YAML file
 
-    require 'rest-graph/config_util'
-    RestGraph.load_config('path/to/rest-graph.yaml', 'production')
-    rg = RestGraph.new
+        require 'rest-graph/config_util'
+        RestGraph.load_config('path/to/rest-graph.yaml', 'production')
+        rg = RestGraph.new
 
 4. Load config automatically
 
-    require 'rest-graph'  # under Rails, would load config/rest-graph.yaml
-    rg = RestGraph.new
+        require 'rest-graph'  # under Rails, would load config/rest-graph.yaml
+        rg = RestGraph.new
 
 5. Override directly
 
-    module MyDefaults
-      def default_app_id
-        '456'
-      end
+        module MyDefaults
+          def default_app_id
+            '456'
+            end
 
-      def default_secret
-        'category theory'
-      end
-    end
-    RestGraph.send(:extend, MyDefaults)
-    rg = RestGraph.new
+          def default_secret
+            'category theory'
+          end
+        end
+        RestGraph.send(:extend, MyDefaults)
+        rg = RestGraph.new
 
 ## API REFERENCE:
 
