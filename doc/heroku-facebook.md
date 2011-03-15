@@ -102,10 +102,12 @@
 
       env ARCHFLAGS='-arch x86_64' gem install pg
 
-* Generate RSA keys and upload to Heroku
+* Generate RSA keys and upload to Heroku. (you'll need a [Heroku][] account)
 
       ssh-keygen -t rsa -C 'your@email.com'
       heroku keys:add ~/.ssh/id_rsa.pub
+
+[Heroku]: http://heroku.com
 
 ## Create a Rails application and push to Heroku
 
