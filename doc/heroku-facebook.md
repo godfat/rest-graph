@@ -40,6 +40,7 @@
 
 * Install various tools
 
+      sudo apt-get update
       sudo apt-get install gcc g++ make libssl-dev zlib1g-dev libreadline5-dev libyaml-dev libxml2-dev
 
 * Install Git (source code manger).
