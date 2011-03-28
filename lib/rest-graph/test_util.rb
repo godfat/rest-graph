@@ -25,8 +25,13 @@ module RestGraph::TestUtil
                              {'name' => q,
                                'fql_result_set' => [default_response]}
                            }
-                     when %r{#{http}method/\w+\.\w+}
-                       [default_response]
+                     when %r{#{http}method/(\w+\.\w+)}
+                       case $2
+                         when 'friends.getAppUsers'
+                           [5678]
+                         else
+                           [default_response]
+                       end
                      else
                        default_response
                    end
