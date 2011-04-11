@@ -32,4 +32,9 @@ describe RestGraph do
       test[rg.lighten].should == rg
     }
   end
+
+  should 'lighten takes options to change attributes' do
+    RestGraph.new.lighten(:timeout => 100    ).timeout.should == 100
+    RestGraph.new.lighten(:lang    => 'zh-TW').lang   .should == 'zh-TW'
+  end
 end

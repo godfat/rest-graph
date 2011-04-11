@@ -211,14 +211,15 @@ class RestGraph < RestGraphStruct
     "#{app_id}|#{secret}"
   end
 
-  def lighten!
+  def lighten! o={}
     [:cache, :log_method, :log_handler, :error_handler].each{ |obj|
       send("#{obj}=", nil) }
+    send(:initialize, o)
     self
   end
 
-  def lighten
-    dup.lighten!
+  def lighten o={}
+    dup.lighten!(o)
   end
 
   def inspect
