@@ -230,16 +230,20 @@ options for RestGraph instance are also valid options for rest_graph_setup.
     rg.get('me', :metadata => '1')
 
     # extra options:
-    #   auto_decode: Bool # decode with json or not in this method call
+    #   auto_decode: Bool # decode with json or not in this API request
     #                     # default: auto_decode in rest-graph instance
+    #       timeout: Int  # the timeout for this API request
+    #                     # default: timeout in rest-graph instance
     #        secret: Bool # use secret_acccess_token or not
     #                     # default: false
     #         cache: Bool # use cache or not; if it's false, update cache, too
     #                     # default: true
     #    expires_in: Int  # control when would the cache be expired
-    #                     # default: nothing
+    #                     # default: nil
     #         async: Bool # use eventmachine for http client or not
     #                     # default: false, but true in aget family
+    #       headers: Hash # additional hash you want to pass
+    #                     # default: {}
     rg.get('me', {:metadata => '1'}, :secret => true, expires_in => 600)
 
 #### post

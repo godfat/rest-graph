@@ -240,17 +240,20 @@ class RestGraph < RestGraphStruct
   end
 
   # extra options:
-  #   auto_decode: Bool # decode with json or not in this method call
+  #   auto_decode: Bool # decode with json or not in this API request
   #                     # default: auto_decode in rest-graph instance
+  #       timeout: Int  # the timeout for this API request
+  #                     # default: timeout in rest-graph instance
   #        secret: Bool # use secret_acccess_token or not
   #                     # default: false
   #         cache: Bool # use cache or not; if it's false, update cache, too
   #                     # default: true
   #    expires_in: Int  # control when would the cache be expired
-  #                     # default: nothing
+  #                     # default: nil
   #         async: Bool # use eventmachine for http client or not
   #                     # default: false, but true in aget family
   #       headers: Hash # additional hash you want to pass
+  #                     # default: {}
   def get    path, query={}, opts={}, &cb
     request(opts, [:get   , url(path, query, graph_server, opts)], &cb)
   end
@@ -432,11 +435,11 @@ class RestGraph < RestGraphStruct
 
 
   def request opts, *reqs, &cb
-    Timeout.timeout(timeout){
+    Timeout.timeout(opts[:timeout] || timeout){
       reqs.each{ |(meth, uri, payload)|
-        next if meth != :get
+        next if meth != :get     # only get result would get cached
         cache_assign(uri, nil)
-      } if opts[:cache] == false
+      } if opts[:cache] == false # remove cache if we don't want it
 
       if opts[:async]
         request_em(opts, reqs, &cb)

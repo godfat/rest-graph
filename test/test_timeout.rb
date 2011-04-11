@@ -17,4 +17,9 @@ describe RestGraph do
     end
     e.should.kind_of?(Timeout::Error)
   end
+
+  should 'override timeout' do
+    mock(Timeout).timeout(99){ true }
+    RestGraph.new(:timeout => 1).get('me', {}, :timeout => 99).should == true
+  end
 end
