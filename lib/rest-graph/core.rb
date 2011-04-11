@@ -415,12 +415,6 @@ class RestGraph < RestGraphStruct
   end
   alias_method :broken_old_rest, :secret_old_rest
 
-  def exchange_sessions query={}, opts={}, &cb
-    q = {:client_id => app_id, :client_secret => secret,
-         :type => 'client_cred'}.merge(query)
-    request(opts, [:post, url('oauth/exchange_sessions', q)], &cb)
-  end
-
   def fql code, query={}, opts={}, &cb
     old_rest('fql.query', {:query => code}.merge(query), opts, &cb)
   end
@@ -428,6 +422,12 @@ class RestGraph < RestGraphStruct
   def fql_multi codes, query={}, opts={}, &cb
     old_rest('fql.multiquery',
       {:queries => self.class.json_encode(codes)}.merge(query), opts, &cb)
+  end
+
+  def exchange_sessions query={}, opts={}, &cb
+    q = {:client_id => app_id, :client_secret => secret,
+         :type => 'client_cred'}.merge(query)
+    request(opts, [:post, url('oauth/exchange_sessions', q)], &cb)
   end
 
 
