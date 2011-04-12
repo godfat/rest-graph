@@ -402,12 +402,18 @@ class RestGraph < RestGraphStruct
   # old rest facebook api, i will definitely love to remove them someday
 
   def old_rest path, query={}, opts={}, &cb
-    request(
-      opts,
-      [:get,
-       url("method/#{path}", {:format => 'json'}.merge(query),
-           old_server, opts)],
-      &cb)
+    uri = url("method/#{path}", {:format => 'json'}.merge(query),
+              old_server, opts)
+    if opts[:post]
+      request(
+        opts.merge(:uri => uri),
+        [:post,
+         url("method/#{path}", {:format => 'json'}, old_server, opts),
+         query],
+        &cb)
+    else
+      request(opts, [:get, uri], &cb)
+    end
   end
 
   def secret_old_rest path, query={}, opts={}, &cb
@@ -438,7 +444,7 @@ class RestGraph < RestGraphStruct
     Timeout.timeout(opts[:timeout] || timeout){
       reqs.each{ |(meth, uri, payload)|
         next if meth != :get     # only get result would get cached
-        cache_assign(uri, nil)
+        cache_assign(opts, uri, nil)
       } if opts[:cache] == false # remove cache if we don't want it
 
       if opts[:async]
@@ -455,7 +461,7 @@ class RestGraph < RestGraphStruct
     rs = reqs.map{ |(meth, uri, payload)|
       r = EM::HttpRequest.new(uri).send(meth, :body => payload,
                                               :head => build_headers(opts))
-      if cached = cache_get(uri)
+      if cached = cache_get(opts, uri)
         # TODO: this is hack!!
         r.instance_variable_set('@response', cached)
         r.instance_variable_set('@state'   , :finish)
@@ -463,7 +469,7 @@ class RestGraph < RestGraphStruct
         r.succeed(r)
       else
         r.callback{
-          cache_for(uri, r.response, meth, opts)
+          cache_for(opts, uri, r.response, meth)
           log(Event::Requested.new(Time.now - start_time, uri))
         }
         r.error{
@@ -491,7 +497,7 @@ class RestGraph < RestGraphStruct
 
   def request_rc opts, meth, uri, payload=nil, &cb
     start_time = Time.now
-    post_request(cache_get(uri) || fetch(meth, uri, payload, opts),
+    post_request(cache_get(opts, uri) || fetch(meth, uri, payload, opts),
                  uri, opts, &cb)
   rescue RestClient::Exception => e
     post_request(e.http_body, uri, opts, &cb)
@@ -518,7 +524,7 @@ class RestGraph < RestGraphStruct
     if decode?(opts)
                                   # [this].first is not needed for yajl-ruby
       decoded = self.class.json_decode("[#{result}]").first
-      check_error(decoded, uri, &cb)
+      check_error(opts, uri, decoded, &cb)
     else
       block_given? ? yield(result) : result
     end
@@ -544,11 +550,11 @@ class RestGraph < RestGraphStruct
                          end == cookies['sig']
   end
 
-  def check_error hash, uri
+  def check_error opts, uri, hash
     if error_handler && hash.kind_of?(Hash) &&
        (hash['error'] ||    # from graph api
         hash['error_code']) # from fql
-      cache_assign(uri, nil)
+      cache_assign(opts, uri, nil)
       error_handler.call(hash, uri)
     else
       block_given? ? yield(hash) : hash
@@ -563,30 +569,33 @@ class RestGraph < RestGraphStruct
     cookies.reject{ |(k, v)| k == 'sig' }.sort.map{ |a| a.join('=') }
   end
 
-  def cache_assign uri, value
+  def cache_key opts, uri
+    Digest::MD5.hexdigest(opts[:uri] || uri)
+  end
+
+  def cache_assign opts, uri, value
     return unless cache
-    cache[cache_key(uri)] = value
+    cache[cache_key(opts, uri)] = value
   end
 
-  def cache_key uri
-    Digest::MD5.hexdigest(uri)
-  end
-
-  def cache_get uri
+  def cache_get opts, uri
     return unless cache
     start_time = Time.now
-    cache[cache_key(uri)].tap{ |result|
+    cache[cache_key(opts, uri)].tap{ |result|
       log(Event::CacheHit.new(Time.now - start_time, uri)) if result
     }
   end
 
-  def cache_for uri, result, meth, opts
-    return if !cache || meth != :get
+  def cache_for opts, uri, value, meth
+    return unless cache
+    # fake post (opts[:post] => true) is considered get and need cache
+    return if meth != :get unless opts[:post]
 
     if opts[:expires_in].kind_of?(Fixnum) && cache.method(:store).arity == -3
-      cache.store(cache_key(uri), result, :expires_in => opts[:expires_in])
+      cache.store(cache_key(opts, uri), value,
+                  :expires_in => opts[:expires_in])
     else
-      cache_assign(uri, result)
+      cache_assign(opts, uri, value)
     end
   end
 
@@ -594,7 +603,7 @@ class RestGraph < RestGraphStruct
     RestClient::Request.execute(:method => meth, :url => uri,
                                 :headers => build_headers(opts),
                                 :payload => payload).body.
-      tap{ |result| cache_for(uri, result, meth, opts) }
+      tap{ |result| cache_for(opts, uri, result, meth) }
   end
 
   def merge_data lhs, rhs

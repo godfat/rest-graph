@@ -48,6 +48,38 @@ describe RestGraph do
     RestGraph.new.fql_multi(:f0 => f0, :f1 => f1).should == []
   end
 
+  should 'cache fake post in fql' do
+    query = 'select name from user where uid = 4'
+    body  = '[{"name":"Mark Zuckerberg"}]'
+    stub_request(:post,
+      'https://api.facebook.com/method/fql.query?format=json').
+      with(:body => {:query => query}).
+      to_return(:body => body)
+
+    RestGraph.new(:cache => (cache = {})).fql(query, {}, :post => true).
+      first['name']   .should == 'Mark Zuckerberg'
+    cache.size        .should == 1
+    cache.values.first.should == body
+
+    WebMock.reset! # should hit the cache
+
+    RestGraph.new(:cache => cache).fql(query, {}, :post => true).
+      first['name']   .should == 'Mark Zuckerberg'
+    cache.size        .should == 1
+    cache.values.first.should == body
+
+    # query changed
+    should.raise(WebMock::NetConnectNotAllowedError) do
+      RestGraph.new(:cache => cache).fql(query.upcase, {}, :post => true)
+    end
+
+    # cache should work for normal get
+    RestGraph.new(:cache => cache).fql(query).
+      first['name']   .should == 'Mark Zuckerberg'
+    cache.size        .should == 1
+    cache.values.first.should == body
+  end
+
   should 'do facebook old rest api' do
     body = 'hate facebook inconsistent'
     stub_request(:get,
