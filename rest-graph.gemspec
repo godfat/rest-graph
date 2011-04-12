@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Cardinal Blue", "Lin Jen-Shin (godfat)"]
-  s.date = %q{2011-03-28}
+  s.date = %q{2011-04-12}
   s.description = %q{A lightweight Facebook Graph API client}
   s.email = ["dev (XD) cardinalblue.com"]
   s.extra_rdoc_files = ["CHANGES", "CONTRIBUTORS", "LICENSE", "TODO"]
@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/godfat/}
   s.rdoc_options = ["--main", "README"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.6.2}
+  s.rubygems_version = %q{1.7.2}
   s.summary = %q{A lightweight Facebook Graph API client}
   s.test_files = ["test/test_api.rb", "test/test_cache.rb", "test/test_default.rb", "test/test_error.rb", "test/test_facebook.rb", "test/test_handler.rb", "test/test_load_config.rb", "test/test_misc.rb", "test/test_multi.rb", "test/test_oauth.rb", "test/test_old.rb", "test/test_page.rb", "test/test_parse.rb", "test/test_rest-graph.rb", "test/test_serialize.rb", "test/test_test_util.rb", "test/test_timeout.rb"]
 

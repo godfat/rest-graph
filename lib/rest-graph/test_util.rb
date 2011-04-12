@@ -14,7 +14,7 @@ module RestGraph::TestUtil
     any_instance_of(RestGraph){ |rg|
       stub(rg).data{default_data}
 
-      stub(rg).fetch{ |meth, uri, payload|
+      stub(rg).fetch{ |opts, uri, meth, payload|
         history << [meth, uri, payload]
         http     = 'https?://[\w\d]+(\.[\w\d]+)+/'
         response = case uri

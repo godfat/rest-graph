@@ -54,12 +54,12 @@ describe RestGraph do
 
   should 'auto decode json' do
     RestGraph.new(:auto_decode => true).
-      send(:post_request, '[]', '', {}).should == []
+      send(:post_request, {}, '', '[]').should == []
   end
 
   should 'not auto decode json' do
     RestGraph.new(:auto_decode => false).
-      send(:post_request, '[]', '', {}).should == '[]'
+      send(:post_request, {}, '', '[]').should == '[]'
   end
 
   should 'give better inspect string' do
