@@ -21,10 +21,11 @@ module RestGraph::TestUtil
                      when %r{#{http}method/fql.multiquery}
                        RestGraph.json_decode(
                          Rack::Utils.parse_query(
-                           URI.parse(uri).query)['queries']).keys.map{ |q|
-                             {'name' => q,
-                               'fql_result_set' => [default_response]}
-                           }
+                           URI.parse(opts[:uri] || uri).query)['queries']).
+                             keys.map{ |q|
+                               {'name' => q,
+                                'fql_result_set' => [default_response]}
+                             }
                      when %r{#{http}method/(\w+\.\w+)}
                        case $2
                          when 'friends.getAppUsers'

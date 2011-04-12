@@ -71,4 +71,15 @@ describe RestGraph::TestUtil do
     rg.authorized?.should == true
     rg.get('me').should == RestGraph::TestUtil.user('1234')
   end
+
+  should 'return correct response in fake get' do
+    RestGraph.new.fql('', {}, :post => true).
+      should == [RestGraph::TestUtil.default_response]
+
+    RestGraph.new.fql_multi({:a => '', :b => ''}, {}, :post => true).
+      should == [{'name' => 'a',
+                  'fql_result_set' => [RestGraph::TestUtil.default_response]},
+                 {'name' => 'b',
+                  'fql_result_set' => [RestGraph::TestUtil.default_response]}]
+  end
 end
