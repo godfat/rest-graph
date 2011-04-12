@@ -11,7 +11,7 @@ GEM
     activeresource (2.3.11)
       activesupport (= 2.3.11)
     activesupport (2.3.11)
-    addressable (2.2.4)
+    addressable (2.2.5)
     crack (0.1.8)
     mime-types (1.16)
     rack (1.1.2)
