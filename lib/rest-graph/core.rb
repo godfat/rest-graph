@@ -535,8 +535,6 @@ class RestGraph < RestGraphStruct
   def decode? opts
     if opts.has_key?(:auto_decode)
       opts[:auto_decode]
-    elsif opts.has_key?(:suppress_decode)
-      !opts[:suppress_decode]
     else
       auto_decode
     end
