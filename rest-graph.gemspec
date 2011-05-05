@@ -82,6 +82,7 @@ Gem::Specification.new do |s|
   %q{lib/rest-graph/core.rb},
   %q{lib/rest-graph/facebook_util.rb},
   %q{lib/rest-graph/rails_util.rb},
+  %q{lib/rest-graph/rest-core/rest-core.rb},
   %q{lib/rest-graph/test_util.rb},
   %q{lib/rest-graph/version.rb},
   %q{rest-graph.gemspec},
