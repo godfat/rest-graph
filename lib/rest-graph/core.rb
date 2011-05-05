@@ -419,7 +419,6 @@ class RestGraph < RestGraphStruct
   def secret_old_rest path, query={}, opts={}, &cb
     old_rest(path, query, {:secret => true}.merge(opts), &cb)
   end
-  alias_method :broken_old_rest, :secret_old_rest
 
   def fql code, query={}, opts={}, &cb
     old_rest('fql.query', {:query => code}.merge(query), opts, &cb)
