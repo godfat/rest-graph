@@ -62,20 +62,8 @@ describe RestGraph do
       send(:post_request, {}, '', '[]').should == '[]'
   end
 
-  should 'give better inspect string' do
-    RestGraph.new(:auto_decode => false).inspect.should =~ Regexp.new(
-    '#<struct RestGraph auto_decode=false,'                          \
-                      ' timeout=10,'                                 \
-                      ' graph_server="https://graph.facebook.com/",' \
-                      ' old_server="https://api.facebook.com/",'     \
-                      ' accept="text/javascript",'                   \
-                      ' lang="en-us",'                               \
-                      ' app_id=nil,'                                 \
-                      ' secret=nil,'                                 \
-                      ' data=\{\},'                                  \
-                      ' cache=nil,'                                  \
-                      ' log_method=nil,'                             \
-                      ' log_handler=nil,'                            \
-                      ' error_handler=#<Proc:.+>>')
+  should 'give attributes' do
+    RestGraph.new(:auto_decode => false).attributes.keys.map(&:to_s).sort.
+      should == RestGraphStruct.members.map(&:to_s).sort
   end
 end

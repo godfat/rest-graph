@@ -223,12 +223,13 @@ class RestGraph < RestGraphStruct
   end
 
   def inspect
-    super.gsub(/(\w+)=([^,>]+)/){ |match|
-      value = $2 == 'nil' ? self.class.send("default_#{$1}").inspect : $2
-      "#{$1}=#{value}"
-    }
+    "#<struct RestGraph #{attributes.map{ |k, v|
+      "#{k}=#{v.inspect}" }.join(', ')}>"
   end
 
+  def attributes
+    Hash[each_pair.map{ |k, v| [k, send(k)] }]
+  end
 
 
 
