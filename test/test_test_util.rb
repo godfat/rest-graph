@@ -77,6 +77,7 @@ describe RestGraph::TestUtil do
       should == [RestGraph::TestUtil.default_response]
 
     RestGraph.new.fql_multi({:a => '', :b => ''}, {}, :post => true).
+      sort_by{ |h| h['name'] }.
       should == [{'name' => 'a',
                   'fql_result_set' => [RestGraph::TestUtil.default_response]},
                  {'name' => 'b',
