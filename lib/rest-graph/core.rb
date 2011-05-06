@@ -2,19 +2,12 @@
 require 'rest-graph/rest-core/rest-core.rb'
 
 # the data structure used in RestGraph
-RestGraphStruct = Struct.new(:auto_decode, :timeout,
-                             :graph_server, :old_server,
-                             :accept, :lang,
-                             :app_id, :secret,
-                             :data, :cache,
-                             :log_method,
-                             :log_handler,
-                             :error_handler) unless defined?(RestGraphStruct)
 
-class RestGraph < RestGraphStruct
-  Attributes  = RestGraphStruct.members.map(&:to_sym) unless
-    defined?(::RestGraph::Attributes)
-
+class RestGraph < RestCore.struct('RestGraph',
+                                  :graph_server, :old_server,
+                                  :accept, :lang,
+                                  :app_id, :secret,
+                                  :data)
   include RestCore
 
   class Error < RuntimeError
@@ -54,16 +47,6 @@ class RestGraph < RestGraphStruct
     end
     extend Util
   end
-
-  # honor default attributes
-  Attributes.each{ |name|
-    module_eval <<-RUBY
-      def #{name}
-        if (r = super).nil? then self.#{name} = self.class.default_#{name}
-                            else r end
-      end
-    RUBY
-  }
 
   # setup defaults
   module DefaultAttributes

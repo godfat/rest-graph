@@ -41,7 +41,7 @@ module TestHelper
   end
 
   def attrs_no_callback
-    RestGraph::Attributes.reject{ |attr|
+    RestGraph.members.reject{ |attr|
       attr.to_s =~ /_handler/
     }
   end

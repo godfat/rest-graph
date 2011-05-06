@@ -64,6 +64,6 @@ describe RestGraph do
 
   should 'give attributes' do
     RestGraph.new(:auto_decode => false).attributes.keys.map(&:to_s).sort.
-      should == RestGraphStruct.members.map(&:to_s).sort
+      should == RestCore::RestGraphStruct.members.map(&:to_s).sort
   end
 end

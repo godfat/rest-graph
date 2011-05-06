@@ -17,27 +17,43 @@ module RestCore
   EventStruct = Struct.new(:duration, :url) unless
     RestCore.const_defined?(:EventStruct)
 
-  class Event < EventStruct
-    # self.class.name[/(?<=::)\w+$/] if RUBY_VERSION >= '1.9.2'
-    def name; self.class.name[/::\w+$/].tr(':', ''); end
-    def to_s; "RestCore: spent #{sprintf('%f', duration)} #{name} #{url}";end
+  def self.members_core
+    [:auto_decode, :timeout, :cache,
+     :log_method, :log_handler, :error_handler]
   end
-  class Event::MultiDone < Event; end
-  class Event::Requested < Event; end
-  class Event::CacheHit  < Event; end
-  class Event::Failed    < Event; end
 
+  def self.struct prefix, *members
+    name = "#{prefix}Struct"
+    if const_defined?(name)
+      const_get(name)
+    else
+      # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
+      const_set(name, Struct.new(*(members_core + members)))
+    end
+  end
 
   def self.included mod
     # honor default attributes
-    mod.const_get(:Attributes).each{ |name|
-      mod.module_eval <<-RUBY
+    src = mod.members.map{ |name|
+      <<-RUBY
         def #{name}
-          (r = super).nil? ? (self.#{name} = self.class.default_#{name}) : r
+          if (r = super).nil? then self.#{name} = self.class.default_#{name}
+                              else r end
         end
+        self
       RUBY
     }
-
+    # if RUBY_VERSION < '1.9.2'
+    src << <<-RUBY if mod.members.first.kind_of?(String)
+      def members
+        super.map(&:to_sym)
+      end
+      self
+    RUBY
+    # end
+    accessor = Module.new.module_eval(src.join("\n"))
+    const_set("#{mod.name}Accessor", accessor)
+    mod.send(:include, accessor)
     select_json!(mod) unless respond_to?(:json_decode)
 
     # Fallback to ruby-hmac gem in case system openssl
@@ -49,6 +65,16 @@ module RestCore
       HMAC::SHA256.digest(key, data)
     end
   end
+
+  class Event < EventStruct
+    # self.class.name[/(?<=::)\w+$/] if RUBY_VERSION >= '1.9.2'
+    def name; self.class.name[/::\w+$/].tr(':', ''); end
+    def to_s; "RestCore: spent #{sprintf('%f', duration)} #{name} #{url}";end
+  end
+  class Event::MultiDone < Event; end
+  class Event::Requested < Event; end
+  class Event::CacheHit  < Event; end
+  class Event::Failed    < Event; end
 
   # begin json backend adapter
   module YajlRuby
@@ -116,7 +142,7 @@ module RestCore
 
 
   def initialize o={}
-    (self.class.const_get(:Attributes) + [:access_token]).each{ |name|
+    (members + [:access_token]).each{ |name|
       send("#{name}=", o[name]) if o.key?(name)
     }
   end
