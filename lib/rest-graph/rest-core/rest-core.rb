@@ -124,9 +124,9 @@ module RestCore
   end
 
   def self.select_json! mod, picked=false
-    if    defined?(::Yajl)
+    if    Object.const_defined?(:Yajl)
       mod.send(:extend, YajlRuby)
-    elsif defined?(::JSON)
+    elsif Object.const_defined?(:JSON)
       mod.send(:extend, Json)
     elsif picked
       mod.send(:extend, Gsub)
