@@ -213,7 +213,7 @@ class RestGraph < RestGraphStruct
 
   def lighten! o={}
     [:cache, :log_method, :log_handler, :error_handler].each{ |obj|
-      send("#{obj}=", nil) }
+      send("#{obj}=", false) }
     send(:initialize, o)
     self
   end
