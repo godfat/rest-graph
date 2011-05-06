@@ -18,7 +18,7 @@ module RestCore
     RestCore.const_defined?(:EventStruct)
 
   def self.members_core
-    [:auto_decode, :timeout, :cache,
+    [:auto_decode, :timeout, :cache, :accept, :lang,
      :log_method, :log_handler, :error_handler]
   end
 

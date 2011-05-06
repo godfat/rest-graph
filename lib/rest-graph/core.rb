@@ -5,7 +5,6 @@ require 'rest-graph/rest-core/rest-core.rb'
 
 class RestGraph < RestCore.struct('RestGraph',
                                   :graph_server, :old_server,
-                                  :accept, :lang,
                                   :app_id, :secret,
                                   :data)
   include RestCore
