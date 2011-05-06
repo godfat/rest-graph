@@ -303,7 +303,7 @@ class RestGraph < RestGraphStruct
 
   def next_page hash, opts={}, &cb
     if hash['paging'].kind_of?(Hash) && hash['paging']['next']
-      request(opts, [:get, hash['paging']['next']], &cb)
+      request(opts, [:get, URI.encode(hash['paging']['next'])], &cb)
     else
       yield(nil) if block_given?
     end
@@ -311,7 +311,7 @@ class RestGraph < RestGraphStruct
 
   def prev_page hash, opts={}, &cb
     if hash['paging'].kind_of?(Hash) && hash['paging']['previous']
-      request(opts, [:get, hash['paging']['previous']], &cb)
+      request(opts, [:get, URI.encode(hash['paging']['previous'])], &cb)
     else
       yield(nil) if block_given?
     end
