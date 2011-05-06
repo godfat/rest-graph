@@ -14,61 +14,9 @@ require 'cgi'
 require 'timeout'
 
 module RestCore
+  # ------------------------ event ------------------------
   EventStruct = Struct.new(:duration, :url) unless
     RestCore.const_defined?(:EventStruct)
-
-  def self.members_core
-    [:auto_decode, :timeout, :cache, :accept, :lang,
-     :log_method, :log_handler, :error_handler]
-  end
-
-  def self.struct prefix, *members
-    name = "#{prefix}Struct"
-    if const_defined?(name)
-      const_get(name)
-    else
-      # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
-      const_set(name, Struct.new(*(members_core + members)))
-    end
-  end
-
-  def self.included mod
-    setup_accessor(mod)
-    select_json!(mod) unless respond_to?(:json_decode)
-
-    # Fallback to ruby-hmac gem in case system openssl
-    # lib doesn't support SHA256 (OSX 10.5)
-    def mod.hmac_sha256 key, data
-      OpenSSL::HMAC.digest('sha256', key, data)
-    rescue RuntimeError
-      require 'hmac-sha2'
-      HMAC::SHA256.digest(key, data)
-    end
-  end
-
-  def self.setup_accessor mod
-    # honor default attributes
-    src = mod.members.map{ |name|
-      <<-RUBY
-        def #{name}
-          if (r = super).nil? then self.#{name} = self.class.default_#{name}
-                              else r end
-        end
-        self
-      RUBY
-    }
-    # if RUBY_VERSION < '1.9.2'
-    src << <<-RUBY if mod.members.first.kind_of?(String)
-      def members
-        super.map(&:to_sym)
-      end
-      self
-    RUBY
-    # end
-    accessor = Module.new.module_eval(src.join("\n"))
-    const_set("#{mod.name}Accessor", accessor)
-    mod.send(:include, accessor)
-  end
 
   class Event < EventStruct
     # self.class.name[/(?<=::)\w+$/] if RUBY_VERSION >= '1.9.2'
@@ -79,8 +27,11 @@ module RestCore
   class Event::Requested < Event; end
   class Event::CacheHit  < Event; end
   class Event::Failed    < Event; end
+  # ------------------------ event ------------------------
 
-  # begin json backend adapter
+
+
+  # ------------------------ json  ------------------------
   module YajlRuby
     def self.extended mod
       mod.const_set(:ParseError, Yajl::ParseError)
@@ -142,7 +93,68 @@ module RestCore
       select_json!(mod, true)
     end
   end
-  #   end json backend adapter
+  # ------------------------ json  ------------------------
+
+
+
+  def self.members_core
+    [:auto_decode, :timeout, :cache, :accept, :lang,
+     :log_method, :log_handler, :error_handler]
+  end
+
+  def self.struct prefix, *members
+    name = "#{prefix}Struct"
+    if const_defined?(name)
+      const_get(name)
+    else
+      # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
+      const_set(name, Struct.new(*(members_core + members)))
+    end
+  end
+
+  def self.included mod
+    return if mod < Hmac
+    mod.send(:extend, Hmac)
+    setup_accessor(mod)
+    select_json!(mod)
+  end
+
+  module Hmac
+    # Fallback to ruby-hmac gem in case system openssl
+    # lib doesn't support SHA256 (OSX 10.5)
+    def hmac_sha256 key, data
+      OpenSSL::HMAC.digest('sha256', key, data)
+    rescue RuntimeError
+      require 'hmac-sha2'
+      HMAC::SHA256.digest(key, data)
+    end
+  end
+
+  def self.setup_accessor mod
+    # honor default attributes
+    src = mod.members.map{ |name|
+      <<-RUBY
+        def #{name}
+          if (r = super).nil? then self.#{name} = self.class.default_#{name}
+                              else r end
+        end
+        self
+      RUBY
+    }
+    # if RUBY_VERSION < '1.9.2'
+    src << <<-RUBY if mod.members.first.kind_of?(String)
+      def members
+        super.map(&:to_sym)
+      end
+      self
+    RUBY
+    # end
+    accessor = Module.new.module_eval(src.join("\n"))
+    const_set("#{mod.name}Accessor", accessor)
+    mod.send(:include, accessor)
+  end
+
+
 
 
   def initialize o={}
