@@ -82,7 +82,8 @@ class RestGraph < RestGraphStruct
   Attributes.each{ |name|
     module_eval <<-RUBY
       def #{name}
-        (r = super).nil? ? (self.#{name} = self.class.default_#{name}) : r
+        if (r = super).nil? then self.#{name} = self.class.default_#{name}
+                            else r end
       end
     RUBY
   }
