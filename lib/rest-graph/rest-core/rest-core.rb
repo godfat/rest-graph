@@ -33,6 +33,20 @@ module RestCore
   end
 
   def self.included mod
+    setup_accessor(mod)
+    select_json!(mod) unless respond_to?(:json_decode)
+
+    # Fallback to ruby-hmac gem in case system openssl
+    # lib doesn't support SHA256 (OSX 10.5)
+    def mod.hmac_sha256 key, data
+      OpenSSL::HMAC.digest('sha256', key, data)
+    rescue RuntimeError
+      require 'hmac-sha2'
+      HMAC::SHA256.digest(key, data)
+    end
+  end
+
+  def self.setup_accessor mod
     # honor default attributes
     src = mod.members.map{ |name|
       <<-RUBY
@@ -54,16 +68,6 @@ module RestCore
     accessor = Module.new.module_eval(src.join("\n"))
     const_set("#{mod.name}Accessor", accessor)
     mod.send(:include, accessor)
-    select_json!(mod) unless respond_to?(:json_decode)
-
-    # Fallback to ruby-hmac gem in case system openssl
-    # lib doesn't support SHA256 (OSX 10.5)
-    def mod.hmac_sha256 key, data
-      OpenSSL::HMAC.digest('sha256', key, data)
-    rescue RuntimeError
-      require 'hmac-sha2'
-      HMAC::SHA256.digest(key, data)
-    end
   end
 
   class Event < EventStruct
