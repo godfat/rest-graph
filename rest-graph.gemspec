@@ -2,13 +2,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rest-graph}
-  s.version = "1.8.0"
+  s.version = "1.9.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [
   %q{Cardinal Blue},
   %q{Lin Jen-Shin (godfat)}]
-  s.date = %q{2011-05-05}
+  s.date = %q{2011-05-06}
   s.description = %q{A lightweight Facebook Graph API client}
   s.email = [%q{dev (XD) cardinalblue.com}]
   s.extra_rdoc_files = [
@@ -110,7 +110,7 @@ Gem::Specification.new do |s|
   %q{--main},
   %q{README}]
   s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.0}
+  s.rubygems_version = %q{1.8.1}
   s.summary = %q{A lightweight Facebook Graph API client}
   s.test_files = [
   %q{test/test_api.rb},
