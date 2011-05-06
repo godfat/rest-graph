@@ -14,7 +14,7 @@ require 'cgi'
 require 'timeout'
 
 # the data structure used in RestGraph
-RestGraphStruct = Struct.new(:auto_decode, :strict, :timeout,
+RestGraphStruct = Struct.new(:auto_decode, :timeout,
                              :graph_server, :old_server,
                              :accept, :lang,
                              :app_id, :secret,
