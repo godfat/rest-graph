@@ -234,6 +234,13 @@ class RestGraph < RestCore.struct('RestGraph',
                          end == cookies['sig']
   end
 
+
+  protected
+  def prepare_query_string opts={}
+    token = opts[:secret] ? secret_access_token : access_token
+    token ? {:access_token => token} : {}
+  end
+
   def check_error opts, uri, hash
     if error_handler && hash.kind_of?(Hash) &&
        (hash['error'] ||    # from graph api

@@ -336,10 +336,17 @@ module RestCore
     log(Event::Requested.new(Time.now - start_time, uri))
   end
 
+  def prepare_query_string opts={}
+    {}
+  end
+
+  def prepare_headers opts={}
+    {}
+  end
+
   def build_query_string query={}, opts={}
-    token = opts[:secret] ? secret_access_token : access_token
-    qq = token ? {:access_token => token}.merge(query) : query
-    q  = qq.select{ |k, v| v } # compacting the hash
+                                              # compacting the hash
+    q = prepare_query_string(opts).merge(query).select{ |k, v| v }
     return '' if q.empty?
     return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
   end
@@ -348,7 +355,7 @@ module RestCore
     headers = {}
     headers['Accept']          = accept if accept
     headers['Accept-Language'] = lang   if lang
-    headers.merge(opts[:headers] || {})
+    headers.merge(prepare_headers(opts).merge(opts[:headers] || {}))
   end
 
   def post_request opts, uri, result, &cb
