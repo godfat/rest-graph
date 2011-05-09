@@ -286,6 +286,11 @@ module RestCore
 
 
   protected
+  # those are for user to override
+  def prepare_query_string opts={}; {}; end
+  def prepare_headers      opts={}; {}; end
+
+  private
   def request_em opts, reqs
     start_time = Time.now
     rs = reqs.map{ |(meth, uri, payload)|
@@ -334,14 +339,6 @@ module RestCore
     post_request(opts, uri, e.http_body, &cb)
   ensure
     log(Event::Requested.new(Time.now - start_time, uri))
-  end
-
-  def prepare_query_string opts={}
-    {}
-  end
-
-  def prepare_headers opts={}
-    {}
   end
 
   def build_query_string query={}, opts={}
