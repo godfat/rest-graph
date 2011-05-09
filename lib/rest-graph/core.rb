@@ -87,27 +87,6 @@ class RestGraph < RestCore.struct('RestGraph',
     "#{app_id}|#{secret}"
   end
 
-  def lighten! o={}
-    [:cache, :log_method, :log_handler, :error_handler].each{ |obj|
-      send("#{obj}=", false) }
-    send(:initialize, o)
-    self
-  end
-
-  def lighten o={}
-    dup.lighten!(o)
-  end
-
-  def inspect
-    "#<struct RestGraph #{attributes.map{ |k, v|
-      "#{k}=#{v.inspect}" }.join(', ')}>"
-  end
-
-  def attributes
-    Hash[each_pair.map{ |k, v| [k, send(k)] }]
-  end
-
-
 
 
   # graph api related methods
