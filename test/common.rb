@@ -39,11 +39,16 @@ module TestHelper
   end
 
   def test_defaults
-    [[RestCore.members_core,
-        RestCore::DefaultAttributes],
+    members = RestGraph::DefaultAttributes.instance_methods.map{ |name|
+      name.to_s.sub('default_', '')
+    }
 
-     [RestGraph.members - RestCore.members_core,
-        RestGraph::DefaultAttributes]].
+    members_core = RestCore::DefaultAttributes.instance_methods.map{ |name|
+      name.to_s.sub('default_', '')
+    } - members
+
+    [[members_core, RestCore:: DefaultAttributes],
+     [members     , RestGraph::DefaultAttributes]].
 
     map{ |(attrs, mod)|
       [attrs.reject{ |attr| attr.to_s =~ /_handler$/ }, mod]

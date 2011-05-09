@@ -24,8 +24,8 @@ module RestCore
   end
 
   def self.members_core
-    [:auto_decode, :timeout, :accept, :lang, :data, :cache,
-     :log_method, :log_handler, :error_handler]
+    [:auto_decode, :timeout, :server, :accept, :lang,
+     :data, :cache, :log_method, :log_handler, :error_handler]
   end
 
   def self.struct prefix, *members
@@ -68,15 +68,16 @@ module RestCore
   # ------------------------ default ----------------------
   module DefaultAttributes
     extend self
-    def default_auto_decode  ; true              ; end
-    def default_timeout      ; 10                ; end
-    def default_accept       ; 'text/javascript' ; end
-    def default_lang         ; 'en-us'           ; end
-    def default_data         ; {}                ; end
-    def default_cache        ; nil               ; end
-    def default_log_method   ; nil               ; end
-    def default_log_handler  ; nil               ; end
-    def default_error_handler; nil               ; end
+    def default_auto_decode  ; true               ; end
+    def default_timeout      ; 10                 ; end
+    def default_server       ; 'http://localhost/'; end
+    def default_accept       ; 'text/javascript'  ; end
+    def default_lang         ; 'en-us'            ; end
+    def default_data         ; {}                 ; end
+    def default_cache        ; nil                ; end
+    def default_log_method   ; nil                ; end
+    def default_log_handler  ; nil                ; end
+    def default_error_handler; nil                ; end
   end
   extend DefaultAttributes
   # ------------------------ default ----------------------
@@ -204,6 +205,68 @@ module RestCore
     dup.lighten!(o)
   end
 
+  def url path, query={}, prefix=server, opts={}
+    "#{prefix}#{path}#{build_query_string(query, opts)}"
+  end
+
+  # extra options:
+  #   auto_decode: Bool # decode with json or not in this API request
+  #                     # default: auto_decode in rest-graph instance
+  #       timeout: Int  # the timeout for this API request
+  #                     # default: timeout in rest-graph instance
+  #        secret: Bool # use secret_acccess_token or not
+  #                     # default: false
+  #         cache: Bool # use cache or not; if it's false, update cache, too
+  #                     # default: true
+  #    expires_in: Int  # control when would the cache be expired
+  #                     # default: nil
+  #         async: Bool # use eventmachine for http client or not
+  #                     # default: false, but true in aget family
+  #       headers: Hash # additional hash you want to pass
+  #                     # default: {}
+  def get    path, query={}, opts={}, &cb
+    request(opts, [:get   , url(path, query, server, opts)], &cb)
+  end
+
+  def delete path, query={}, opts={}, &cb
+    request(opts, [:delete, url(path, query, server, opts)], &cb)
+  end
+
+  def post   path, payload={}, query={}, opts={}, &cb
+    request(opts, [:post  , url(path, query, server, opts), payload],
+            &cb)
+  end
+
+  def put    path, payload={}, query={}, opts={}, &cb
+    request(opts, [:put   , url(path, query, server, opts), payload],
+            &cb)
+  end
+
+  # request by eventmachine (em-http)
+
+  def aget    path, query={}, opts={}, &cb
+    get(path, query, {:async => true}.merge(opts), &cb)
+  end
+
+  def adelete path, query={}, opts={}, &cb
+    delete(path, query, {:async => true}.merge(opts), &cb)
+  end
+
+  def apost   path, payload={}, query={}, opts={}, &cb
+    post(path, payload, query, {:async => true}.merge(opts), &cb)
+  end
+
+  def aput    path, payload={}, query={}, opts={}, &cb
+    put(path, payload, query, {:async => true}.merge(opts), &cb)
+  end
+
+  def multi reqs, opts={}, &cb
+    request({:async => true}.merge(opts),
+      *reqs.map{ |(meth, path, query, payload)|
+        [meth, url(path, query || {}, server, opts), payload]
+      }, &cb)
+  end
+
   def request opts, *reqs, &cb
     Timeout.timeout(opts[:timeout] || timeout){
       reqs.each{ |(meth, uri, payload)|
@@ -307,7 +370,6 @@ module RestCore
       auto_decode
     end
   end
-
 
   def cache_key opts, uri
     Digest::MD5.hexdigest(opts[:uri] || uri)

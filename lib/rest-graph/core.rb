@@ -4,8 +4,8 @@ require 'rest-graph/rest-core/rest-core.rb'
 # the data structure used in RestGraph
 
 class RestGraph < RestCore.struct('RestGraph',
-                                  :graph_server, :old_server,
-                                  :app_id, :secret)
+                                  :app_id, :secret,
+                                  :old_server)
   include RestCore
 
   class Error < RuntimeError
@@ -49,7 +49,7 @@ class RestGraph < RestCore.struct('RestGraph',
   # setup defaults
   module DefaultAttributes
     extend self
-    def default_graph_server; 'https://graph.facebook.com/'; end
+    def default_server      ; 'https://graph.facebook.com/'; end
     def default_old_server  ; 'https://api.facebook.com/'  ; end
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
@@ -76,76 +76,6 @@ class RestGraph < RestCore.struct('RestGraph',
   def secret_access_token
     "#{app_id}|#{secret}"
   end
-
-
-
-  # graph api related methods
-
-  def url path, query={}, server=graph_server, opts={}
-    "#{server}#{path}#{build_query_string(query, opts)}"
-  end
-
-  # extra options:
-  #   auto_decode: Bool # decode with json or not in this API request
-  #                     # default: auto_decode in rest-graph instance
-  #       timeout: Int  # the timeout for this API request
-  #                     # default: timeout in rest-graph instance
-  #        secret: Bool # use secret_acccess_token or not
-  #                     # default: false
-  #         cache: Bool # use cache or not; if it's false, update cache, too
-  #                     # default: true
-  #    expires_in: Int  # control when would the cache be expired
-  #                     # default: nil
-  #         async: Bool # use eventmachine for http client or not
-  #                     # default: false, but true in aget family
-  #       headers: Hash # additional hash you want to pass
-  #                     # default: {}
-  def get    path, query={}, opts={}, &cb
-    request(opts, [:get   , url(path, query, graph_server, opts)], &cb)
-  end
-
-  def delete path, query={}, opts={}, &cb
-    request(opts, [:delete, url(path, query, graph_server, opts)], &cb)
-  end
-
-  def post   path, payload={}, query={}, opts={}, &cb
-    request(opts, [:post  , url(path, query, graph_server, opts), payload],
-            &cb)
-  end
-
-  def put    path, payload={}, query={}, opts={}, &cb
-    request(opts, [:put   , url(path, query, graph_server, opts), payload],
-            &cb)
-  end
-
-  # request by eventmachine (em-http)
-
-  def aget    path, query={}, opts={}, &cb
-    get(path, query, {:async => true}.merge(opts), &cb)
-  end
-
-  def adelete path, query={}, opts={}, &cb
-    delete(path, query, {:async => true}.merge(opts), &cb)
-  end
-
-  def apost   path, payload={}, query={}, opts={}, &cb
-    post(path, payload, query, {:async => true}.merge(opts), &cb)
-  end
-
-  def aput    path, payload={}, query={}, opts={}, &cb
-    put(path, payload, query, {:async => true}.merge(opts), &cb)
-  end
-
-  def multi reqs, opts={}, &cb
-    request({:async => true}.merge(opts),
-      *reqs.map{ |(meth, path, query, payload)|
-        [meth, url(path, query || {}, graph_server, opts), payload]
-      }, &cb)
-  end
-
-
-
-
 
   def next_page hash, opts={}, &cb
     if hash['paging'].kind_of?(Hash) && hash['paging']['next']
@@ -231,7 +161,7 @@ class RestGraph < RestCore.struct('RestGraph',
 
   def authorize_url opts={}
     query = {:client_id => app_id, :access_token => nil}.merge(opts)
-    "#{graph_server}oauth/authorize#{build_query_string(query)}"
+    "#{server}oauth/authorize#{build_query_string(query)}"
   end
 
   def authorize! opts={}
