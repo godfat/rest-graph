@@ -287,8 +287,9 @@ module RestCore
 
   protected
   # those are for user to override
-  def prepare_query_string opts={}; {}; end
-  def prepare_headers      opts={}; {}; end
+  def prepare_query_string opts={};    {}; end
+  def prepare_headers      opts={};    {}; end
+  def error?               decoded; false; end
 
   private
   def request_em opts, reqs
@@ -355,13 +356,17 @@ module RestCore
     headers.merge(prepare_headers(opts).merge(opts[:headers] || {}))
   end
 
-  def post_request opts, uri, result, &cb
+  def post_request opts, uri, result
     if decode?(opts)
                                   # [this].first is not needed for yajl-ruby
       decoded = self.class.json_decode("[#{result}]").first
-      check_error(opts, uri, decoded, &cb)
+      if error?(decoded)
+        cache_assign(opts, uri, nil)
+        error_handler.call(decoded, uri) if error_handler
+      end
+      block_given? ? yield(decoded) : decoded
     else
-      block_given? ? yield(result) : result
+      block_given? ? yield(result ) : result
     end
   rescue self.class.const_get(:ParseError) => error
     error_handler.call(error, uri) if error_handler

@@ -241,17 +241,13 @@ class RestGraph < RestCore.struct('RestGraph',
     token ? {:access_token => token} : {}
   end
 
-  def check_error opts, uri, hash
-    if error_handler && hash.kind_of?(Hash) &&
+  def error? hash
+    error_handler && hash.kind_of?(Hash) &&
        (hash['error'] ||    # from graph api
         hash['error_code']) # from fql
-      cache_assign(opts, uri, nil)
-      error_handler.call(hash, uri)
-    else
-      block_given? ? yield(hash) : hash
-    end
   end
 
+  private
   def calculate_sig cookies
     Digest::MD5.hexdigest(fbs_without_sig(cookies).join + secret)
   end
