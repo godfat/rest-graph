@@ -14,6 +14,73 @@ require 'cgi'
 require 'timeout'
 
 module RestCore
+  # ------------------------ class ------------------------
+  def self.included mod
+    return if   mod < DefaultAttributes
+    mod.send(:extend, DefaultAttributes)
+    mod.send(:extend, Hmac)
+    setup_accessor(mod)
+    select_json!(mod)
+  end
+
+  def self.members_core
+    [:auto_decode, :timeout, :accept, :lang, :data, :cache,
+     :log_method, :log_handler, :error_handler]
+  end
+
+  def self.struct prefix, *members
+    name = "#{prefix}Struct"
+    if const_defined?(name)
+      const_get(name)
+    else
+      # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
+      const_set(name, Struct.new(*(members_core + members)))
+    end
+  end
+
+  def self.setup_accessor mod
+    # honor default attributes
+    src = mod.members.map{ |name|
+      <<-RUBY
+        def #{name}
+          if (r = super).nil? then self.#{name} = self.class.default_#{name}
+                              else r end
+        end
+        self
+      RUBY
+    }
+    # if RUBY_VERSION < '1.9.2'
+    src << <<-RUBY if mod.members.first.kind_of?(String)
+      def members
+        super.map(&:to_sym)
+      end
+      self
+    RUBY
+    # end
+    accessor = Module.new.module_eval(src.join("\n"))
+    const_set("#{mod.name}Accessor", accessor)
+    mod.send(:include, accessor)
+  end
+  # ------------------------ class ------------------------
+
+
+
+  # ------------------------ default ----------------------
+  module DefaultAttributes
+    extend self
+    def default_auto_decode  ; true              ; end
+    def default_timeout      ; 10                ; end
+    def default_accept       ; 'text/javascript' ; end
+    def default_lang         ; 'en-us'           ; end
+    def default_data         ; {}                ; end
+    def default_cache        ; nil               ; end
+    def default_log_method   ; nil               ; end
+    def default_log_handler  ; nil               ; end
+    def default_error_handler; nil               ; end
+  end
+  extend DefaultAttributes
+  # ------------------------ default ----------------------
+
   # ------------------------ event ------------------------
   EventStruct = Struct.new(:duration, :url) unless
     RestCore.const_defined?(:EventStruct)
@@ -108,56 +175,6 @@ module RestCore
     end
   end
   # ------------------------ hmac -------------------------
-
-
-
-  # ------------------------ class ------------------------
-  def self.members_core
-    [:auto_decode, :timeout, :cache, :accept, :lang,
-     :log_method, :log_handler, :error_handler]
-  end
-
-  def self.struct prefix, *members
-    name = "#{prefix}Struct"
-    if const_defined?(name)
-      const_get(name)
-    else
-      # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
-      const_set(name, Struct.new(*(members_core + members)))
-    end
-  end
-
-  def self.included mod
-    return if mod < Hmac
-    mod.send(:extend, Hmac)
-    setup_accessor(mod)
-    select_json!(mod)
-  end
-
-  def self.setup_accessor mod
-    # honor default attributes
-    src = mod.members.map{ |name|
-      <<-RUBY
-        def #{name}
-          if (r = super).nil? then self.#{name} = self.class.default_#{name}
-                              else r end
-        end
-        self
-      RUBY
-    }
-    # if RUBY_VERSION < '1.9.2'
-    src << <<-RUBY if mod.members.first.kind_of?(String)
-      def members
-        super.map(&:to_sym)
-      end
-      self
-    RUBY
-    # end
-    accessor = Module.new.module_eval(src.join("\n"))
-    const_set("#{mod.name}Accessor", accessor)
-    mod.send(:include, accessor)
-  end
-  # ------------------------ class ------------------------
 
 
 

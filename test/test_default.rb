@@ -7,12 +7,8 @@ end
 
 describe RestGraph do
   should 'honor default attributes' do
-    TestHelper.attrs_no_callback.each{ |name|
-      RestGraph.new.send(name).should ==
-        RestGraph.send("default_#{name}")
-
-      RestGraph.new.send(name).should ==
-        RestGraph::DefaultAttributes.send("default_#{name}")
+    TestHelper.test_defaults{ |name, mod|
+      RestGraph.new.send(name).should == RestGraph.send("default_#{name}")
     }
   end
 

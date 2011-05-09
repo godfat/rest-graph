@@ -5,8 +5,7 @@ require 'rest-graph/rest-core/rest-core.rb'
 
 class RestGraph < RestCore.struct('RestGraph',
                                   :graph_server, :old_server,
-                                  :app_id, :secret,
-                                  :data)
+                                  :app_id, :secret)
   include RestCore
 
   class Error < RuntimeError
@@ -50,19 +49,10 @@ class RestGraph < RestCore.struct('RestGraph',
   # setup defaults
   module DefaultAttributes
     extend self
-    def default_auto_decode ; true                         ; end
-    def default_strict      ; false                        ; end
-    def default_timeout     ; 10                           ; end
     def default_graph_server; 'https://graph.facebook.com/'; end
     def default_old_server  ; 'https://api.facebook.com/'  ; end
-    def default_accept      ; 'text/javascript'            ; end
-    def default_lang        ; 'en-us'                      ; end
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
-    def default_data        ; {}                           ; end
-    def default_cache       ; nil                          ; end
-    def default_log_method  ; nil                          ; end
-    def default_log_handler ; nil                          ; end
     def default_error_handler
       lambda{ |error, url| raise ::RestGraph::Error.parse(error, url) }
     end

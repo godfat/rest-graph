@@ -24,12 +24,10 @@ module TestHelper
     yield
 
   ensure # the defaults should remain the same!
-    RestGraph.send(:extend, RestGraph::DefaultAttributes.dup)
-
-    TestHelper.attrs_no_callback.each{ |name|
-      RestGraph.new.send(name).should ==
-        RestGraph::DefaultAttributes.send("default_#{name}")
+    [RestCore, RestGraph].each{ |mod|
+      RestGraph.send(:extend, mod.const_get(:DefaultAttributes).dup)
     }
+    test_defaults
   end
 
   def normalize_query query
@@ -40,9 +38,17 @@ module TestHelper
     url.sub(/\?.+/){ |query| TestHelper.normalize_query(query) }
   end
 
-  def attrs_no_callback
-    RestGraph.members.reject{ |attr|
-      attr.to_s =~ /_handler/
-    }
+  def test_defaults
+    [[RestCore.members_core,
+        RestCore::DefaultAttributes],
+
+     [RestGraph.members - RestCore.members_core,
+        RestGraph::DefaultAttributes]].
+
+    map{ |(attrs, mod)|
+      [attrs.reject{ |attr| attr.to_s =~ /_handler$/ }, mod]
+    }.each{ |(names, mod)| names.each{ |name|
+      RestGraph.new.send(name).should == mod.send("default_#{name}")
+      yield(name, mod) if block_given?}}
   end
 end
