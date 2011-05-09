@@ -163,6 +163,15 @@ module RestCore
     }
   end
 
+  def attributes
+    Hash[each_pair.map{ |k, v| [k, send(k)] }]
+  end
+
+  def inspect
+    "#<struct #{self.class.name} #{attributes.map{ |k, v|
+      "#{k}=#{v.inspect}" }.join(', ')}>"
+  end
+
   def lighten! o={}
     attributes.each{ |k, v| case v; when Proc, IO; send("#{k}=", false); end}
     send(:initialize, o)
@@ -172,16 +181,6 @@ module RestCore
   def lighten o={}
     dup.lighten!(o)
   end
-
-  def inspect
-    "#<struct #{self.class.name} #{attributes.map{ |k, v|
-      "#{k}=#{v.inspect}" }.join(', ')}>"
-  end
-
-  def attributes
-    Hash[each_pair.map{ |k, v| [k, send(k)] }]
-  end
-
 
   def request opts, *reqs, &cb
     Timeout.timeout(opts[:timeout] || timeout){
