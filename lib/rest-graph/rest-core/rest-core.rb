@@ -31,7 +31,7 @@ module RestCore
 
 
 
-  # ------------------------ json  ------------------------
+  # ------------------------ json -------------------------
   module YajlRuby
     def self.extended mod
       mod.const_set(:ParseError, Yajl::ParseError)
@@ -93,10 +93,25 @@ module RestCore
       select_json!(mod, true)
     end
   end
-  # ------------------------ json  ------------------------
+  # ------------------------ json -------------------------
+
+
+  # ------------------------ hmac -------------------------
+  module Hmac
+    # Fallback to ruby-hmac gem in case system openssl
+    # lib doesn't support SHA256 (OSX 10.5)
+    def hmac_sha256 key, data
+      OpenSSL::HMAC.digest('sha256', key, data)
+    rescue RuntimeError
+      require 'hmac-sha2'
+      HMAC::SHA256.digest(key, data)
+    end
+  end
+  # ------------------------ hmac -------------------------
 
 
 
+  # ------------------------ class ------------------------
   def self.members_core
     [:auto_decode, :timeout, :cache, :accept, :lang,
      :log_method, :log_handler, :error_handler]
@@ -117,17 +132,6 @@ module RestCore
     mod.send(:extend, Hmac)
     setup_accessor(mod)
     select_json!(mod)
-  end
-
-  module Hmac
-    # Fallback to ruby-hmac gem in case system openssl
-    # lib doesn't support SHA256 (OSX 10.5)
-    def hmac_sha256 key, data
-      OpenSSL::HMAC.digest('sha256', key, data)
-    rescue RuntimeError
-      require 'hmac-sha2'
-      HMAC::SHA256.digest(key, data)
-    end
   end
 
   def self.setup_accessor mod
@@ -153,10 +157,11 @@ module RestCore
     const_set("#{mod.name}Accessor", accessor)
     mod.send(:include, accessor)
   end
+  # ------------------------ class ------------------------
 
 
 
-
+  # ------------------------ instance ---------------------
   def initialize o={}
     (members + [:access_token]).each{ |name|
       send("#{name}=", o[name]) if o.key?(name)
@@ -196,6 +201,9 @@ module RestCore
       end
     }
   end
+  # ------------------------ instance ---------------------
+
+
 
   protected
   def request_em opts, reqs
