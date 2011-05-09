@@ -5,8 +5,18 @@ require 'rest-graph/rest-core/rest-core.rb'
 
 class RestGraph < RestCore.struct('RestGraph',
                                   :app_id, :secret,
-                                  :old_server)
+                                  :old_server, :graph_server)
   include RestCore
+
+  def graph_server
+    puts "[DEPRECATED] please use `server' instead of `graph_server'"
+    super
+  end
+
+  def graph_server= new_server
+    puts "[DEPRECATED] please use `server=' instead of `graph_server='"
+    super
+  end
 
   class Error < RuntimeError
     class AccessToken < Error; end
@@ -55,6 +65,11 @@ class RestGraph < RestCore.struct('RestGraph',
     def default_secret      ; nil                          ; end
     def default_error_handler
       lambda{ |error, url| raise ::RestGraph::Error.parse(error, url) }
+    end
+    def default_graph_server
+      puts "[DEPRECATED] please use `default_server' instead of " \
+           "`default_graph_server'"
+      default_server
     end
   end
   extend DefaultAttributes
