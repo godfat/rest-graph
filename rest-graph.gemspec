@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = [
   %q{Cardinal Blue},
   %q{Lin Jen-Shin (godfat)}]
-  s.date = %q{2011-05-07}
+  s.date = %q{2011-05-09}
   s.description = %q{A lightweight Facebook Graph API client}
   s.email = [%q{dev (XD) cardinalblue.com}]
   s.extra_rdoc_files = [
@@ -37,7 +37,6 @@ Gem::Specification.new do |s|
   %q{example/multi/config.ru},
   %q{example/multi/rainbows.rb},
   %q{example/rails2/Gemfile},
-  %q{example/rails2/Gemfile.lock},
   %q{example/rails2/README},
   %q{example/rails2/Rakefile},
   %q{example/rails2/app/controllers/application_controller.rb},
@@ -58,7 +57,6 @@ Gem::Specification.new do |s|
   %q{example/rails2/test/test_helper.rb},
   %q{example/rails2/test/unit/rails_util_test.rb},
   %q{example/rails3/Gemfile},
-  %q{example/rails3/Gemfile.lock},
   %q{example/rails3/Rakefile},
   %q{example/rails3/app/controllers/application_controller.rb},
   %q{example/rails3/app/views/application/helper.html.erb},
