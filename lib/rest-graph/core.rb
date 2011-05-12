@@ -5,16 +5,27 @@ require 'rest-graph/rest-core/rest-core.rb'
 
 class RestGraph < RestCore.struct('RestGraph',
                                   :app_id, :secret,
+                                  :old_site,
                                   :old_server, :graph_server)
   include RestCore
 
   def graph_server
-    puts "[DEPRECATED] please use `server' instead of `graph_server'"
+    puts "[DEPRECATED] please use `site' instead of `graph_server'"
     super
   end
 
-  def graph_server= new_server
-    puts "[DEPRECATED] please use `server=' instead of `graph_server='"
+  def graph_server= site
+    puts "[DEPRECATED] please use `site=' instead of `graph_server='"
+    super
+  end
+
+  def old_server
+    puts "[DEPRECATED] please use `old_site' instead of `old_server'"
+    super
+  end
+
+  def old_server= site
+    puts "[DEPRECATED] please use `old_site=' instead of `old_server='"
     super
   end
 
@@ -59,17 +70,22 @@ class RestGraph < RestCore.struct('RestGraph',
   # setup defaults
   module DefaultAttributes
     extend self
-    def default_server      ; 'https://graph.facebook.com/'; end
-    def default_old_server  ; 'https://api.facebook.com/'  ; end
+    def default_site        ; 'https://graph.facebook.com/'; end
+    def default_old_site    ; 'https://api.facebook.com/'  ; end
     def default_app_id      ; nil                          ; end
     def default_secret      ; nil                          ; end
     def default_error_handler
       lambda{ |error, url| raise ::RestGraph::Error.parse(error, url) }
     end
     def default_graph_server
-      puts "[DEPRECATED] please use `default_server' instead of " \
+      puts "[DEPRECATED] please use `default_site' instead of " \
            "`default_graph_server'"
-      default_server
+      default_site
+    end
+    def default_old_server
+      puts "[DEPRECATED] please use `default_old_site' instead of " \
+           "`default_old_server'"
+      default_old_site
     end
   end
   extend DefaultAttributes
@@ -176,7 +192,7 @@ class RestGraph < RestCore.struct('RestGraph',
 
   def authorize_url opts={}
     query = {:client_id => app_id, :access_token => nil}.merge(opts)
-    "#{server}oauth/authorize#{build_query_string(query)}"
+    "#{site}oauth/authorize#{build_query_string(query)}"
   end
 
   def authorize! opts={}

@@ -24,7 +24,7 @@ module RestCore
   end
 
   def self.members_core
-    [:auto_decode, :timeout, :server, :accept, :lang,
+    [:site, :accept, :lang, :auto_decode, :timeout,
      :data, :cache, :log_method, :log_handler, :error_handler]
   end
 
@@ -68,11 +68,11 @@ module RestCore
   # ------------------------ default ----------------------
   module DefaultAttributes
     extend self
-    def default_auto_decode  ; true               ; end
-    def default_timeout      ; 10                 ; end
-    def default_server       ; 'http://localhost/'; end
+    def default_site         ; 'http://localhost/'; end
     def default_accept       ; 'text/javascript'  ; end
     def default_lang         ; 'en-us'            ; end
+    def default_auto_decode  ; true               ; end
+    def default_timeout      ; 10                 ; end
     def default_data         ; {}                 ; end
     def default_cache        ; nil                ; end
     def default_log_method   ; nil                ; end
@@ -205,7 +205,7 @@ module RestCore
     dup.lighten!(o)
   end
 
-  def url path, query={}, prefix=server, opts={}
+  def url path, query={}, prefix=site, opts={}
     "#{prefix}#{path}#{build_query_string(query, opts)}"
   end
 
@@ -225,20 +225,20 @@ module RestCore
   #       headers: Hash # additional hash you want to pass
   #                     # default: {}
   def get    path, query={}, opts={}, &cb
-    request(opts, [:get   , url(path, query, server, opts)], &cb)
+    request(opts, [:get   , url(path, query, site, opts)], &cb)
   end
 
   def delete path, query={}, opts={}, &cb
-    request(opts, [:delete, url(path, query, server, opts)], &cb)
+    request(opts, [:delete, url(path, query, site, opts)], &cb)
   end
 
   def post   path, payload={}, query={}, opts={}, &cb
-    request(opts, [:post  , url(path, query, server, opts), payload],
+    request(opts, [:post  , url(path, query, site, opts), payload],
             &cb)
   end
 
   def put    path, payload={}, query={}, opts={}, &cb
-    request(opts, [:put   , url(path, query, server, opts), payload],
+    request(opts, [:put   , url(path, query, site, opts), payload],
             &cb)
   end
 
@@ -263,7 +263,7 @@ module RestCore
   def multi reqs, opts={}, &cb
     request({:async => true}.merge(opts),
       *reqs.map{ |(meth, path, query, payload)|
-        [meth, url(path, query || {}, server, opts), payload]
+        [meth, url(path, query || {}, site, opts), payload]
       }, &cb)
   end
 
