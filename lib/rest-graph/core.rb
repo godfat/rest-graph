@@ -210,12 +210,12 @@ class RestGraph < RestCore.struct('RestGraph',
 
   def old_rest path, query={}, opts={}, &cb
     uri = url("method/#{path}", {:format => 'json'}.merge(query),
-              old_server, opts)
+              old_site, opts)
     if opts[:post]
       request(
         opts.merge(:uri => uri),
         [:post,
-         url("method/#{path}", {:format => 'json'}, old_server, opts),
+         url("method/#{path}", {:format => 'json'}, old_site, opts),
          query],
         &cb)
     else

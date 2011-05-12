@@ -51,7 +51,7 @@ module TestHelper
      [members     , RestGraph::DefaultAttributes]].
 
     map{ |(attrs, mod)|
-      [attrs.reject{ |attr| attr.to_s =~ /_handler$/ }, mod]
+      [attrs.reject{ |attr| attr.to_s =~ /(_handler|_server)$/ }, mod]
     }.each{ |(names, mod)| names.each{ |name|
       RestGraph.new.send(name).should == mod.send("default_#{name}")
       yield(name, mod) if block_given?}}
