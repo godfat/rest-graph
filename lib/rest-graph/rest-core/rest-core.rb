@@ -218,17 +218,6 @@ module RestCore::Client
     }
   end
 
-  def request_rc opts, meth, uri, payload=nil, &cb
-    start_time = Time.now
-    post_request(opts, uri,
-                 cache_get(opts, uri) || fetch(opts, uri, meth, payload),
-                 &cb)
-  rescue RestClient::Exception => e
-    post_request(opts, uri, e.http_body, &cb)
-  ensure
-    log(Event::Requested.new(Time.now - start_time, uri))
-  end
-
   def build_query_string query={}, opts={}
                                               # compacting the hash
     q = prepare_query_string(opts).merge(query).select{ |k, v| v }
@@ -265,13 +254,6 @@ module RestCore::Client
     else
       auto_decode
     end
-  end
-
-  def fetch opts, uri, meth, payload
-    RestClient::Request.execute(:method => meth, :url => uri,
-                                :headers => build_headers(opts),
-                                :payload => payload).body.
-      tap{ |result| cache_for(opts, uri, meth, result) }
   end
 
   def log event
@@ -342,12 +324,26 @@ class RestCore::Timeout
   end
 end
 
+class RestCore::RestClient
+  def self.members; []; end
+
+  def call env
+    RestClient::Request.execute(:method  => env['REQUEST_METHOD'   ],
+                                :url     => env['rest-core.uri'    ],
+                                :headers => env['rest-core.headers'],
+                                :payload => env['rest-core.payload']).body
+  rescue RestClient::Exception => e
+    e.http_body
+  end
+end
+
 RestGraph = RestCore::Builder.client('RestGraph',
                                      :app_id, :secret,
                                      :old_site,
                                      :old_server, :graph_server) do
   use Cache, {}
   use Timeout, 10
+  run RestClient.new
 end
 
 module RestCore
