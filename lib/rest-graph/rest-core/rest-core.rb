@@ -13,8 +13,40 @@ require 'openssl'
 require 'cgi'
 require 'timeout'
 
+module RestCore
+  # ------------------------ event ------------------------
+  EventStruct = Struct.new(:duration, :url) unless
+    RestCore.const_defined?(:EventStruct)
 
-module RestCore; end
+  class Event < EventStruct
+    # self.class.name[/(?<=::)\w+$/] if RUBY_VERSION >= '1.9.2'
+    def name; self.class.name[/::\w+$/].tr(':', ''); end
+    def to_s; "RestCore: spent #{sprintf('%f', duration)} #{name} #{url}";end
+  end
+  class Event::MultiDone < Event; end
+  class Event::Requested < Event; end
+  class Event::CacheHit  < Event; end
+  class Event::Failed    < Event; end
+  # ------------------------ event ------------------------
+end
+
+module RestCore::Middleware
+  def self.included mod
+    mod.send(:include, RestCore)
+    mod.send(:attr_reader, :app)
+    mod.module_eval(mod.members.map{ |member|
+      <<-RUBY
+        def #{member} env
+          env['#{member}'] || @#{member}
+        end
+      RUBY
+    }.join("\n"))
+  end
+  def initialize app; @app = app   ; end
+  def call       env; app.call(env); end
+  def fail       env; app.fail(env); end
+  def log        env; app. log(env); end
+end
 
 class RestCore::Builder
   include RestCore
@@ -193,10 +225,12 @@ module RestCore::Client
       else
         r.callback{
           cache_for(opts, uri, meth, r.response)
-          log(Event::Requested.new(Time.now - start_time, uri))
+          log(env.merge('event' =>
+            Event::Requested.new(Time.now - start_time, uri)))
         }
         r.error{
-          log(Event::Failed.new(Time.now - start_time, uri))
+          log(env.merge('event' =>
+            Event::Failed.new(Time.now - start_time, uri)))
         }
       end
       r
@@ -211,8 +245,8 @@ module RestCore::Client
       if reqs.size == 1
         yield(results.first)
       else
-        log(Event::MultiDone.new(Time.now - start_time,
-          clients.map(&:uri).join(', ')))
+        log(env.merge('event' => Event::MultiDone.new(Time.now - start_time,
+          clients.map(&:uri).join(', '))))
         yield(results)
       end
     }
@@ -231,40 +265,28 @@ module RestCore::Client
     headers['Accept-Language'] = lang   if lang
     headers.merge(prepare_headers(opts).merge(opts[:headers] || {}))
   end
+end
 
-  def post_request opts, uri, result
-    if decode?(opts)
-                                  # [this].first is not needed for yajl-ruby
-      decoded = self.class.json_decode("[#{result}]").first
-      if error?(decoded)
-        cache_assign(opts, uri, nil)
-        error_handler.call(decoded, uri) if error_handler
-      end
-      block_given? ? yield(decoded) : decoded
-    else
-      block_given? ? yield(result ) : result
-    end
-  rescue self.class.const_get(:ParseError) => error
-    error_handler.call(error, uri) if error_handler
+class RestCore::CommonLogger
+  def self.members; [:log_handler, :log_method]; end
+  include RestCore::Middleware
+  def call env
+    start_time = Time.now
+    result = app.call(env)
+    log(env.merge('event' =>
+      Event::Requested.new(Time.now - start_time, env['rest-core.uri'])))
+    result
   end
-
-  def decode? opts
-    if opts.has_key?(:auto_decode)
-      opts[:auto_decode]
-    else
-      auto_decode
-    end
-  end
-
-  def log event
-    log_handler.call(event)             if log_handler
-    log_method .call("DEBUG: #{event}") if log_method
+  def log env
+    log_handler(env).call(env)                      if log_handler(env)
+    log_method(env) .call("DEBUG: #{env['event']}") if log_method(env)
+    app.log(env)
   end
 end
 
 class RestCore::Cache
   def self.members; [:cache]; end
-  def cache env; env['cache'] || @cache; end
+  include RestCore::Middleware
 
   attr_reader :app
   def initialize app, cache
@@ -273,6 +295,11 @@ class RestCore::Cache
 
   def call env
     cache_get(env) || cache_for(env, app.call(env))
+  end
+
+  def fail env
+    cache_assign(env, nil)
+    app.fail(env)
   end
 
   protected
@@ -285,7 +312,8 @@ class RestCore::Cache
     start_time = Time.now
     cache(env)[cache_key(env)].tap{ |result|
       if result
-        log(Event::CacheHit.new(Time.now - start_time, env['rest-core.uri']))
+        log(env.merge('event' =>
+          Event::CacheHit.new(Time.now - start_time, env['rest-core.uri'])))
       end
     }
   end
@@ -293,12 +321,12 @@ class RestCore::Cache
   def cache_for env, value
     return value unless cache(env)
     # fake post (opts[:post] => true) is considered get and need cache
-    return if env['REQUEST_METHOD'] != :get unless env['cache.post']
+    return value if env['REQUEST_METHOD'] != :get unless env['cache.post']
 
     if env['cache.expires_in'].kind_of?(Fixnum) &&
        cache(env).method(:store).arity == -3
       cache(env).store(cache_key(env), value,
-                  :expires_in => env['cache.expires_in'])
+                       :expires_in => env['cache.expires_in'])
     else
       cache_assign(env, value)
     end
@@ -310,127 +338,37 @@ class RestCore::Cache
   end
 end
 
-class RestCore::Timeout
-  def self.members; [:timeout]; end
-  def timeout env; env['timeout'] || @timeout; end
+class RestCore::AutoJsonDecode
+  def self.members; [:auto_decode, :error_handler]; end
+  include RestCore::Middleware
+  def auto_decode env
+    (env.key?('auto_decode') && env['auto_decode']) || @auto_decode
+  end
 
   attr_reader :app
-  def initialize app, timeout=10
-    @app, @timeout = app, timeout
+  def initialize app, error_handler=nil, auto_decode=true
+    @app, @error_handler, @auto_decode = app, error_handler, auto_decode
   end
 
   def call env
-    Timeout.timeout(timeout(env)){ app.call(env) }
-  end
-end
-
-class RestCore::RestClient
-  def self.members; []; end
-
-  def call env
-    RestClient::Request.execute(:method  => env['REQUEST_METHOD'   ],
-                                :url     => env['rest-core.uri'    ],
-                                :headers => env['rest-core.headers'],
-                                :payload => env['rest-core.payload']).body
-  rescue RestClient::Exception => e
-    e.http_body
-  end
-end
-
-RestGraph = RestCore::Builder.client('RestGraph',
-                                     :app_id, :secret,
-                                     :old_site,
-                                     :old_server, :graph_server) do
-  use Cache, {}
-  use Timeout, 10
-  run RestClient.new
-end
-
-module RestCore
-  # ------------------------ class ------------------------
-  def self.included mod
-    return if   mod < DefaultAttributes
-    mod.send(:extend, DefaultAttributes)
-    mod.send(:extend, Hmac)
-    setup_accessor(mod)
-    select_json!(mod)
-  end
-
-  def self.members_core
-    [:site, :accept, :lang, :auto_decode, :timeout,
-     :data, :cache, :log_method, :log_handler, :error_handler]
-  end
-
-  def self.struct prefix, *members
-    name = "#{prefix}Struct"
-    if const_defined?(name)
-      const_get(name)
-    else
-      # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
-      const_set(name, Struct.new(*(members_core + members)))
-    end
-  end
-
-  def self.setup_accessor mod
-    # honor default attributes
-    src = mod.members.map{ |name|
-      <<-RUBY
-        def #{name}
-          if (r = super).nil? then self.#{name} = self.class.default_#{name}
-                              else r end
-        end
-        self
-      RUBY
-    }
-    # if RUBY_VERSION < '1.9.2'
-    src << <<-RUBY if mod.members.first.kind_of?(String)
-      def members
-        super.map(&:to_sym)
+    result = app.call(env)
+    if auto_decode(env)
+                                  # [this].first is not needed for yajl-ruby
+      decoded = self.class.json_decode("[#{result}]").first
+      if false # error?(decoded)
+        app.fail(env)
+        error_handler(env).call(env.merge('json.error' => decoded)) if
+          error_handler(env)
       end
-      self
-    RUBY
-    # end
-    accessor = Module.new.module_eval(src.join("\n"))
-    const_set("#{mod.name}Accessor", accessor)
-    mod.send(:include, accessor)
+      block_given? ? yield(decoded) : decoded
+    else
+      block_given? ? yield(result ) : result
+    end
+  rescue self.class.const_get(:ParseError) => error
+    app.fail(env)
+    error_handler(env).call(env.merge('json.error' => error)) if
+      error_handler(env)
   end
-  # ------------------------ class ------------------------
-
-
-
-  # ------------------------ default ----------------------
-  module DefaultAttributes
-    extend self
-    def default_site         ; 'http://localhost/'; end
-    def default_accept       ; 'text/javascript'  ; end
-    def default_lang         ; 'en-us'            ; end
-    def default_auto_decode  ; true               ; end
-    def default_timeout      ; 10                 ; end
-    def default_data         ; {}                 ; end
-    def default_cache        ; nil                ; end
-    def default_log_method   ; nil                ; end
-    def default_log_handler  ; nil                ; end
-    def default_error_handler; nil                ; end
-  end
-  extend DefaultAttributes
-  # ------------------------ default ----------------------
-
-  # ------------------------ event ------------------------
-  EventStruct = Struct.new(:duration, :url) unless
-    RestCore.const_defined?(:EventStruct)
-
-  class Event < EventStruct
-    # self.class.name[/(?<=::)\w+$/] if RUBY_VERSION >= '1.9.2'
-    def name; self.class.name[/::\w+$/].tr(':', ''); end
-    def to_s; "RestCore: spent #{sprintf('%f', duration)} #{name} #{url}";end
-  end
-  class Event::MultiDone < Event; end
-  class Event::Requested < Event; end
-  class Event::CacheHit  < Event; end
-  class Event::Failed    < Event; end
-  # ------------------------ event ------------------------
-
-
 
   # ------------------------ json -------------------------
   module YajlRuby
@@ -494,23 +432,137 @@ module RestCore
       select_json!(mod, true)
     end
   end
+  select_json!(self)
   # ------------------------ json -------------------------
-
-
-  # ------------------------ hmac -------------------------
-  module Hmac
-    # Fallback to ruby-hmac gem in case system openssl
-    # lib doesn't support SHA256 (OSX 10.5)
-    def hmac_sha256 key, data
-      OpenSSL::HMAC.digest('sha256', key, data)
-    rescue RuntimeError
-      require 'hmac-sha2'
-      HMAC::SHA256.digest(key, data)
-    end
-  end
-  # ------------------------ hmac -------------------------
-
-
-
-  # ------------------------ instance ---------------------
 end
+
+class RestCore::Timeout
+  def self.members; [:timeout]; end
+  include RestCore::Middleware
+
+  attr_reader :app
+  def initialize app, timeout=10
+    @app, @timeout = app, timeout
+  end
+
+  def call env
+    ::Timeout.timeout(timeout(env)){ app.call(env) }
+  end
+end
+
+class RestCore::RestClient
+  def self.members; []; end
+  def call env
+    RestClient::Request.execute(:method  => env['REQUEST_METHOD'   ],
+                                :url     => env['rest-core.uri'    ],
+                                :headers => env['rest-core.headers'],
+                                :payload => env['rest-core.payload']).body
+  rescue RestClient::Exception => e
+    e.http_body
+  end
+  def fail env; end
+  def log  env; end
+end
+
+RestGraph = RestCore::Builder.client('RestGraph',
+                                     :app_id, :secret,
+                                     :old_site,
+                                     :old_server, :graph_server) do
+  use Cache, {}
+  use AutoJsonDecode
+  use Timeout, 10
+  use CommonLogger
+  run RestClient.new
+end
+
+# module RestCore
+#   # ------------------------ class ------------------------
+#   def self.included mod
+#     return if   mod < DefaultAttributes
+#     mod.send(:extend, DefaultAttributes)
+#     mod.send(:extend, Hmac)
+#     setup_accessor(mod)
+#     select_json!(mod)
+#   end
+#
+#   def self.members_core
+#     [:site, :accept, :lang, :auto_decode, :timeout,
+#      :data, :cache, :log_method, :log_handler, :error_handler]
+#   end
+#
+#   def self.struct prefix, *members
+#     name = "#{prefix}Struct"
+#     if const_defined?(name)
+#       const_get(name)
+#     else
+#       # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
+#       const_set(name, Struct.new(*(members_core + members)))
+#     end
+#   end
+#
+#   def self.setup_accessor mod
+#     # honor default attributes
+#     src = mod.members.map{ |name|
+#       <<-RUBY
+#         def #{name}
+#           if (r = super).nil? then self.#{name} = self.class.default_#{name}
+#                               else r end
+#         end
+#         self
+#       RUBY
+#     }
+#     # if RUBY_VERSION < '1.9.2'
+#     src << <<-RUBY if mod.members.first.kind_of?(String)
+#       def members
+#         super.map(&:to_sym)
+#       end
+#       self
+#     RUBY
+#     # end
+#     accessor = Module.new.module_eval(src.join("\n"))
+#     const_set("#{mod.name}Accessor", accessor)
+#     mod.send(:include, accessor)
+#   end
+#   # ------------------------ class ------------------------
+#
+#
+#
+#   # ------------------------ default ----------------------
+#   module DefaultAttributes
+#     extend self
+#     def default_site         ; 'http://localhost/'; end
+#     def default_accept       ; 'text/javascript'  ; end
+#     def default_lang         ; 'en-us'            ; end
+#     def default_auto_decode  ; true               ; end
+#     def default_timeout      ; 10                 ; end
+#     def default_data         ; {}                 ; end
+#     def default_cache        ; nil                ; end
+#     def default_log_method   ; nil                ; end
+#     def default_log_handler  ; nil                ; end
+#     def default_error_handler; nil                ; end
+#   end
+#   extend DefaultAttributes
+#   # ------------------------ default ----------------------
+#
+#
+#
+#
+#
+#
+#   # ------------------------ hmac -------------------------
+#   module Hmac
+#     # Fallback to ruby-hmac gem in case system openssl
+#     # lib doesn't support SHA256 (OSX 10.5)
+#     def hmac_sha256 key, data
+#       OpenSSL::HMAC.digest('sha256', key, data)
+#     rescue RuntimeError
+#       require 'hmac-sha2'
+#       HMAC::SHA256.digest(key, data)
+#     end
+#   end
+#   # ------------------------ hmac -------------------------
+#
+#
+#
+#   # ------------------------ instance ---------------------
+# end
