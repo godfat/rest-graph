@@ -215,7 +215,7 @@ module RestCore::Client
       req = reqs.first
       app.call(build_env.merge('REQUEST_METHOD'  => req[0],
                                'REQUEST_URI'     => req[1],
-                               'REQUEST_HEADERS' => build_headers(opts),
+                               'REQUEST_HEADERS' => opts[:headers],
                                'REQUEST_PAYLOAD' => req[2]))
     end
   end
@@ -283,13 +283,6 @@ module RestCore::Client
     q = prepare_query_string(opts).merge(query).select{ |k, v| v }
     return '' if q.empty?
     return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
-  end
-
-  def build_headers opts={}
-    headers = {}
-    headers['Accept']          = accept if accept
-    headers['Accept-Language'] = lang   if lang
-    headers.merge(prepare_headers(opts).merge(opts[:headers] || {}))
   end
 end
 
@@ -477,7 +470,11 @@ end
 class RestCore::DefaultHeaders
   def self.members; [:accept, :lang]; end
   include RestCore::Middleware
-
+  def call env
+    app.call(env.merge('REQUEST_HEADERS' =>
+      {'Accept'          => accept(env),
+       'Accept-Language' =>   lang(env)}.merge(env['REQUEST_HEADERS']||{})))
+  end
 end
 
 class RestCore::RestClient
