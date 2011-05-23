@@ -213,10 +213,10 @@ module RestCore::Client
       request_em(opts, reqs, &cb)
     else
       req = reqs.first
-      app.call('REQUEST_METHOD'    => req[0],
-               'rest-core.uri'     => req[1],
-               'rest-core.headers' => build_headers(opts),
-               'rest-core.payload' => req[2])
+      app.call(build_env.merge('REQUEST_METHOD'    => req[0],
+                               'rest-core.uri'     => req[1],
+                               'rest-core.headers' => build_headers(opts),
+                               'rest-core.payload' => req[2]))
     end
   end
   # ------------------------ instance ---------------------
@@ -224,6 +224,13 @@ module RestCore::Client
 
 
   protected
+  def build_env
+    attributes.inject({}){ |r, (k,v)|
+      r[k.to_s] = v unless v.nil?
+      r
+    }
+  end
+
   # those are for user to override
   def prepare_query_string opts={};    {}; end
   def prepare_headers      opts={};    {}; end
