@@ -86,7 +86,7 @@ class RestCore::Builder
 
   def to_app
     # === foldr m.new app middles
-    middles.reverse.inject(app){ |app, (middle, args, block)|
+    middles.reverse.inject(app.new){ |app, (middle, args, block)|
       begin
         middle.new(app, *args, &block)
       rescue ArgumentError => e
@@ -488,13 +488,13 @@ RestGraph = RestCore::Builder.client('RestGraph',
                                      :old_site,
                                      :old_server, :graph_server) do
   use AutoJsonDecode, true, lambda{ |env| p "error: #{env.inspect}" }
-  use Cache, {}
+  use Cache         , {}
   use Timeout       ,  10
   use DefaultSite   ,  'https://graph.facebook.com/'
   use DefaultHeaders, {'Accept'          => 'application/json',
                        'Accept-Language' => 'en-us'}
   use CommonLogger  , method(:puts)
-  run RestClient.new
+  run RestClient
 end
 
 # module RestCore
