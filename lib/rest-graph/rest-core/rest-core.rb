@@ -497,8 +497,8 @@ RestGraph = RestCore::Builder.client('RestGraph',
                                      :app_id, :secret,
                                      :old_site,
                                      :old_server, :graph_server) do
-  use Cache, {}
   use AutoJsonDecode, true, lambda{ |env| p "error: #{env.inspect}" }
+  use Cache, {}
   use Timeout, 10
   use DefaultSite, 'https://graph.facebook.com/'
   use DefaultHeaders, 'application/json', 'en-us'
