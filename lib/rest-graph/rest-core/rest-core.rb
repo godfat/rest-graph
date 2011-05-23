@@ -484,6 +484,7 @@ class RestCore::RestClient
   include RestCore::Middleware
   def initialize; require 'restclient'; end
   def call env
+    p env
     ::RestClient::Request.execute(:method  => env['REQUEST_METHOD' ],
                                   :url     => env['REQUEST_URI'    ],
                                   :headers => env['REQUEST_HEADERS'],
