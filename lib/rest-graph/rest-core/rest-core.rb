@@ -88,11 +88,20 @@ class RestCore::Builder
     # === foldr m.new app middles
     middles.reverse.inject(app.new){ |app, (middle, args, block)|
       begin
-        middle.new(app, *args, &block)
+        middle.new(app, *partial_deep_copy(args), &block)
       rescue ArgumentError => e
         raise ArgumentError.new("#{middle}: #{e}")
       end
     }
+  end
+
+  def partial_deep_copy obj
+    case obj
+      when Array; obj.map{ |o| partial_deep_copy(o) }
+      when Hash ; obj.inject({}){ |r, (k, v)| r[k] = partial_deep_copy(v); r }
+      when Numeric, Symbol, TrueClass, FalseClass, NilClass; obj
+      else begin obj.dup; rescue TypeError; obj; end
+    end
   end
 
   def to_client prefix, *attrs
