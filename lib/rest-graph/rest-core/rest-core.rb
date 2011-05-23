@@ -231,11 +231,6 @@ module RestCore::Client
     }
   end
 
-  # those are for user to override
-  def prepare_query_string opts={};    {}; end
-  def prepare_headers      opts={};    {}; end
-  def error?               decoded; false; end
-
   private
   def request_em opts, reqs
     start_time = Time.now
@@ -279,8 +274,7 @@ module RestCore::Client
   end
 
   def build_query_string query={}, opts={}
-                                              # compacting the hash
-    q = prepare_query_string(opts).merge(query).select{ |k, v| v }
+    q = query.select{ |k, v| v } # compacting the hash
     return '' if q.empty?
     return '?' + q.map{ |(k, v)| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')
   end
