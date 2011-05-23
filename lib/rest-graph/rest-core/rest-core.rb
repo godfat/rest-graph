@@ -287,7 +287,7 @@ module RestCore::Client
 end
 
 class RestCore::CommonLogger
-  def self.members; [:log_handler, :log_method]; end
+  def self.members; [:log_method]; end
   include RestCore::Middleware
 
   def call env
@@ -299,8 +299,7 @@ class RestCore::CommonLogger
   end
 
   def log env
-    log_handler(env).call(env)                      if log_handler(env)
-    log_method( env).call("DEBUG: #{env['event']}") if log_method( env)
+    log_method(env).call("DEBUG: #{env['event']}") if log_method(env)
     app.log(env)
   end
 end
@@ -500,7 +499,7 @@ RestGraph = RestCore::Builder.client('RestGraph',
   use DefaultSite   ,  'https://graph.facebook.com/'
   use DefaultHeaders, {'Accept'          => 'application/json',
                        'Accept-Language' => 'en-us'}
-  use CommonLogger  , nil, method(:puts)
+  use CommonLogger  , method(:puts)
   run RestClient.new
 end
 
