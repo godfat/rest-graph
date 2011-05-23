@@ -34,18 +34,29 @@ module RestCore::Middleware
   def self.included mod
     mod.send(:include, RestCore)
     mod.send(:attr_reader, :app)
-    mod.module_eval(mod.members.map{ |member|
-      <<-RUBY
-        def #{member} env
-          env['#{member}'] || @#{member}
+    return unless mod.respond_to?(:members)
+    accessors = mod.members.map{ |member| <<-RUBY }.join("\n")
+      def #{member} env
+        if env.key?('#{member}')
+          env['#{member}']
+        else
+          @#{member}
         end
-      RUBY
-    }.join("\n"))
+      end
+    RUBY
+    args      = [:app] + mod.members
+    args_list = args.join(', ')
+    ivar_list = args.map{ |a| "@#{a}" }.join(', ')
+    initialize = <<-RUBY
+      def initialize #{args_list}
+        #{ivar_list} = #{args_list}
+      end
+    RUBY
+    mod.module_eval("#{accessors}\n#{initialize}")
   end
-  def initialize app; @app = app   ; end
-  def call       env; app.call(env); end
-  def fail       env; app.fail(env); end
-  def log        env; app. log(env); end
+  def call       env; app.call(env)                          ; end
+  def fail       env; app.fail(env) if app.respond_to?(:fail); end
+  def log        env; app. log(env) if app.respond_to?(:log ); end
 end
 
 class RestCore::Builder
@@ -76,7 +87,11 @@ class RestCore::Builder
   def to_app
     # === foldr m.new app middles
     middles.reverse.inject(app){ |app, (middle, args, block)|
-      middle.new(app, *args, &block)
+      begin
+        middle.new(app, *args, &block)
+      rescue ArgumentError => e
+        raise ArgumentError.new("#{middle}: #{e}")
+      end
     }
   end
 
@@ -197,7 +212,11 @@ module RestCore::Client
     if opts[:async]
       request_em(opts, reqs, &cb)
     else
-      request_rc(opts, *reqs.first, &cb)
+      req = reqs.first
+      app.call('REQUEST_METHOD'    => req[0],
+               'rest-core.uri'     => req[1],
+               'rest-core.headers' => build_headers(opts),
+               'rest-core.payload' => req[2])
     end
   end
   # ------------------------ instance ---------------------
@@ -270,6 +289,7 @@ end
 class RestCore::CommonLogger
   def self.members; [:log_handler, :log_method]; end
   include RestCore::Middleware
+
   def call env
     start_time = Time.now
     result = app.call(env)
@@ -277,9 +297,10 @@ class RestCore::CommonLogger
       Event::Requested.new(Time.now - start_time, env['rest-core.uri'])))
     result
   end
+
   def log env
     log_handler(env).call(env)                      if log_handler(env)
-    log_method(env) .call("DEBUG: #{env['event']}") if log_method(env)
+    log_method( env).call("DEBUG: #{env['event']}") if log_method( env)
     app.log(env)
   end
 end
@@ -287,11 +308,6 @@ end
 class RestCore::Cache
   def self.members; [:cache]; end
   include RestCore::Middleware
-
-  attr_reader :app
-  def initialize app, cache
-    @app, @cache = app, cache
-  end
 
   def call env
     cache_get(env) || cache_for(env, app.call(env))
@@ -341,14 +357,6 @@ end
 class RestCore::AutoJsonDecode
   def self.members; [:auto_decode, :error_handler]; end
   include RestCore::Middleware
-  def auto_decode env
-    (env.key?('auto_decode') && env['auto_decode']) || @auto_decode
-  end
-
-  attr_reader :app
-  def initialize app, error_handler=nil, auto_decode=true
-    @app, @error_handler, @auto_decode = app, error_handler, auto_decode
-  end
 
   def call env
     result = app.call(env)
@@ -440,28 +448,42 @@ class RestCore::Timeout
   def self.members; [:timeout]; end
   include RestCore::Middleware
 
-  attr_reader :app
-  def initialize app, timeout=10
-    @app, @timeout = app, timeout
-  end
-
   def call env
     ::Timeout.timeout(timeout(env)){ app.call(env) }
   end
 end
 
-class RestCore::RestClient
-  def self.members; []; end
+class RestCore::DefaultSite
+  def self.members; [:site]; end
+  include RestCore::Middleware
+
   def call env
-    RestClient::Request.execute(:method  => env['REQUEST_METHOD'   ],
-                                :url     => env['rest-core.uri'    ],
-                                :headers => env['rest-core.headers'],
-                                :payload => env['rest-core.payload']).body
-  rescue RestClient::Exception => e
+    if env['rest-core.uri'].start_with?('http')
+      app.call(env)
+    else
+      app.call(env.merge('rest-core.uri' =>
+        "#{site(env)}#{env['rest-core.uri']}"))
+    end
+  end
+end
+
+class RestCore::DefaultHeaders
+  def self.members; [:accept, :lang]; end
+  include RestCore::Middleware
+
+end
+
+class RestCore::RestClient
+  include RestCore::Middleware
+  def initialize; require 'restclient'; end
+  def call env
+    ::RestClient::Request.execute(:method  => env['REQUEST_METHOD'   ],
+                                  :url     => env['rest-core.uri'    ],
+                                  :headers => env['rest-core.headers'],
+                                  :payload => env['rest-core.payload']).body
+  rescue ::RestClient::Exception => e
     e.http_body
   end
-  def fail env; end
-  def log  env; end
 end
 
 RestGraph = RestCore::Builder.client('RestGraph',
@@ -469,9 +491,11 @@ RestGraph = RestCore::Builder.client('RestGraph',
                                      :old_site,
                                      :old_server, :graph_server) do
   use Cache, {}
-  use AutoJsonDecode
+  use AutoJsonDecode, true, lambda{ |env| p "error: #{env.inspect}" }
   use Timeout, 10
-  use CommonLogger
+  use DefaultSite, 'https://graph.facebook.com/'
+  use DefaultHeaders, 'application/json', 'en-us'
+  use CommonLogger, nil, method(:puts)
   run RestClient.new
 end
 
