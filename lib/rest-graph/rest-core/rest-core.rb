@@ -213,10 +213,10 @@ module RestCore::Client
       request_em(opts, reqs, &cb)
     else
       req = reqs.first
-      app.call(build_env.merge('REQUEST_METHOD'    => req[0],
-                               'rest-core.uri'     => req[1],
-                               'rest-core.headers' => build_headers(opts),
-                               'rest-core.payload' => req[2]))
+      app.call(build_env.merge('REQUEST_METHOD'  => req[0],
+                               'REQUEST_URI'     => req[1],
+                               'REQUEST_HEADERS' => build_headers(opts),
+                               'REQUEST_PAYLOAD' => req[2]))
     end
   end
   # ------------------------ instance ---------------------
@@ -301,7 +301,7 @@ class RestCore::CommonLogger
     start_time = Time.now
     result = app.call(env)
     log(env.merge('event' =>
-      Event::Requested.new(Time.now - start_time, env['rest-core.uri'])))
+      Event::Requested.new(Time.now - start_time, env['REQUEST_URI'])))
     result
   end
 
@@ -327,7 +327,7 @@ class RestCore::Cache
 
   protected
   def cache_key env
-    Digest::MD5.hexdigest(env['cache.key'] || env['rest-core.uri'])
+    Digest::MD5.hexdigest(env['cache.key'] || env['REQUEST_URI'])
   end
 
   def cache_get env
@@ -336,7 +336,7 @@ class RestCore::Cache
     cache(env)[cache_key(env)].tap{ |result|
       if result
         log(env.merge('event' =>
-          Event::CacheHit.new(Time.now - start_time, env['rest-core.uri'])))
+          Event::CacheHit.new(Time.now - start_time, env['REQUEST_URI'])))
       end
     }
   end
@@ -465,11 +465,11 @@ class RestCore::DefaultSite
   include RestCore::Middleware
 
   def call env
-    if env['rest-core.uri'].start_with?('http')
+    if env['REQUEST_URI'].start_with?('http')
       app.call(env)
     else
-      app.call(env.merge('rest-core.uri' =>
-        "#{site(env)}#{env['rest-core.uri']}"))
+      app.call(env.merge('REQUEST_URI' =>
+        "#{site(env)}#{env['REQUEST_URI']}"))
     end
   end
 end
@@ -484,10 +484,10 @@ class RestCore::RestClient
   include RestCore::Middleware
   def initialize; require 'restclient'; end
   def call env
-    ::RestClient::Request.execute(:method  => env['REQUEST_METHOD'   ],
-                                  :url     => env['rest-core.uri'    ],
-                                  :headers => env['rest-core.headers'],
-                                  :payload => env['rest-core.payload']).body
+    ::RestClient::Request.execute(:method  => env['REQUEST_METHOD' ],
+                                  :url     => env['REQUEST_URI'    ],
+                                  :headers => env['REQUEST_HEADERS'],
+                                  :payload => env['REQUEST_PAYLOAD']).body
   rescue ::RestClient::Exception => e
     e.http_body
   end
