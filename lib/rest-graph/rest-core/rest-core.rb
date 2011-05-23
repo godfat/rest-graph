@@ -468,12 +468,11 @@ class RestCore::DefaultSite
 end
 
 class RestCore::DefaultHeaders
-  def self.members; [:accept, :lang]; end
+  def self.members; [:headers]; end
   include RestCore::Middleware
   def call env
     app.call(env.merge('REQUEST_HEADERS' =>
-      {'Accept'          => accept(env),
-       'Accept-Language' =>   lang(env)}.merge(env['REQUEST_HEADERS']||{})))
+      @headers.merge(headers(env)).merge(env['REQUEST_HEADERS'] || {})))
   end
 end
 
@@ -497,10 +496,11 @@ RestGraph = RestCore::Builder.client('RestGraph',
                                      :old_server, :graph_server) do
   use AutoJsonDecode, true, lambda{ |env| p "error: #{env.inspect}" }
   use Cache, {}
-  use Timeout, 10
-  use DefaultSite, 'https://graph.facebook.com/'
-  use DefaultHeaders, 'application/json', 'en-us'
-  use CommonLogger, nil, method(:puts)
+  use Timeout       ,  10
+  use DefaultSite   ,  'https://graph.facebook.com/'
+  use DefaultHeaders, {'Accept'          => 'application/json',
+                       'Accept-Language' => 'en-us'}
+  use CommonLogger  , nil, method(:puts)
   run RestClient.new
 end
 
