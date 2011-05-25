@@ -415,14 +415,16 @@ class RestCore::AutoJsonDecode
   include RestCore::Middleware
 
   def call env
+    response = app.call(env)
     if auto_decode(env)
                                   # [this].first is not needed for yajl-ruby
-      self.class.json_decode("[#{app.call(env)}]").first
+      self.class.json_decode("[#{response}]").first
     else
-      app.call(env)
+      response
     end
   rescue self.class.const_get(:ParseError) => error
     app.fail(env.merge('exception' => error))
+    response
   end
 
   # ------------------------ json -------------------------
