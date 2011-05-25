@@ -534,13 +534,13 @@ RestCore::Builder.client('RestGraph',
                          :app_id, :secret,
                          :old_site,
                          :old_server, :graph_server) do
+  use DefaultSite   ,  'https://graph.facebook.com/'
   use ErrorDetector , lambda{ |env| env['RESPONSE']['error'] ||
                                     env['RESPONSE']['error_code'] }
   use ErrorHandler  , lambda{ |env| p "error: #{env.inspect}" }
   use AutoJsonDecode, true
   use Cache         , {}
   use Timeout       ,  10
-  use DefaultSite   ,  'https://graph.facebook.com/'
   use DefaultHeaders, {'Accept'          => 'application/json',
                        'Accept-Language' => 'en-us'}
   use CommonLogger  , method(:puts)
