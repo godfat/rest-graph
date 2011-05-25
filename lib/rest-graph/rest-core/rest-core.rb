@@ -14,7 +14,13 @@ require 'cgi'
 require 'timeout'
 
 module RestCore
-  # ------------------------ event ------------------------
+  REQUEST_METHOD   = 'REQUEST_METHOD'
+  REQUEST_URI      = 'REQUEST_URI'
+  REQUEST_PAYLOAD  = 'REQUEST_PAYLOAD'
+  REQUEST_HEADERS  = 'REQUEST_HEADERS'
+  RESPONSE_BODY    = 'RESPONSE_BODY'
+  RESPONSE_HEADERS = 'RESPONSE_HEADERS'
+
   EventStruct = Struct.new(:duration, :url) unless
     RestCore.const_defined?(:EventStruct)
 
@@ -28,7 +34,6 @@ module RestCore
   class Event::CacheHit     < Event; end
   class Event::CacheCleared < Event; end
   class Event::Failed       < Event; end
-  # ------------------------ event ------------------------
 end
 
 module RestCore::Middleware
@@ -119,6 +124,7 @@ class RestCore::Builder
 end
 
 module RestCore::Client
+  include RestCore
   def self.included mod
     # honor default attributes
     src = mod.members.map{ |name|
@@ -245,10 +251,11 @@ module RestCore::Client
       request_em(opts, reqs, &cb)
     else
       req = reqs.first
-      app.call(build_env.merge('REQUEST_METHOD'  => req[0],
-                               'REQUEST_URI'     => req[1],
-                               'REQUEST_HEADERS' => opts[:headers],
-                               'REQUEST_PAYLOAD' => req[2]))['RESPONSE_BODY']
+      app.call(build_env.merge(REQUEST_METHOD  => req[0],
+                               REQUEST_URI     => req[1],
+                               REQUEST_PAYLOAD => req[2],
+                               REQUEST_HEADERS => opts[:headers])
+                               )[RESPONSE_BODY]
     end
   end
   # ------------------------ instance ---------------------
@@ -320,7 +327,7 @@ class RestCore::CommonLogger
     start_time = Time.now
     response = app.call(env)
     log(env.merge('event' =>
-      Event::Requested.new(Time.now - start_time, env['REQUEST_URI'])))
+      Event::Requested.new(Time.now - start_time, env[REQUEST_URI])))
     response
   end
 
@@ -345,7 +352,7 @@ class RestCore::Cache
 
   protected
   def cache_key env
-    Digest::MD5.hexdigest(env['cache.key'] || env['REQUEST_URI'])
+    Digest::MD5.hexdigest(env['cache.key'] || env[REQUEST_URI])
   end
 
   def cache_get env
@@ -353,14 +360,14 @@ class RestCore::Cache
     start_time = Time.now
     return unless value = cache(env)[cache_key(env)]
     log(env.merge('event' => Event::CacheHit.new(Time.now - start_time,
-                                                   env['REQUEST_URI'])))
+                                                   env[REQUEST_URI])))
     env.merge(value)
   end
 
   def cache_for env, response
     return response unless cache(env)
     # fake post (opts[:post] => true) is considered get and need cache
-    return response if env['REQUEST_METHOD'] != :get unless env['cache.post']
+    return response if env[REQUEST_METHOD] != :get unless env['cache.post']
 
     value = response.select{ |k,v| k.start_with?('RESPONSE') }
 
@@ -380,7 +387,7 @@ class RestCore::Cache
 
     start_time = Time.now
     log(env.merge('event' =>
-      Event::CacheCleared.new(Time.now - start_time, env['REQUEST_URI']))) if
+      Event::CacheCleared.new(Time.now - start_time, env[REQUEST_URI]))) if
         value.nil?
 
     cache(env)[cache_key(env)] = value
@@ -393,7 +400,7 @@ class RestCore::ErrorDetector
 
   def call env
     response = app.call(env)
-    if response['RESPONSE_BODY'].kind_of?(Hash) &&
+    if response[RESPONSE_BODY].kind_of?(Hash) &&
        error_detector(env).call(response)
 
       app.fail(response)
@@ -419,8 +426,8 @@ class RestCore::AutoJsonDecode
   def call env
     response = app.call(env)
     if auto_decode(env)
-      response.merge('RESPONSE_BODY' =>
-        self.class.json_decode("[#{response['RESPONSE_BODY']}]").first)
+      response.merge(RESPONSE_BODY =>
+        self.class.json_decode("[#{response[RESPONSE_BODY]}]").first)
         # [this].first is not needed for yajl-ruby
     else
       response
@@ -510,11 +517,11 @@ class RestCore::DefaultSite
   include RestCore::Middleware
 
   def call env
-    if env['REQUEST_URI'].start_with?('http')
+    if env[REQUEST_URI].start_with?('http')
       app.call(env)
     else
-      app.call(env.merge('REQUEST_URI' =>
-        "#{site(env)}#{env['REQUEST_URI']}"))
+      app.call(env.merge(REQUEST_URI =>
+        "#{site(env)}#{env[REQUEST_URI]}"))
     end
   end
 end
@@ -523,8 +530,8 @@ class RestCore::DefaultHeaders
   def self.members; [:headers]; end
   include RestCore::Middleware
   def call env
-    app.call(env.merge('REQUEST_HEADERS' =>
-      @headers.merge(headers(env)).merge(env['REQUEST_HEADERS'] || {})))
+    app.call(env.merge(REQUEST_HEADERS =>
+      @headers.merge(headers(env)).merge(env[REQUEST_HEADERS] || {})))
   end
 end
 
@@ -533,16 +540,16 @@ class RestCore::RestClient
   def initialize; require 'restclient'; end
   def call env
     response =
-      ::RestClient::Request.execute(:method  => env['REQUEST_METHOD' ],
-                                    :url     => env['REQUEST_URI'    ],
-                                    :headers => env['REQUEST_HEADERS'],
-                                    :payload => env['REQUEST_PAYLOAD'])
+      ::RestClient::Request.execute(:method  => env[REQUEST_METHOD ],
+                                    :url     => env[REQUEST_URI    ],
+                                    :payload => env[REQUEST_PAYLOAD],
+                                    :headers => env[REQUEST_HEADERS])
 
-    env.merge('RESPONSE_BODY'    => response.body,
-              'RESPONSE_HEADERS' => response.raw_headers)
+    env.merge(RESPONSE_BODY    => response.body,
+              RESPONSE_HEADERS => response.raw_headers)
   rescue ::RestClient::Exception => e
-    env.merge('RESPONSE_BODY'    => e.response.body,
-              'RESPONSE_HEADERS' => e.response.raw_headers)
+    env.merge(RESPONSE_BODY    => e.response.body,
+              RESPONSE_HEADERS => e.response.raw_headers)
   end
 end
 
@@ -552,8 +559,8 @@ RestCore::Builder.client('RestGraph',
                          :old_server, :graph_server) do
 
   use DefaultSite   ,  'https://graph.facebook.com/'
-  use ErrorDetector , lambda{ |env| env['RESPONSE_BODY']['error'] ||
-                                    env['RESPONSE_BODY']['error_code'] }
+  use ErrorDetector , lambda{ |env| env[RESPONSE_BODY]['error'] ||
+                                    env[RESPONSE_BODY]['error_code'] }
   use AutoJsonDecode, true
 
   use Cache         , {}
@@ -568,6 +575,7 @@ RestCore::Builder.client('RestGraph',
 end
 
 class RestGraph::Error < RuntimeError
+  include RestCore
   class AccessToken        < RestGraph::Error; end
   class InvalidAccessToken < AccessToken     ; end
   class MissingAccessToken < AccessToken     ; end
@@ -578,32 +586,28 @@ class RestGraph::Error < RuntimeError
     super("#{error.inspect} from #{url}")
   end
 
-  module Util
-    extend self
-    def call env
-      error, url = env['RESPONSE_BODY'], env['REQUEST_URI']
-      return Error.new(error, url) unless error.kind_of?(Hash)
-      if    invalid_token?(error)
-        InvalidAccessToken.new(error, url)
-      elsif missing_token?(error)
-        MissingAccessToken.new(error, url)
-      else
-        Error.new(error, url)
-      end
-    end
-
-    def invalid_token? error
-      (%w[OAuthInvalidTokenException
-          OAuthException].include?((error['error'] || {})['type'])) ||
-      (error['error_code'] == 190) # Invalid OAuth 2.0 Access Token
-    end
-
-    def missing_token? error
-      (error['error'] || {})['message'] =~ /^An active access token/ ||
-      (error['error_code'] == 104) # Requires valid signature
+  def self.call env
+    error, url = env[RESPONSE_BODY], env[REQUEST_URI]
+    return new(error, url) unless error.kind_of?(Hash)
+    if    invalid_token?(error)
+      InvalidAccessToken.new(error, url)
+    elsif missing_token?(error)
+      MissingAccessToken.new(error, url)
+    else
+      new(error, url)
     end
   end
-  extend Util
+
+  def self.invalid_token? error
+    (%w[OAuthInvalidTokenException
+        OAuthException].include?((error['error'] || {})['type'])) ||
+    (error['error_code'] == 190) # Invalid OAuth 2.0 Access Token
+  end
+
+  def self.missing_token? error
+    (error['error'] || {})['message'] =~ /^An active access token/ ||
+    (error['error_code'] == 104) # Requires valid signature
+  end
 end
 
 
