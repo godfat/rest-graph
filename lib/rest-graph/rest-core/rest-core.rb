@@ -378,28 +378,44 @@ class RestCore::Cache
   end
 end
 
-class RestCore::AutoJsonDecode
-  def self.members; [:auto_decode, :error_handler]; end
+class RestCore::ErrorDetector
+  def self.members; [:error_detector]; end
   include RestCore::Middleware
 
   def call env
-    result = app.call(env)
+    response = app.call(env)
+    if response.kind_of?(Hash) &&
+       error_detector(env).call(env.merge('RESPONSE' => response))
+
+      app.fail(env.merge('RESPONSE' => response))
+    end
+    response
+  end
+end
+
+class RestCore::ErrorHandler
+  def self.members; [:error_handler]; end
+  include RestCore::Middleware
+
+  def fail env
+    app.fail(env)
+    error_handler(env).call(env) if error_handler(env)
+  end
+end
+
+class RestCore::AutoJsonDecode
+  def self.members; [:auto_decode]; end
+  include RestCore::Middleware
+
+  def call env
     if auto_decode(env)
                                   # [this].first is not needed for yajl-ruby
-      decoded = self.class.json_decode("[#{result}]").first
-      if false # error?(decoded)
-        app.fail(env)
-        error_handler(env).call(env.merge('json.error' => decoded)) if
-          error_handler(env)
-      end
-      block_given? ? yield(decoded) : decoded
+      self.class.json_decode("[#{app.call(env)}]").first
     else
-      block_given? ? yield(result ) : result
+      app.call(env)
     end
   rescue self.class.const_get(:ParseError) => error
-    app.fail(env)
-    error_handler(env).call(env.merge('json.error' => error)) if
-      error_handler(env)
+    app.fail(env.merge('exception' => error))
   end
 
   # ------------------------ json -------------------------
@@ -518,7 +534,10 @@ RestCore::Builder.client('RestGraph',
                          :app_id, :secret,
                          :old_site,
                          :old_server, :graph_server) do
-  use AutoJsonDecode, true, lambda{ |env| p "error: #{env.inspect}" }
+  use ErrorDetector , lambda{ |env| env['RESPONSE']['error'] ||
+                                    env['RESPONSE']['error_code'] }
+  use ErrorHandler  , lambda{ |env| p "error: #{env.inspect}" }
+  use AutoJsonDecode, true
   use Cache         , {}
   use Timeout       ,  10
   use DefaultSite   ,  'https://graph.facebook.com/'
