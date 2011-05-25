@@ -248,7 +248,7 @@ module RestCore::Client
       app.call(build_env.merge('REQUEST_METHOD'  => req[0],
                                'REQUEST_URI'     => req[1],
                                'REQUEST_HEADERS' => opts[:headers],
-                               'REQUEST_PAYLOAD' => req[2]))
+                               'REQUEST_PAYLOAD' => req[2]))['RESPONSE_BODY']
     end
   end
   # ------------------------ instance ---------------------
@@ -318,10 +318,10 @@ class RestCore::CommonLogger
 
   def call env
     start_time = Time.now
-    result = app.call(env)
+    response = app.call(env)
     log(env.merge('event' =>
       Event::Requested.new(Time.now - start_time, env['REQUEST_URI'])))
-    result
+    response
   end
 
   def log env
@@ -351,18 +351,18 @@ class RestCore::Cache
   def cache_get env
     return unless cache(env)
     start_time = Time.now
-    cache(env)[cache_key(env)].tap{ |result|
-      if result
-        log(env.merge('event' =>
-          Event::CacheHit.new(Time.now - start_time, env['REQUEST_URI'])))
-      end
-    }
+    return unless value = cache(env)[cache_key(env)]
+    log(env.merge('event' => Event::CacheHit.new(Time.now - start_time,
+                                                   env['REQUEST_URI'])))
+    env.merge(value)
   end
 
-  def cache_for env, value
-    return value unless cache(env)
+  def cache_for env, response
+    return response unless cache(env)
     # fake post (opts[:post] => true) is considered get and need cache
-    return value if env['REQUEST_METHOD'] != :get unless env['cache.post']
+    return response if env['REQUEST_METHOD'] != :get unless env['cache.post']
+
+    value = response.select{ |k,v| k.start_with?('RESPONSE') }
 
     if env['cache.expires_in'].kind_of?(Fixnum) &&
        cache(env).method(:store).arity == -3
@@ -371,6 +371,8 @@ class RestCore::Cache
     else
       cache_assign(env, value)
     end
+
+    response
   end
 
   def cache_assign env, value
@@ -391,10 +393,10 @@ class RestCore::ErrorDetector
 
   def call env
     response = app.call(env)
-    if response.kind_of?(Hash) &&
-       error_detector(env).call(env.merge('RESPONSE' => response))
+    if response['RESPONSE_BODY'].kind_of?(Hash) &&
+       error_detector(env).call(response)
 
-      app.fail(env.merge('RESPONSE' => response))
+      app.fail(response)
     end
     response
   end
@@ -417,13 +419,14 @@ class RestCore::AutoJsonDecode
   def call env
     response = app.call(env)
     if auto_decode(env)
-                                  # [this].first is not needed for yajl-ruby
-      self.class.json_decode("[#{response}]").first
+      response.merge('RESPONSE_BODY' =>
+        self.class.json_decode("[#{response['RESPONSE_BODY']}]").first)
+        # [this].first is not needed for yajl-ruby
     else
       response
     end
   rescue self.class.const_get(:ParseError) => error
-    app.fail(env.merge('exception' => error))
+    app.fail(response.merge('exception' => error))
     response
   end
 
@@ -529,12 +532,17 @@ class RestCore::RestClient
   include RestCore::Middleware
   def initialize; require 'restclient'; end
   def call env
-    ::RestClient::Request.execute(:method  => env['REQUEST_METHOD' ],
-                                  :url     => env['REQUEST_URI'    ],
-                                  :headers => env['REQUEST_HEADERS'],
-                                  :payload => env['REQUEST_PAYLOAD']).body
+    response =
+      ::RestClient::Request.execute(:method  => env['REQUEST_METHOD' ],
+                                    :url     => env['REQUEST_URI'    ],
+                                    :headers => env['REQUEST_HEADERS'],
+                                    :payload => env['REQUEST_PAYLOAD'])
+
+    env.merge('RESPONSE_BODY'    => response.body,
+              'RESPONSE_HEADERS' => response.raw_headers)
   rescue ::RestClient::Exception => e
-    e.http_body
+    env.merge('RESPONSE_BODY'    => e.response.body,
+              'RESPONSE_HEADERS' => e.response.raw_headers)
   end
 end
 
@@ -544,8 +552,8 @@ RestCore::Builder.client('RestGraph',
                          :old_server, :graph_server) do
 
   use DefaultSite   ,  'https://graph.facebook.com/'
-  use ErrorDetector , lambda{ |env| env['RESPONSE']['error'] ||
-                                    env['RESPONSE']['error_code'] }
+  use ErrorDetector , lambda{ |env| env['RESPONSE_BODY']['error'] ||
+                                    env['RESPONSE_BODY']['error_code'] }
   use AutoJsonDecode, true
 
   use Cache         , {}
@@ -573,7 +581,7 @@ class RestGraph::Error < RuntimeError
   module Util
     extend self
     def call env
-      error, url = env['RESPONSE'], env['REQUEST_URI']
+      error, url = env['RESPONSE_BODY'], env['REQUEST_URI']
       return Error.new(error, url) unless error.kind_of?(Hash)
       if    invalid_token?(error)
         InvalidAccessToken.new(error, url)
