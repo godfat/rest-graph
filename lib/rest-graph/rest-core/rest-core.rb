@@ -54,9 +54,9 @@ module RestCore::Middleware
     RUBY
     mod.module_eval("#{accessors}\n#{initialize}")
   end
-  def call       env; app.call(env)                          ; end
-  def fail       env; app.fail(env) if app.respond_to?(:fail); end
-  def log        env; app. log(env) if app.respond_to?(:log ); end
+  def call env; app.call(env)                          ; end
+  def fail env; app.fail(env) if app.respond_to?(:fail); end
+  def log  env; app. log(env) if app.respond_to?(:log ); end
 end
 
 class RestCore::Builder
