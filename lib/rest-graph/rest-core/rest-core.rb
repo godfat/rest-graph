@@ -23,10 +23,11 @@ module RestCore
     def name; self.class.name[/::\w+$/].tr(':', ''); end
     def to_s; "RestCore: spent #{sprintf('%f', duration)} #{name} #{url}";end
   end
-  class Event::MultiDone < Event; end
-  class Event::Requested < Event; end
-  class Event::CacheHit  < Event; end
-  class Event::Failed    < Event; end
+  class Event::MultiDone    < Event; end
+  class Event::Requested    < Event; end
+  class Event::CacheHit     < Event; end
+  class Event::CacheCleared < Event; end
+  class Event::Failed       < Event; end
   # ------------------------ event ------------------------
 end
 
@@ -374,6 +375,12 @@ class RestCore::Cache
 
   def cache_assign env, value
     return value unless cache(env)
+
+    start_time = Time.now
+    log(env.merge('event' =>
+      Event::CacheCleared.new(Time.now - start_time, env['REQUEST_URI']))) if
+        value.nil?
+
     cache(env)[cache_key(env)] = value
   end
 end
