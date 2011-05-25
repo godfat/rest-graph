@@ -105,17 +105,12 @@ class RestCore::Builder
   end
 
   def to_client prefix, *attrs
-    name = "#{prefix}Struct"
-    struct = if RestCore.const_defined?(name)
-               RestCore.const_get(name)
-             else
-               # if RUBY_VERSION >= 1.9.2
-               # RestCore.const_set(name, Struct.new(*members, *attrs))
-               RestCore.const_set(name, Struct.new(*(members + attrs)))
-             end
-
+    # struct = Struct.new(*members, *attrs) if RUBY_VERSION >= 1.9.2
+    struct = Struct.new(*(members + attrs))
     client = Class.new(struct)
     client.send(:include, Client)
+    Object.const_set( prefix , client)
+    client.const_set('Struct', struct)
     class << client; attr_reader :builder; end
     client.instance_variable_set(:@builder, self)
     client
@@ -123,6 +118,33 @@ class RestCore::Builder
 end
 
 module RestCore::Client
+  def self.included mod
+    # honor default attributes
+    src = mod.members.map{ |name|
+      <<-RUBY
+        def #{name}
+          if (r = super).nil? && self.class.respond_to?(:default_#{name})
+            self.class.default_#{name}
+          else
+            r
+          end
+        end
+        self
+      RUBY
+    }
+    # if RUBY_VERSION < '1.9.2'
+    src << <<-RUBY if mod.members.first.kind_of?(String)
+      def members
+        super.map(&:to_sym)
+      end
+      self
+    RUBY
+    # end
+    accessor = Module.new.module_eval(src.join("\n"))
+    mod.const_set('Accessor', accessor)
+    mod.send(:include, accessor)
+  end
+
   attr_reader :app
   def initialize o={}
     (members + [:access_token]).each{ |name|
@@ -492,10 +514,10 @@ class RestCore::RestClient
   end
 end
 
-RestGraph = RestCore::Builder.client('RestGraph',
-                                     :app_id, :secret,
-                                     :old_site,
-                                     :old_server, :graph_server) do
+RestCore::Builder.client('RestGraph',
+                         :app_id, :secret,
+                         :old_site,
+                         :old_server, :graph_server) do
   use AutoJsonDecode, true, lambda{ |env| p "error: #{env.inspect}" }
   use Cache         , {}
   use Timeout       ,  10
@@ -506,80 +528,7 @@ RestGraph = RestCore::Builder.client('RestGraph',
   run RestClient
 end
 
-# module RestCore
-#   # ------------------------ class ------------------------
-#   def self.included mod
-#     return if   mod < DefaultAttributes
-#     mod.send(:extend, DefaultAttributes)
-#     mod.send(:extend, Hmac)
-#     setup_accessor(mod)
-#     select_json!(mod)
-#   end
-#
-#   def self.members_core
-#     [:site, :accept, :lang, :auto_decode, :timeout,
-#      :data, :cache, :log_method, :log_handler, :error_handler]
-#   end
-#
-#   def self.struct prefix, *members
-#     name = "#{prefix}Struct"
-#     if const_defined?(name)
-#       const_get(name)
-#     else
-#       # Struct.new(*members_core, *members) if RUBY_VERSION >= '1.9.2'
-#       const_set(name, Struct.new(*(members_core + members)))
-#     end
-#   end
-#
-#   def self.setup_accessor mod
-#     # honor default attributes
-#     src = mod.members.map{ |name|
-#       <<-RUBY
-#         def #{name}
-#           if (r = super).nil? then self.#{name} = self.class.default_#{name}
-#                               else r end
-#         end
-#         self
-#       RUBY
-#     }
-#     # if RUBY_VERSION < '1.9.2'
-#     src << <<-RUBY if mod.members.first.kind_of?(String)
-#       def members
-#         super.map(&:to_sym)
-#       end
-#       self
-#     RUBY
-#     # end
-#     accessor = Module.new.module_eval(src.join("\n"))
-#     const_set("#{mod.name}Accessor", accessor)
-#     mod.send(:include, accessor)
-#   end
-#   # ------------------------ class ------------------------
-#
-#
-#
-#   # ------------------------ default ----------------------
-#   module DefaultAttributes
-#     extend self
-#     def default_site         ; 'http://localhost/'; end
-#     def default_accept       ; 'text/javascript'  ; end
-#     def default_lang         ; 'en-us'            ; end
-#     def default_auto_decode  ; true               ; end
-#     def default_timeout      ; 10                 ; end
-#     def default_data         ; {}                 ; end
-#     def default_cache        ; nil                ; end
-#     def default_log_method   ; nil                ; end
-#     def default_log_handler  ; nil                ; end
-#     def default_error_handler; nil                ; end
-#   end
-#   extend DefaultAttributes
-#   # ------------------------ default ----------------------
-#
-#
-#
-#
-#
-#
+
 #   # ------------------------ hmac -------------------------
 #   module Hmac
 #     # Fallback to ruby-hmac gem in case system openssl
