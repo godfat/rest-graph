@@ -553,10 +553,49 @@ RestCore::Builder.client('RestGraph',
   use DefaultHeaders, {'Accept'          => 'application/json',
                        'Accept-Language' => 'en-us'}
 
-  use ErrorHandler  , lambda{ |env| p "error: #{env.inspect}" }
+  use ErrorHandler  , lambda{ |env| raise ::RestGraph::Error.call(env) }
   use CommonLogger  , method(:puts)
 
   run RestClient
+end
+
+class RestGraph::Error < RuntimeError
+  class AccessToken        < RestGraph::Error; end
+  class InvalidAccessToken < AccessToken     ; end
+  class MissingAccessToken < AccessToken     ; end
+
+  attr_reader :error, :url
+  def initialize error, url=''
+    @error, @url = error, url
+    super("#{error.inspect} from #{url}")
+  end
+
+  module Util
+    extend self
+    def call env
+      error, url = env['RESPONSE'], env['REQUEST_URI']
+      return Error.new(error, url) unless error.kind_of?(Hash)
+      if    invalid_token?(error)
+        InvalidAccessToken.new(error, url)
+      elsif missing_token?(error)
+        MissingAccessToken.new(error, url)
+      else
+        Error.new(error, url)
+      end
+    end
+
+    def invalid_token? error
+      (%w[OAuthInvalidTokenException
+          OAuthException].include?((error['error'] || {})['type'])) ||
+      (error['error_code'] == 190) # Invalid OAuth 2.0 Access Token
+    end
+
+    def missing_token? error
+      (error['error'] || {})['message'] =~ /^An active access token/ ||
+      (error['error_code'] == 104) # Requires valid signature
+    end
+  end
+  extend Util
 end
 
 
