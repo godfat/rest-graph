@@ -22,4 +22,7 @@ group :test do
   gem 'rr'
   gem 'webmock'
   gem 'bacon'
+  if RUBY_VERSION >= '1.9.2'
+    gem 'psych'
+  end
 end
