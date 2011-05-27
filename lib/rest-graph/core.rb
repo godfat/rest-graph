@@ -351,8 +351,7 @@ class RestGraph < RestGraphStruct
     self.data = check_sig_and_return_data(
       # take out facebook sometimes there but sometimes not quotes in cookies
       Rack::Utils.parse_query(fbs.to_s.gsub('"', ''))) ||
-      check_sig_and_return_data(
-         Rack::Utils.parse_query(fbs.to_s))
+      check_sig_and_return_data(Rack::Utils.parse_query(fbs.to_s))
   end
 
   def parse_json! json
