@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = [
   %q{Cardinal Blue},
   %q{Lin Jen-Shin (godfat)}]
-  s.date = %q{2011-05-26}
+  s.date = %q{2011-05-27}
   s.description = %q{A lightweight Facebook Graph API client}
   s.email = [%q{dev (XD) cardinalblue.com}]
   s.extra_rdoc_files = [
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
   %q{.gitignore},
   %q{.gitmodules},
+  %q{.rvmrc},
   %q{CHANGES},
   %q{CONTRIBUTORS},
   %q{Gemfile},
@@ -108,7 +109,7 @@ Gem::Specification.new do |s|
   %q{--main},
   %q{README}]
   s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.4}
+  s.rubygems_version = %q{1.8.3}
   s.summary = %q{A lightweight Facebook Graph API client}
   s.test_files = [
   %q{test/test_api.rb},
