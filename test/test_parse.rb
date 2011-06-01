@@ -13,6 +13,15 @@ describe RestGraph do
     rg.data              .should == {}
   end
 
+  should 'parse if fbs contains json as well' do
+    algorithm = 'HMAC-SHA256'
+    user      = '{"country"=>"us", "age"=>{"min"=>21}}'
+    data      = {'algorithm' => algorithm, 'user' => user}
+    rg        = RestGraph.new(:data => data, :secret => 'secret')
+    sig       = rg.send(:calculate_sig, data)
+    rg.parse_fbs!("\"#{rg.fbs}\"").should == data.merge('sig' => sig)
+  end
+
   should 'extract correct access_token or fail checking sig' do
     access_token = '1|2-5|f.'
     app_id       = '1829'

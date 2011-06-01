@@ -1,5 +1,40 @@
 = rest-graph changes history
 
+== rest-graph 1.9.1 -- ?
+
+* [RestGraph] Fixed parse_fbs! where fbs contains some json. (thanks Bruce)
+
+== rest-graph 1.9.0 -- 2011-05-26
+
+* [RestGraph] Removed deprecated rest-graph/auto_load.rb, and
+              rest-graph/autoload.rb. Please simply require 'rest-graph'
+
+* [RestGraph] Removed deprecated strict option. Facebook had fixed their bug.
+
+* [RestGraph] Removed deprecated broken_old_rest. Please use old_rest instead.
+
+* [RestGraph] Removed deprecated suppress_decode. Plz use auto_decode instead.
+
+* [RestGraph] Introduced RestGraph#attributes.
+
+* [RestGraph] RestGraph#lighten and RestGraph#lighten! now takes an extra
+              argument which let you set attributes.
+
+* [RestGraph] Now RestGraph#get/post has an option for timeout which
+              make this request use this timeout instead of the default one.
+
+* [RestGraph] URI.encode on Facebook's broken paging URL. (thanks andy)
+
+* [RestGraph] Now all old_rest based methods accept a :post option, which
+              means use POST for this API request, but still treating it
+              a GET request for rest-graph, so that caching and other
+              similar features would still work.
+
+              The reason for this option is that some FQL could be very long,
+              FQL multiquery could be even much more longer! Long URLs might
+              cause problems, thus we have provided this option to use POST
+              instead.
+
 == rest-graph 1.8.0 -- 2011-03-08
 
 *  [RestGraph] Now require 'rest-graph/autoload' is deprecated, simply use
