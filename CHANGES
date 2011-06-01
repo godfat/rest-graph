@@ -1,5 +1,9 @@
 = rest-graph changes history
 
+== rest-graph 1.9.1 -- ?
+
+* [RestGraph] Fixed parse_fbs! where fbs contains some json. (thanks Bruce)
+
 == rest-graph 1.9.0 -- 2011-05-26
 
 * [RestGraph] Removed deprecated rest-graph/auto_load.rb, and
