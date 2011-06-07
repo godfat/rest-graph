@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = [
   %q{Cardinal Blue},
   %q{Lin Jen-Shin (godfat)}]
-  s.date = %q{2011-06-01}
+  s.date = %q{2011-06-07}
   s.description = %q{A lightweight Facebook Graph API client}
   s.email = [%q{dev (XD) cardinalblue.com}]
   s.extra_rdoc_files = [
