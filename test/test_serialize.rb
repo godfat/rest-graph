@@ -14,7 +14,7 @@ describe RestGraph do
   should 'be serialized with lighten' do
     engines = if RUBY_VERSION >= '1.9.2'
                 require 'psych'
-                YAML::ENGINE.yamler = 'syck' # TODO: probably a bug?
+                YAML::ENGINE.yamler = 'psych'
                 [Marshal, YAML, Psych]
               elsif defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
                 [Marshal]
