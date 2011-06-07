@@ -1,6 +1,6 @@
 = rest-graph changes history
 
-== rest-graph 1.9.1 -- ?
+== rest-graph 1.9.1 -- 2011-06-07
 
 * [RestGraph] Fixed parse_fbs! where fbs contains some json. (thanks Bruce)
 
