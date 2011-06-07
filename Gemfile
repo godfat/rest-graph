@@ -18,7 +18,6 @@ group :test do
   gem 'ruby-hmac'
 
   # for testing
-  gem 'bones'
   gem 'rr'
   gem 'webmock'
   gem 'bacon'
