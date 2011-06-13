@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = [
   %q{Cardinal Blue},
   %q{Lin Jen-Shin (godfat)}]
-  s.date = %q{2011-06-07}
+  s.date = %q{2011-06-13}
   s.description = %q{A lightweight Facebook Graph API client}
   s.email = [%q{dev (XD) cardinalblue.com}]
   s.extra_rdoc_files = [
@@ -103,7 +103,7 @@ Gem::Specification.new do |s|
   %q{test/test_serialize.rb},
   %q{test/test_test_util.rb},
   %q{test/test_timeout.rb}]
-  s.homepage = %q{https://github.com/godfat/}
+  s.homepage = %q{https://github.com/cardinalblue/rest-graph}
   s.rdoc_options = [
   %q{--main},
   %q{README}]

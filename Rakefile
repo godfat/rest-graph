@@ -11,6 +11,7 @@ task 'gem:spec' do
     require 'rest-graph/version'
     s.name        = 'rest-graph'
     s.version     = RestGraph::VERSION
+    s.homepage    = 'https://github.com/cardinalblue/rest-graph'
     # s.executables = [s.name]
 
     %w[].each{ |g| s.add_runtime_dependency(g) }
