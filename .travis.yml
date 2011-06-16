@@ -1,4 +1,4 @@
-script: 'git submodule update --init; rake test:travis'
+script: 'git submodule update --init; bundle exec rake test:travis'
 rvm:
   - 1.8.7
   - 1.9.2
