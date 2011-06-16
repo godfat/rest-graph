@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = [
   %q{Cardinal Blue},
   %q{Lin Jen-Shin (godfat)}]
-  s.date = %q{2011-06-13}
+  s.date = %q{2011-06-16}
   s.description = %q{A lightweight Facebook Graph API client}
   s.email = [%q{dev (XD) cardinalblue.com}]
   s.extra_rdoc_files = [
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
   %q{.gitignore},
   %q{.gitmodules},
+  %q{.travis.yml},
   %q{CHANGES},
   %q{CONTRIBUTORS},
   %q{Gemfile},
