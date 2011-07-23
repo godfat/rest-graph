@@ -11,7 +11,7 @@ an experienced Ruby programmer, you might also want to look at
 
 ## LINKS:
 
-* [github](http://github.com/cardinalblue/rest-graph)
+* [github](https://ithub.com/cardinalblue/rest-graph)
 * [rubygems](http://rubygems.org/gems/rest-graph)
 * [rdoc](http://rdoc.info/projects/cardinalblue/rest-graph)
 * [mailing list](http://groups.google.com/group/rest-graph/topics)
