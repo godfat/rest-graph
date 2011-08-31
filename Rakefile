@@ -26,19 +26,26 @@ task 'gem:spec' do
   Gemgem.write
 end
 
+module Gemgem
+  module_function
+  def test_rails *rails
+    rails.each{ |framework|
+      opts = Rake.application.options
+      args = (opts.singleton_methods - [:rakelib, 'rakelib']).map{ |arg|
+               if arg.to_s !~ /=$/ && opts.send(arg)
+                 "--#{arg}"
+               else
+                 ''
+               end
+             }.join(' ')
+      Rake.sh "cd example/#{framework}; #{Gem.ruby} -S rake test #{args}"
+    }
+  end
+end
+
 desc 'Run example tests'
 task 'test:example' => ['gem:install'] do
-  %w[rails3 rails2].each{ |framework|
-    opts = Rake.application.options
-    args = (opts.singleton_methods - [:rakelib, 'rakelib']).map{ |arg|
-             if arg.to_s !~ /=$/ && opts.send(arg)
-               "--#{arg}"
-             else
-               ''
-             end
-           }.join(' ')
-    sh "cd example/#{framework}; #{Gem.ruby} -S rake test #{args}"
-  }
+  Gemgem.test_rails('rails3', 'rails2')
 end
 
 desc 'Run all tests'
@@ -47,13 +54,14 @@ task 'test:all' => ['test', 'test:example']
 desc 'Run different json test'
 task 'test:json' do
   %w[yajl json].each{ |json|
-    sh "#{Gem.ruby} -S rake -r #{json} test"
+    Rake.sh "#{Gem.ruby} -S rake -r #{json} test"
   }
 end
 
-task 'test:travis:prepare' do
-  sh 'cd example/rails2; env BUNDLE_GEMFILE=Gemfile bundle install'
-  sh 'cd example/rails3; env BUNDLE_GEMFILE=Gemfile bundle install'
+task 'test:travis' do
+  case ENV['TEST']
+  when 'rails3'; Gemgem.test_rails('rails3')
+  when 'rails2'; Gemgem.test_rails('rails2')
+  else         ; Rake::Task['test'].invoke
+  end
 end
-
-task 'test:travis' => ['test:travis:prepare', 'test:all']
