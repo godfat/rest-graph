@@ -1,7 +1,8 @@
 
 # optional http client
 begin; require 'restclient'     ; rescue LoadError; end
-begin; require 'em-http-request'; rescue LoadError; end
+begin; gem 'em-http-request', '<1'
+       require 'em-http-request'; rescue LoadError; end
 
 # optional gem
 begin; require 'rack'           ; rescue LoadError; end
