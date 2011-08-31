@@ -59,7 +59,7 @@ task 'test:json' do
 end
 
 task 'test:travis' do
-  case ENV['TEST']
+  case ENV['RESTGRAPH']
   when 'rails3'; Gemgem.test_rails('rails3')
   when 'rails2'; Gemgem.test_rails('rails2')
   else         ; Rake::Task['test'].invoke
