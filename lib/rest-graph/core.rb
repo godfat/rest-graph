@@ -15,7 +15,8 @@ require 'cgi'
 require 'timeout'
 
 # the data structure used in RestGraph
-RestGraphStruct = Struct.new(:auto_decode, :timeout,
+RestGraphStruct = Struct.new(:access_token,
+                             :auto_decode, :timeout,
                              :graph_server, :old_server,
                              :accept, :lang,
                              :app_id, :secret,
@@ -92,6 +93,7 @@ class RestGraph < RestGraphStruct
   # setup defaults
   module DefaultAttributes
     extend self
+    def default_access_token; nil                          ; end
     def default_auto_decode ; true                         ; end
     def default_strict      ; false                        ; end
     def default_timeout     ; 10                           ; end
