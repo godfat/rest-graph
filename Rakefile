@@ -52,8 +52,8 @@ task 'test:json' do
 end
 
 task 'test:travis:prepare' do
-  sh 'cd example/rails2; bundle install'
-  sh 'cd example/rails3; bundle install'
+  sh 'cd example/rails2; bundle install --gemfile Gemfile'
+  sh 'cd example/rails3; bundle install --gemfile Gemfile'
 end
 
 task 'test:travis' => ['test:travis:prepare', 'test:all']
