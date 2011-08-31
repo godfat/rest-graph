@@ -44,7 +44,7 @@ module Gemgem
 end
 
 desc 'Run example tests'
-task 'test:example' => ['gem:install'] do
+task 'test:example' do
   Gemgem.test_rails('rails3', 'rails2')
 end
 
