@@ -21,6 +21,7 @@ RestGraphStruct = Struct.new(:access_token,
                              :accept, :lang,
                              :app_id, :secret,
                              :data, :cache,
+                             :expires_in,
                              :log_method,
                              :log_handler,
                              :error_handler) unless defined?(RestGraphStruct)
@@ -105,6 +106,7 @@ class RestGraph < RestGraphStruct
     def default_secret      ; nil                          ; end
     def default_data        ; {}                           ; end
     def default_cache       ; nil                          ; end
+    def default_expires_in  ; 600                          ; end
     def default_log_method  ; nil                          ; end
     def default_log_handler ; nil                          ; end
     def default_error_handler
@@ -607,9 +609,10 @@ class RestGraph < RestGraphStruct
     # fake post (opts[:post] => true) is considered get and need cache
     return if meth != :get unless opts[:post]
 
-    if opts[:expires_in].kind_of?(Fixnum) && cache.method(:store).arity == -3
+    expires = opts[:expires_in] || expires_in
+    if expires.kind_of?(Fixnum) && cache.method(:store).arity == -3
       cache.store(cache_key(opts, uri), value,
-                  :expires_in => opts[:expires_in])
+                  :expires_in => expires)
     else
       cache_assign(opts, uri, value)
     end
