@@ -172,7 +172,7 @@ class ApplicationControllerTest < ActionController::TestCase
   def test_reinitailize
     get(:reinitialize)
     assert_response :success
-    assert_equal [nil, {'a' => 'b'}], YAML.load(@response.body)
+    assert_equal({'a' => 'b'}, YAML.load(@response.body))
   end
 
   def test_helper

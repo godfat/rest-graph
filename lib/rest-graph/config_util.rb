@@ -34,7 +34,7 @@ module RestGraph::ConfigUtil
           #{v.kind_of?(String) ? "'#{v}'" : v}
         end
       RUBY
-    }.join)
+    }.join, __FILE__, __LINE__)
 
     RestGraph.send(:extend, mod)
   end

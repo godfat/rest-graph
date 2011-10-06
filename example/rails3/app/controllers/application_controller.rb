@@ -49,10 +49,8 @@ class ApplicationController < ActionController::Base
   end
 
   def reinitialize
-    cache_nil = rest_graph.cache
     rest_graph_setup(:cache => {'a' => 'b'})
-    cache     = rest_graph.cache
-    render :text => YAML.dump([cache_nil, cache])
+    render :text => YAML.dump(rest_graph.cache)
   end
 
   def helper; end

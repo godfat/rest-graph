@@ -347,13 +347,26 @@ class RestGraph < RestGraphStruct
   end
 
   def parse_cookies! cookies
-    self.data = parse_fbs!(cookies["fbs_#{app_id}"])
+    self.data = if   fbsr = cookies["fbsr_#{app_id}"]
+                  parse_fbsr!(fbsr)
+                else fbs  = cookies["fbs_#{app_id}"]
+                  parse_fbs!(fbs)
+                end
   end
 
   def parse_fbs! fbs
     self.data = check_sig_and_return_data(
       # take out facebook sometimes there but sometimes not quotes in cookies
       Rack::Utils.parse_query(fbs.to_s.sub(/^"/, '').sub(/"$/, '')))
+  end
+
+  def parse_fbsr! fbsr
+    old_data = parse_signed_request!(fbsr)
+    # beware! maybe facebook would take out the code someday
+    return self.data = old_data unless old_data && old_data['code']
+    # passing empty redirect_uri is needed!
+    authorize!(:code => old_data['code'], :redirect_uri => '')
+    self.data = old_data.merge(data)
   end
 
   def parse_json! json

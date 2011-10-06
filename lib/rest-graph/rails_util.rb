@@ -22,6 +22,8 @@ end
 
 class RestGraph
   module DefaultAttributes
+    def default_log_method            ; Rails.logger.method(:debug); end
+    def default_cache                 ; Rails.cache                ; end
     def default_canvas                ; ''   ; end
     def default_iframe                ; false; end
     def default_auto_authorize        ; false; end
@@ -183,7 +185,7 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_options_new
-    @rest_graph_options_new ||= {:log_method => logger.method(:debug)}
+    @rest_graph_options_new ||= {}
   end
   # ==================== end options utility =======================
 
