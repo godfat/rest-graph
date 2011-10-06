@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors = [
   "Cardinal Blue",
   "Lin Jen-Shin (godfat)"]
-  s.date = "2011-08-31"
+  s.date = "2011-10-06"
   s.description = "A lightweight Facebook Graph API client"
   s.email = ["dev (XD) cardinalblue.com"]
   s.files = [
@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   "CONTRIBUTORS",
   "Gemfile",
   "LICENSE",
-  "README",
   "README.md",
   "Rakefile",
   "TODO",
@@ -102,7 +101,7 @@ Gem::Specification.new do |s|
   "test/test_timeout.rb"]
   s.homepage = "https://github.com/cardinalblue/rest-graph"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
+  s.rubygems_version = "1.8.11"
   s.summary = "A lightweight Facebook Graph API client"
   s.test_files = [
   "test/test_api.rb",
@@ -127,41 +126,8 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rest-client>, [">= 0"])
-      s.add_development_dependency(%q<rack>, [">= 0"])
-      s.add_development_dependency(%q<yajl-ruby>, [">= 0"])
-      s.add_development_dependency(%q<json>, [">= 0"])
-      s.add_development_dependency(%q<json_pure>, [">= 0"])
-      s.add_development_dependency(%q<ruby-hmac>, [">= 0"])
-      s.add_development_dependency(%q<webmock>, [">= 0"])
-      s.add_development_dependency(%q<bacon>, [">= 0"])
-      s.add_development_dependency(%q<rr>, [">= 0"])
-      s.add_development_dependency(%q<rake>, [">= 0"])
-      s.add_development_dependency(%q<em-http-request>, ["< 1"])
     else
-      s.add_dependency(%q<rest-client>, [">= 0"])
-      s.add_dependency(%q<rack>, [">= 0"])
-      s.add_dependency(%q<yajl-ruby>, [">= 0"])
-      s.add_dependency(%q<json>, [">= 0"])
-      s.add_dependency(%q<json_pure>, [">= 0"])
-      s.add_dependency(%q<ruby-hmac>, [">= 0"])
-      s.add_dependency(%q<webmock>, [">= 0"])
-      s.add_dependency(%q<bacon>, [">= 0"])
-      s.add_dependency(%q<rr>, [">= 0"])
-      s.add_dependency(%q<rake>, [">= 0"])
-      s.add_dependency(%q<em-http-request>, ["< 1"])
     end
   else
-    s.add_dependency(%q<rest-client>, [">= 0"])
-    s.add_dependency(%q<rack>, [">= 0"])
-    s.add_dependency(%q<yajl-ruby>, [">= 0"])
-    s.add_dependency(%q<json>, [">= 0"])
-    s.add_dependency(%q<json_pure>, [">= 0"])
-    s.add_dependency(%q<ruby-hmac>, [">= 0"])
-    s.add_dependency(%q<webmock>, [">= 0"])
-    s.add_dependency(%q<bacon>, [">= 0"])
-    s.add_dependency(%q<rr>, [">= 0"])
-    s.add_dependency(%q<rake>, [">= 0"])
-    s.add_dependency(%q<em-http-request>, ["< 1"])
   end
 end
