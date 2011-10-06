@@ -55,6 +55,17 @@ class ApplicationController < ActionController::Base
 
   def helper; end
 
+  def defaults
+    rest_graph_setup
+    render :text => (rest_graph.cache               == Rails.cache &&
+                     rest_graph.log_method.receiver == Rails.logger)
+  end
+
+  def parse_cookies
+    rest_graph_setup
+    render :text => 'dummy'
+  end
+
   private
   def filter_common
     rest_graph_setup(:auto_authorize => true, :canvas => '')

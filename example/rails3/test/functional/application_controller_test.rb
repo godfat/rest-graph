@@ -1,11 +1,13 @@
 
 require 'test_helper'
 require 'webmock'
+require 'rr'
 
 WebMock.disable_net_connect!
 
 class ApplicationControllerTest < ActionController::TestCase
   include WebMock::API
+  include RR::Adapters::TestUnit
 
   def setup
     body = rand(2) == 0 ? '{"error":{"type":"OAuthException"}}' :
@@ -179,5 +181,28 @@ class ApplicationControllerTest < ActionController::TestCase
     get(:helper)
     assert_response :success
     assert_equal RestGraph.default_app_id, @response.body.strip
+  end
+
+  def test_defaults
+    get(:defaults)
+    assert_response :success
+    assert_equal 'true', @response.body.strip
+  end
+
+  def setup_cookies key
+    @cookies = {"#{key}_#{RestGraph.default_app_id}" => 'dummy'}
+    f = RestGraph.new
+    mock(f).parse_cookies!(cookies)
+    stub(@controller).rest_graph{ f }
+  end
+
+  def test_parse_cookies_fbs
+    setup_cookies('fbs')
+    get(:parse_cookies, {}, {}, @cookies)
+  end
+
+  def test_parse_cookies_fbsr
+    setup_cookies('fbsr')
+    get(:parse_cookies, {}, {}, @cookies)
   end
 end
