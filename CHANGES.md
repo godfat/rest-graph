@@ -17,6 +17,8 @@ Otherwise, you can stay with rest-graph with bugs fixes.
   the cache didn't support `:expires_in` option.
 * [RestGraph] Now `RestGraph#initialize` accepts string keys.
 * [RestGraph] We don't support em-http-request >= 1 at the moment.
+* [RestGraph] Fixed that parsing an invalid signed_request would raise an
+  error. From now on it would simply ignore it and wipe out the data.
 
 * [RailsUtil] Now by default, RestGraph would cache all GET requests in
   `Rails.cache` for 600 seconds. You can change this by running:
