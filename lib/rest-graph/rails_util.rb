@@ -228,8 +228,9 @@ module RestGraph::RailsUtil
   # if we're not in canvas nor code passed,
   # we could check out cookies as well.
   def rest_graph_check_cookie
-    return if rest_graph.authorized? ||
-              !cookies["fbs_#{rest_graph.app_id}"]
+    return if rest_graph.authorized?                 ||
+              (!cookies["fbsr_#{rest_graph.app_id}"] &&
+               !cookies["fbs_#{rest_graph.app_id}"])
 
     rest_graph.parse_cookies!(cookies)
     logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \

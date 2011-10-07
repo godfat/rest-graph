@@ -18,6 +18,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def teardown
+    RR.verify
     WebMock.reset!
   end
 
@@ -190,19 +191,20 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def setup_cookies key
-    @cookies = {"#{key}_#{RestGraph.default_app_id}" => 'dummy'}
+    cookies = {"#{key}_#{RestGraph.default_app_id}" => 'dummy'}
+    stub(@controller).cookies{cookies}
     f = RestGraph.new
+    stub(@controller).rest_graph{f}
     mock(f).parse_cookies!(cookies)
-    stub(@controller).rest_graph{ f }
   end
 
   def test_parse_cookies_fbs
     setup_cookies('fbs')
-    get(:parse_cookies, {}, {}, @cookies)
+    get(:parse_cookies)
   end
 
   def test_parse_cookies_fbsr
     setup_cookies('fbsr')
-    get(:parse_cookies, {}, {}, @cookies)
+    get(:parse_cookies)
   end
 end
