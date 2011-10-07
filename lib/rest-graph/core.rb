@@ -196,9 +196,7 @@ class RestGraph < RestGraphStruct
   # common methods
 
   def initialize o={}
-    (Attributes + [:access_token]).each{ |name|
-      send("#{name}=", o[name]) if o.key?(name)
-    }
+    o.each{ |key, value| send("#{key}=", value) if respond_to?("#{key}=") }
   end
 
   def access_token
