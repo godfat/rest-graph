@@ -100,6 +100,10 @@ describe RestGraph do
     rg.data                                 .should == {}
   end
 
+  should 'parse invalid signed_request' do
+    RestGraph.new.parse_signed_request!('bad').should == nil
+  end
+
   should 'fallback to ruby-hmac if Digest.new raise an runtime error' do
     key, data = 'top', 'secret'
     digest = OpenSSL::HMAC.digest('sha256', key, data)
