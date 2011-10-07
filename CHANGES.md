@@ -1,5 +1,30 @@
 = rest-graph changes history
 
+== rest-graph 2.0.0 -- ?
+
+We have moved the development from rest-graph to [rest-core][].
+By now on, we would only fix bugs in rest-graph rather than adding
+features, and we would only backport important changes from rest-core
+once in a period. If you want the latest goodies, please see [rest-core][]
+Otherwise, you can stay with rest-graph with bugs fixes.
+
+[rest-core]: https://github.com/cardinalblue/rest-core
+
+* [RestGraph] Added `RestGraph#parse_fbsr!` which can parse Facebook's new
+  cookie. Also, `RestGraph#parse_cookies!` would look for that too.
+* [RestGraph] Added `expires_in` attribute which would be passed to cache.
+  The default value is 600 seconds. No effect if there's no cache, or if
+  the cache didn't support `:expires_in` option.
+* [RestGraph] Now `RestGraph#initialize` accepts string keys.
+* [RestGraph] We don't support em-http-request >= 1 at the moment.
+
+* [RailsUtil] Now by default, RestGraph would cache all GET requests in
+  `Rails.cache` for 600 seconds. You can change this by running:
+
+      rest_graph_setup(:cache => nil, :expires_in => 3600)
+
+  To disable cache or lengthen/shorten the lifetime of the cache result.
+
 == rest-graph 1.9.1 -- 2011-06-07
 
 * [RestGraph] Fixed parse_fbs! where fbs contains some json. (thanks Bruce)

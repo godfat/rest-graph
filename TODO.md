@@ -1,10 +1,12 @@
-= rest-graph todo list
+# TODO
 
-== RailsUtil
+## RailsUtil
+
 * provide a :validate_access_token or so option
 * test for rails util for writing cookie
 
-== RestGraph
+## RestGraph
+
 * error_handler can't be turned off
 * more docs?
 * more examples?

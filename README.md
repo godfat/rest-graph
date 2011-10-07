@@ -21,6 +21,14 @@ an experienced Ruby programmer, you might also want to look at
 
 A lightweight Facebook Graph API client
 
+We have moved the development from rest-graph to [rest-core][].
+By now on, we would only fix bugs in rest-graph rather than adding
+features, and we would only backport important changes from rest-core
+once in a period. If you want the latest goodies, please see [rest-core][]
+Otherwise, you can stay with rest-graph with bugs fixes.
+
+[rest-core]: https://github.com/cardinalblue/rest-core
+
 ## FEATURES:
 
 * Simple Graph API call
@@ -54,7 +62,8 @@ A lightweight Facebook Graph API client
 
 Or if you want development version, put this in Gemfile:
 
-    gem 'rest-graph', :git => 'git://github.com/cardinalblue/rest-graph.git'
+    gem 'rest-graph', :git => 'git://github.com/cardinalblue/rest-graph.git',
+                      :submodules => true
 
 Or as a Rails2 plugin:
 

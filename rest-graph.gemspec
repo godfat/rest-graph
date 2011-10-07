@@ -8,20 +8,20 @@ Gem::Specification.new do |s|
   s.authors = [
   "Cardinal Blue",
   "Lin Jen-Shin (godfat)"]
-  s.date = "2011-10-06"
-  s.description = "A lightweight Facebook Graph API client"
+  s.date = "2011-10-07"
+  s.description = "A lightweight Facebook Graph API client\n\nWe have moved the development from rest-graph to [rest-core][].\nBy now on, we would only fix bugs in rest-graph rather than adding\nfeatures, and we would only backport important changes from rest-core\nonce in a period. If you want the latest goodies, please see [rest-core][]\nOtherwise, you can stay with rest-graph with bugs fixes.\n\n[rest-core]: https://github.com/cardinalblue/rest-core"
   s.email = ["dev (XD) cardinalblue.com"]
   s.files = [
   ".gitignore",
   ".gitmodules",
   ".travis.yml",
-  "CHANGES",
+  "CHANGES.md",
   "CONTRIBUTORS",
   "Gemfile",
   "LICENSE",
   "README.md",
   "Rakefile",
-  "TODO",
+  "TODO.md",
   "doc/ToC.md",
   "doc/dependency.md",
   "doc/design.md",
@@ -57,6 +57,7 @@ Gem::Specification.new do |s|
   "example/rails3/app/views/application/helper.html.erb",
   "example/rails3/config.ru",
   "example/rails3/config/application.rb",
+  "example/rails3/config/boot.rb",
   "example/rails3/config/environment.rb",
   "example/rails3/config/environments/development.rb",
   "example/rails3/config/environments/production.rb",
