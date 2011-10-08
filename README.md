@@ -1,4 +1,4 @@
-# rest-graph
+# rest-graph [![Build Status](http://travis-ci.org/godfat/rest-graph.png)](http://travis-ci.org/godfat/rest-graph)
 
 by Cardinal Blue <http://cardinalblue.com>
 

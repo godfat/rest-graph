@@ -1,6 +1,6 @@
-= rest-graph changes history
+# CHANGES
 
-== rest-graph 2.0.0 -- ?
+## rest-graph 2.0.0 -- 2011-10-08
 
 We have moved the development from rest-graph to [rest-core][].
 By now on, we would only fix bugs in rest-graph rather than adding
@@ -27,11 +27,11 @@ Otherwise, you can stay with rest-graph with bugs fixes.
 
   To disable cache or lengthen/shorten the lifetime of the cache result.
 
-== rest-graph 1.9.1 -- 2011-06-07
+## rest-graph 1.9.1 -- 2011-06-07
 
 * [RestGraph] Fixed parse_fbs! where fbs contains some json. (thanks Bruce)
 
-== rest-graph 1.9.0 -- 2011-05-26
+## rest-graph 1.9.0 -- 2011-05-26
 
 * [RestGraph] Removed deprecated rest-graph/auto_load.rb, and
               rest-graph/autoload.rb. Please simply require 'rest-graph'
@@ -62,7 +62,7 @@ Otherwise, you can stay with rest-graph with bugs fixes.
               cause problems, thus we have provided this option to use POST
               instead.
 
-== rest-graph 1.8.0 -- 2011-03-08
+## rest-graph 1.8.0 -- 2011-03-08
 
 *  [RestGraph] Now require 'rest-graph/autoload' is deprecated, simply use
                require 'rest-graph' would require anything you "might" or
@@ -106,7 +106,7 @@ Otherwise, you can stay with rest-graph with bugs fixes.
 
 * [FacebookUtil] Added some very Facebook specific utilities.
 
-== rest-graph 1.7.0 -- 2010-12-30
+## rest-graph 1.7.0 -- 2010-12-30
 
 * [RestGraph] Renamed rest-graph/auto_load to rest-graph/autoload; auto_load
               would be still working for a while.
@@ -128,7 +128,7 @@ Otherwise, you can stay with rest-graph with bugs fixes.
 * [RailsUtil] Extract rest_graph_filter_uri, which would filter session,
               code, singed_request, etc. on the redirecting URI.
 
-== rest-graph 1.6.0 -- 2010-11-19
+## rest-graph 1.6.0 -- 2010-11-19
 
 * [RestGraph] Added em-http as an alternate for HTTP client. So rest-client
               is no longer a must-have dependency. Pass :async => true to
@@ -206,7 +206,7 @@ Otherwise, you can stay with rest-graph with bugs fixes.
              RestGraph::TestUtil.history. This would get cleaned up in
              RestGraph::TestUtil.teardown as well.
 
-== rest-graph 1.5.0 -- 2010-10-11
+## rest-graph 1.5.0 -- 2010-10-11
 
 * [RestGraph] Make sure RestGraph::Error#message is string, that way,
               irb could print out error message correctly. Introduced
@@ -273,7 +273,7 @@ should be formatted by "#{app_id}|#{secret}" instead of the usual one.
 
 * [RailsUtil] URI.encode before URI.parse for broken URL Facebook passed.
 
-== rest-graph 1.4.6 -- 2010-09-01
+## rest-graph 1.4.6 -- 2010-09-01
 
 * [RestGraph] Now it will try to pick yajl-ruby or json gem from memory first,
               if it's not there, then try to load one and try to pick one
@@ -304,7 +304,7 @@ should be formatted by "#{app_id}|#{secret}" instead of the usual one.
               Now it's:
                 `rest_graph_authorize(message)`
 
-== rest-graph 1.4.5 -- 2010-08-07
+## rest-graph 1.4.5 -- 2010-08-07
 
 * [RestGraph] Treat oauth_token as access_token as well. This came from
               Facebook's new signed_request. Why didn't they choose
@@ -317,12 +317,12 @@ should be formatted by "#{app_id}|#{secret}" instead of the usual one.
               fbs with user code, instead of using sessions/cookies.
               That way, you can save fbs into memcache or somewhere.
 
-== rest-graph 1.4.4 -- 2010-08-06
+## rest-graph 1.4.4 -- 2010-08-06
 
 * [RailsUtil] Fixed a bug that empty query appends a question mark,
               that confuses Facebook, so that redirect_uri didn't match.
 
-== rest-graph 1.4.3 -- 2010-08-06
+## rest-graph 1.4.3 -- 2010-08-06
 
 * [RestGraph] Fixed a bug in RestGraph#fbs, which didn't join '&'.
               Thanks, Andrew.
@@ -335,7 +335,7 @@ should be formatted by "#{app_id}|#{secret}" instead of the usual one.
 * [RailsUtil] Favor Request#fullpath over Request#request_uri,
               which came from newer Rack and thus for Rails 3.
 
-== rest-graph 1.4.2 -- 2010-08-05
+## rest-graph 1.4.2 -- 2010-08-05
 
 * [RestGraph] Added RestGraph#fbs to generate fbs with correct sig,
               to be used for future parse_fbs! See the bug in RailsUtil.
@@ -348,7 +348,7 @@ should be formatted by "#{app_id}|#{secret}" instead of the usual one.
 
 * Thanks a lot, Andrew.
 
-== rest-graph 1.4.1 -- 2010-08-04
+## rest-graph 1.4.1 -- 2010-08-04
 
 * [RestGraph] Call error_handler when response contains error_code as well,
   which came from FQL response. Thanks Florent.
@@ -368,7 +368,7 @@ should be formatted by "#{app_id}|#{secret}" instead of the usual one.
 * [RailsUtil] Favor signed_request over session in rest_graph_setup
 * [RailsUtil] Now it's possible to setup all options in rest-graph.yaml.
 
-== rest-graph 1.4.0 -- 2010-07-15
+## rest-graph 1.4.0 -- 2010-07-15
 
 Changes only for RailsUtil, the core (rest-graph.rb) is pretty stable for now.
 
@@ -383,7 +383,8 @@ Changes only for RailsUtil, the core (rest-graph.rb) is pretty stable for now.
 * Now :auto_authorize_scope default to nothing.
 * Now there's :write_session option to save fbs in session, default to false.
 
-== rest-graph 1.3.0 -- 2010-06-11
+## rest-graph 1.3.0 -- 2010-06-11
+
 * Now rest-graph is rescuing all exceptions from rest-client.
 * Added RestGraph#exchange_sessions to exchange old sessions to access tokens.
 
@@ -405,7 +406,8 @@ for RailsUtil:
   http://github.com/cardinalblue/rest-graph/tree/rest-graph-1.3.0/example
 * url_for and link_to would auto pass :host option if it's inside canvas.
 
-== rest-graph 1.2.1 -- 2010-06-02
+## rest-graph 1.2.1 -- 2010-06-02
+
 * Deprecated RailsController, use RailsUtil instead.
 * Fixed a bug that passing access_token in query string
   in RestGraph#authorize_url
@@ -413,7 +415,8 @@ for RailsUtil:
   Thanks betelgeuse, closes #1
   http://github.com/cardinalblue/rest-graph/issues/issue/1
 
-== rest-graph 1.2.0 -- 2010-05-27
+## rest-graph 1.2.0 -- 2010-05-27
+
 * Add RestGraph#parse_json!
 * Add RailsController to help you integrate into Rails.
 * Simplify arguments checking and require dependency.
@@ -446,12 +449,14 @@ for RailsUtil:
 * Add RestGraph#fql_multi to do FQL multiquery. Thanks Ethan Czahor
   Usage: rg.fql_multi(:query1 => 'SELECT ...', :query2 => 'SELECT ...')
 
-== rest-graph 1.1.1 -- 2010-05-21
+## rest-graph 1.1.1 -- 2010-05-21
+
 * Add oauth realted utilites -- authorize_url and authorize!
 * Fixed a bug that in Ruby 1.8.7-, nil =~ /regexp/ equals to false.
   It is nil as expected in Ruby 1.9.1+
 
-== rest-graph 1.1.0 -- 2010-05-13
+## rest-graph 1.1.0 -- 2010-05-13
+
 * Main repository was moved to http://github.com/cardinalblue/rest-graph
   Sorry for the inconvenience. I'll keep pushing to both repositories until
   I am too lazy to do that.
@@ -466,20 +471,24 @@ for RailsUtil:
 * Config could be loaded manually as well. require 'rest-graph/load_config'
   and RestGraph::LoadConfig.load_config!('path/to/rest-graph.yaml', 'env')
 
-== rest-graph 1.0.0 -- 2010-05-06
+## rest-graph 1.0.0 -- 2010-05-06
+
 * now access_token is saved in data attributes.
 * cookies related methods got renamed, and saved all data in RestGraph
 * parse failed would return nil, while data is always a hash
 
-== rest-graph 0.9.0 -- 2010-05-04
+## rest-graph 0.9.0 -- 2010-05-04
+
 * renamed :server option to :graph_server
 * added :fql_server option and fql support.
 * cookies related parsing utility is now instance methods.
   you'll need to pass app_id and secret when initializing
 * if sig in cookies is bad, then it won't extract the access_token
 
-== rest-graph 0.8.1 -- 2010-05-03
+## rest-graph 0.8.1 -- 2010-05-03
+
 * added access_token parsing utility
 
-== rest-graph 0.8.0 -- 2010-05-03
+## rest-graph 0.8.0 -- 2010-05-03
+
 * release early, release often
