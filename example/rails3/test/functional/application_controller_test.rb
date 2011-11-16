@@ -166,6 +166,32 @@ class ApplicationControllerTest < ActionController::TestCase
     assert_equal '["yeti"]', @response.body
   end
 
+  def test_wrong_session
+    WebMock.reset!
+    stub_request(:get, 'https://graph.facebook.com/me').
+      to_return(:body => '{"error":{"type":"OAuthException"}}')
+
+    session = @request.session
+    key     = RestGraph::RailsUtil.rest_graph_storage_key
+    session[key] = 'bad'
+
+    get(:session_)
+    assert_equal nil, session[key]
+  end
+
+  def test_wrong_cookies
+    WebMock.reset!
+    stub_request(:get, 'https://graph.facebook.com/me').
+      to_return(:body => '{"error":{"type":"OAuthException"}}')
+
+    cookies = @request.cookies
+    key     = RestGraph::RailsUtil.rest_graph_storage_key
+    session[key] = 'bad'
+
+    get(:cookies_)
+    assert_equal nil, cookies[key]
+  end
+
   def test_error
     get(:error)
   rescue => e

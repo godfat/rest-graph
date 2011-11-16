@@ -122,7 +122,7 @@ module RestGraph::RailsUtil
 
       logger.debug("DEBUG: RestGraph: redirect to #{@rest_graph_authorize_url}")
 
-      cookies.delete("fbs_#{rest_graph.app_id}")
+      rest_graph_cleanup
       rest_graph_authorize_redirect
     end
   end
@@ -318,6 +318,13 @@ module RestGraph::RailsUtil
 
 
   # ==================== begin misc ================================
+  def rest_graph_cleanup
+    cookies.delete("fbs_#{rest_graph.app_id}")
+    cookies.delete("fbsr_#{rest_graph.app_id}")
+    cookies.delete(rest_graph_storage_key)
+    session.delete(rest_graph_storage_key)
+  end
+
   def rest_graph_normalized_request_uri
     uri = if rest_graph_in_canvas?
             # rails 3 uses newer rack which has fullpath

@@ -118,10 +118,10 @@ class ApplicationController < ActionController::Base
   end
 
   def filter_session
-    rest_graph_setup(:write_session => true)
+    rest_graph_setup(:write_session => true, :auto_authorize => true)
   end
 
   def filter_cookies
-    rest_graph_setup(:write_cookies => true)
+    rest_graph_setup(:write_cookies => true, :auto_authorize => true)
   end
 end
