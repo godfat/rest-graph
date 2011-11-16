@@ -408,10 +408,10 @@ class RestGraph < RestGraphStruct
   end
 
   def authorize! opts={}
-    query = {:client_id => app_id, :client_secret => secret}.merge(opts)
+    payload = {:client_id => app_id, :client_secret => secret}.merge(opts)
     self.data = Rack::Utils.parse_query(
                   request({:auto_decode => false}.merge(opts),
-                          [:get, url('oauth/access_token', query)]))
+                          [:post, url('oauth/access_token'), payload]))
   end
 
 

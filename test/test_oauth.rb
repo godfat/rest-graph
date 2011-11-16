@@ -22,9 +22,11 @@ describe RestGraph do
   end
 
   should 'do authorizing and parse result and save it in data' do
-    stub_request(:get, 'https://graph.facebook.com/oauth/access_token?' \
-                       'client_id=29&client_secret=18&code=zzz&'        \
-                       'redirect_uri=http%3A%2F%2Fzzz.tw').
+    stub_request(:post, 'https://graph.facebook.com/oauth/access_token'). \
+      with(:body => {'client_id'     => '29' ,
+                     'client_secret' => '18' ,
+                     'redirect_uri'  => 'http://zzz.tw',
+                     'code'          => 'zzz'}).
       to_return(:body => 'access_token=baken&expires=2918')
 
     result = {'access_token' => 'baken', 'expires' => '2918'}
