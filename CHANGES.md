@@ -1,5 +1,28 @@
 # CHANGES
 
+## rest-graph 2.0.1 -- 2011-11-25
+
+### Bugs fixes back ported from [rest-more][]
+
+* [RestGraph] Now we're using POST in `authorize!` to exchange the
+  access_token with the code instead of GET. If we're using GET,
+  we would run into a risk where a user might use the code to
+  get other people's access_token via the cache. Using POST would
+  prevent this because POSTs are not cached.
+
+* [RestGraph::RailsUtil] Fixed a serious bug. The bug would jump up if
+  you're using :write_session or :write_cookies or :write_handler along
+  with :auto_authorize, for example:
+  `rest_graph_setup(:auto_authorize => true, :write_session => true)`
+  The problem is that RestGraph::RailsUtil is not removing the invalid
+  access_token stored in session or cookie, and yet it is considered
+  authorized, making redirecting to Facebook and redirecting back doesn't
+  update the access_token. `rest_graph_cleanup` is introduced to remove
+  all invalid access_tokens, which would get called once the user is
+  redirected to Facebook, fixing this bug.
+
+[rest-more]: https://github.com/cardinalblue/rest-more
+
 ## rest-graph 2.0.0 -- 2011-10-08
 
 We have moved the development from rest-graph to [rest-core][].
