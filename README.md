@@ -362,6 +362,20 @@ Takes a session key from the old REST API
     # https://graph.facebook.com/oauth/exchange_sessions?sessions=SESSION
     rg.exchange_sessions(:sessions => params[:fb_sig_session_key])
 
+## CONTRIBUTORS:
+
+* Andrew Liu (@eggegg)
+* andy (@coopsite)
+* Barnabas Debreczeni (@keo)
+* Bruce Chu (@bruchu)
+* Ethan Czahor (@ethanz5)
+* Florent Vaucelle (@florent)
+* Jaime Cham (@jcham)
+* John Fan (@johnfan)
+* Lin Jen-Shin (@godfat)
+* Mariusz Pruszynski (@snicky)
+* Nicolas Fouché (@nfo)
+
 ## LICENSE:
 
 Apache License 2.0
