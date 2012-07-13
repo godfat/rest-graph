@@ -498,10 +498,10 @@ class RestGraph < RestGraphStruct
     }
 
     m = EM::MultiRequest.new
-    rs.each.with_index{ |r, i| m.add(i.to_s, r) }
+    rs.each.with_index{ |r, i| m.add(i, r) }
     m.callback{
       # TODO: how to deal with the failed?
-      clients = m.responses[:callback].values
+      clients = m.responses[:callback].sort.map(&:last)
       results = clients.map{ |client|
         post_request(opts, client.uri, client.response)
       }
