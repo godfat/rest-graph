@@ -339,12 +339,19 @@ module RestGraph::RailsUtil
   end
 
   def rest_graph_filter_uri uri
-    URI.parse(URI.encode(uri)).tap{ |uri|
+    URI.parse(uri).tap{ |uri|
       uri.query = uri.query.split('&').reject{ |q|
                     q =~ /^(code|session|signed_request)\=/
                   }.join('&') if uri.query
       uri.query = nil if uri.query.blank?
     }.to_s
+  rescue URI::InvalidURIError => e
+    if @rest_graph_facebook_filter_uri_retry
+      raise e
+    else
+      @rest_graph_facebook_filter_uri_retry = uri = URI.encode(uri)
+      retry
+    end
   end
 
   def rest_graph_in_canvas?
