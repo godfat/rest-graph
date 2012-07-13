@@ -112,7 +112,7 @@ module RestGraph::RailsUtil
                :rest_graph_on_access_token_error
 
   def rest_graph_authorize error=nil, force_redirect=true
-    logger.warn("WARN: RestGraph: #{error.inspect}")
+    logger.info("INFO: RestGraph: #{error.inspect}")
 
     if force_redirect || rest_graph_auto_authorize?
       @rest_graph_authorize_url = rest_graph.authorize_url(
