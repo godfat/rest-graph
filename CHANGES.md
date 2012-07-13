@@ -1,5 +1,18 @@
 # CHANGES
 
+## rest-graph 2.0.2 -- 2012-07-13
+
+* [RestGraph] Adopt latest em-http-request.
+
+### Bugs fixes back ported from [rest-more][]
+
+* [RestGraph::RailsUtil] Change the redirect log level from WARN to INFO.
+* [RestGraph::RailsUtil] Since Facebook would return correct URL now,
+  we don't have to try to use `URI.encode` anymore. Actually, that
+  causes bugs.
+
+Please upgrade to [rest-more][].
+
 ## rest-graph 2.0.1 -- 2011-11-25
 
 ### Bugs fixes back ported from [rest-more][]
