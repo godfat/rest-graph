@@ -15,7 +15,7 @@ gem 'rack'
 gem 'ruby-hmac'
 
 gem 'rest-client'
-gem 'em-http-request', '<1'
+gem 'em-http-request'
 
 platforms(:ruby) do
   gem 'yajl-ruby'
