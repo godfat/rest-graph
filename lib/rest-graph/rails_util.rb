@@ -80,16 +80,9 @@ module RestGraph::RailsUtil
 
     rest_graph_check_params_signed_request # canvas
     rest_graph_check_params_session        # i think it would be deprecated
-    rest_graph_check_cookie                # for js sdk (canvas or not)
     rest_graph_check_code                  # oauth api
-
-    # there are above 4 ways to check the user identity!
-    # if nor of them passed, then we can suppose the user
-    # didn't authorize for us, but we can check if user has authorized
-    # before, in that case, the fbs would be inside session,
-    # as we just saved it there
-
     rest_graph_check_rg_fbs # check rest-graph storage
+    rest_graph_check_cookie                # for js sdk (canvas or not)
 
     if rest_graph_oget(:ensure_authorized) && !rest_graph.authorized?
       rest_graph_authorize('ensure authorized')
@@ -235,6 +228,8 @@ module RestGraph::RailsUtil
     rest_graph.parse_cookies!(cookies)
     logger.debug("DEBUG: RestGraph: detected cookies, parsed:" \
                  " #{rest_graph.data.inspect}")
+
+    rest_graph_write_rg_fbs if rest_graph.authorized?
   end
 
   # exchange the code with access_token
