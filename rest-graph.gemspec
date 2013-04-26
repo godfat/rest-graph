@@ -2,13 +2,13 @@
 
 Gem::Specification.new do |s|
   s.name = "rest-graph"
-  s.version = "2.0.2"
+  s.version = "2.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [
   "Cardinal Blue",
   "Lin Jen-Shin (godfat)"]
-  s.date = "2012-07-13"
+  s.date = "2013-04-26"
   s.description = "A lightweight Facebook Graph API client\n\nWe have moved the development from rest-graph to [rest-core][].\nBy now on, we would only fix bugs in rest-graph rather than adding\nfeatures, and we would only backport important changes from rest-core\nonce in a period. If you want the latest goodies, please see [rest-core][]\nOtherwise, you can stay with rest-graph with bugs fixes.\n\n[rest-core]: https://github.com/cardinalblue/rest-core"
   s.email = ["dev (XD) cardinalblue.com"]
   s.files = [
@@ -101,7 +101,7 @@ Gem::Specification.new do |s|
   "test/test_timeout.rb"]
   s.homepage = "https://github.com/cardinalblue/rest-graph"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.24"
+  s.rubygems_version = "2.0.0"
   s.summary = "A lightweight Facebook Graph API client"
   s.test_files = [
   "test/test_api.rb",
@@ -121,13 +121,4 @@ Gem::Specification.new do |s|
   "test/test_serialize.rb",
   "test/test_test_util.rb",
   "test/test_timeout.rb"]
-
-  if s.respond_to? :specification_version then
-    s.specification_version = 3
-
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-    else
-    end
-  else
-  end
 end

@@ -1,5 +1,11 @@
 # CHANGES
 
+## rest-graph 2.0.3 -- 2013-04-26
+
+* [RestGraph::RailsUtil] Adopt latest changes from rest-more. See:
+  https://github.com/cardinalblue/rest-more/commit/101e4b25f11e4cf3713fa2f1d6b5a46982266e44
+  https://github.com/cardinalblue/rest-more/commit/0e7d4db588ecc287fd8b2840c880dfb3fe3c3096
+
 ## rest-graph 2.0.2 -- 2012-07-13
 
 * [RestGraph] Adopt latest em-http-request.
