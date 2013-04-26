@@ -1,7 +1,7 @@
 
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.9'
+gem 'rails', '3.2.13'
 
 gem 'rest-client' # for rest-graph
 gem 'yajl-ruby'   # for rest-graph

@@ -28,7 +28,7 @@ module Gemgem
   def test_rails *rails
     rails.each{ |framework|
       opts = Rake.application.options
-      args = (opts.singleton_methods - [:rakelib, 'rakelib']).map{ |arg|
+      args = (opts.singleton_methods - [:rakelib, :trace_output]).map{ |arg|
                if arg.to_s !~ /=$/ && opts.send(arg)
                  "--#{arg}"
                else
