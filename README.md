@@ -375,6 +375,7 @@ Takes a session key from the old REST API
 * Lin Jen-Shin (@godfat)
 * Mariusz Pruszynski (@snicky)
 * Nicolas Fouché (@nfo)
+* Yutaro Sugai (@hokkai7go)
 
 ## LICENSE:
 
