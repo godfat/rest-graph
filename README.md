@@ -8,13 +8,13 @@ an experienced Ruby programmer, you might also want to look at
 [detailed documents][].
 
 [samplergthree]: https://github.com/cardinalblue/samplergthree
-[detailed documents]: https://github.com/cardinalblue/rest-graph/blob/master/doc/ToC.md
+[detailed documents]: https://github.com/godfat/rest-graph/blob/master/doc/ToC.md
 
 ## LINKS:
 
-* [github](https://github.com/cardinalblue/rest-graph)
+* [github](https://github.com/godfat/rest-graph)
 * [rubygems](https://rubygems.org/gems/rest-graph)
-* [rdoc](http://rdoc.info/projects/cardinalblue/rest-graph)
+* [rdoc](http://rdoc.info/projects/godfat/rest-graph)
 * [mailing list](http://groups.google.com/group/rest-graph/topics)
 
 ## DESCRIPTION:
@@ -27,7 +27,7 @@ features, and we would only backport important changes from rest-core
 once in a period. If you want the latest goodies, please see [rest-core][]
 Otherwise, you can stay with rest-graph with bugs fixes.
 
-[rest-core]: https://github.com/cardinalblue/rest-core
+[rest-core]: https://github.com/godfat/rest-core
 
 ## FEATURES:
 
@@ -62,12 +62,12 @@ Otherwise, you can stay with rest-graph with bugs fixes.
 
 Or if you want development version, put this in Gemfile:
 
-    gem 'rest-graph', :git => 'git://github.com/cardinalblue/rest-graph.git',
+    gem 'rest-graph', :git => 'git://github.com/godfat/rest-graph.git',
                       :submodules => true
 
 Or as a Rails2 plugin:
 
-    ./script/plugin install git://github.com/cardinalblue/rest-graph.git
+    ./script/plugin install git://github.com/godfat/rest-graph.git
 
 ## QUICK START:
 

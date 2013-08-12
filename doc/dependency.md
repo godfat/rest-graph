@@ -64,7 +64,7 @@ Anyone needs this? File a ticket on our [issue tracker][]
 [json]: https://github.com/flori/json
 [yajl-ruby]: https://github.com/brianmario/yajl-ruby
 [yajl-ruby's README]: https://github.com/brianmario/yajl-ruby/blob/master/README.rdoc
-[issue tracker]: https://github.com/cardinalblue/rest-graph/issues
+[issue tracker]: https://github.com/godfat/rest-graph/issues
 
 ## Rack (optional, needed when parsing cookie)
 

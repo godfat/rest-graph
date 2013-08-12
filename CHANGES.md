@@ -3,8 +3,8 @@
 ## rest-graph 2.0.3 -- 2013-04-26
 
 * [RestGraph::RailsUtil] Adopt latest changes from rest-more. See:
-  https://github.com/cardinalblue/rest-more/commit/101e4b25f11e4cf3713fa2f1d6b5a46982266e44
-  https://github.com/cardinalblue/rest-more/commit/0e7d4db588ecc287fd8b2840c880dfb3fe3c3096
+  https://github.com/godfat/rest-more/commit/101e4b25f11e4cf3713fa2f1d6b5a46982266e44
+  https://github.com/godfat/rest-more/commit/0e7d4db588ecc287fd8b2840c880dfb3fe3c3096
 
 ## rest-graph 2.0.2 -- 2012-07-13
 
@@ -40,7 +40,7 @@ Please upgrade to [rest-more][].
   all invalid access_tokens, which would get called once the user is
   redirected to Facebook, fixing this bug.
 
-[rest-more]: https://github.com/cardinalblue/rest-more
+[rest-more]: https://github.com/godfat/rest-more
 
 ## rest-graph 2.0.0 -- 2011-10-08
 
@@ -50,7 +50,7 @@ features, and we would only backport important changes from rest-core
 once in a period. If you want the latest goodies, please see [rest-core][]
 Otherwise, you can stay with rest-graph with bugs fixes.
 
-[rest-core]: https://github.com/cardinalblue/rest-core
+[rest-core]: https://github.com/godfat/rest-core
 
 * [RestGraph] Added `RestGraph#parse_fbsr!` which can parse Facebook's new
   cookie. Also, `RestGraph#parse_cookies!` would look for that too.
@@ -445,7 +445,7 @@ Changes only for RailsUtil, the core (rest-graph.rb) is pretty stable for now.
 for RailsUtil:
 
 * Big and fat refactoring in RailsUtil, see example for detail:
-  http://github.com/cardinalblue/rest-graph/tree/rest-graph-1.3.0/example
+  http://github.com/godfat/rest-graph/tree/rest-graph-1.3.0/example
 * url_for and link_to would auto pass :host option if it's inside canvas.
 
 ## rest-graph 1.2.1 -- 2010-06-02
@@ -464,7 +464,7 @@ for RailsUtil:
 * Simplify arguments checking and require dependency.
 * Now if there's no secret in RestGraph, sig check would always fail.
 * Now there's a Rails example.
-  http://github.com/cardinalblue/rest-graph/tree/master/example
+  http://github.com/godfat/rest-graph/tree/master/example
 
 * Add error_handler option. Default behavior is raising ::RestGraph::Error.
   You may want to pass your private controller method to do redirection.
@@ -499,7 +499,7 @@ for RailsUtil:
 
 ## rest-graph 1.1.0 -- 2010-05-13
 
-* Main repository was moved to http://github.com/cardinalblue/rest-graph
+* Main repository was moved to http://github.com/godfat/rest-graph
   Sorry for the inconvenience. I'll keep pushing to both repositories until
   I am too lazy to do that.
 

@@ -43,7 +43,7 @@ query for you.  If you feel there are more cases rest-graph should handle
 like this, please feel free to file a ticket on our [issue tracker][] on
 Github.
 
-* <https://github.com/cardinalblue/rest-graph/issues>
+* <https://github.com/godfat/rest-graph/issues>
 
 Or you could start a topic on our mailing list:
 
@@ -55,7 +55,7 @@ Either one is welcomed.
 
 [rest-graph][] is named after its first dependency [rest-client][].
 
-[rest-graph]: https://github.com/cardinalblue/rest-graph
+[rest-graph]: https://github.com/godfat/rest-graph
 [rest-client]: https://github.com/archiloque/rest-client
 
 ## License
@@ -74,7 +74,7 @@ just `require 'rest-graph'`.  It would try to load up anything you *might*
 or *might not* need.  It should Just Work&trade; out of the box, otherwise,
 please file a ticket on our [issue tracker][].
 
-[issue tracker]: https://github.com/cardinalblue/rest-graph/issues
+[issue tracker]: https://github.com/godfat/rest-graph/issues
 
 Target usages are as following:
 
@@ -138,7 +138,7 @@ will get you different things.  Here we list all different requires.
   environments, then `require 'rest-graph/config_util'` is for you.
   See below.
 
-[rdoc]: http://rdoc.info/projects/cardinalblue/rest-graph
+[rdoc]: http://rdoc.info/projects/godfat/rest-graph
 
 * `require 'rest-graph/config_util`
 

@@ -11,13 +11,12 @@ task 'gem:spec' do
     require 'rest-graph/version'
     s.name     = 'rest-graph'
     s.version  = RestGraph::VERSION
-    s.homepage = 'https://github.com/cardinalblue/rest-graph'
+    s.homepage = 'https://github.com/godfat/rest-graph'
 
     %w[].each{ |g| s.add_runtime_dependency(g) }
     %w[].each{ |g| s.add_development_dependency(g) }
 
     s.authors  = ['Cardinal Blue', 'Lin Jen-Shin (godfat)']
-    s.email    = ['dev (XD) cardinalblue.com']
   end
 
   Gemgem.write
