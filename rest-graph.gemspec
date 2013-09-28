@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+# stub: rest-graph 2.0.3 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "rest-graph"
@@ -8,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors = [
   "Cardinal Blue",
   "Lin Jen-Shin (godfat)"]
-  s.date = "2013-08-12"
+  s.date = "2013-09-29"
   s.description = "A lightweight Facebook Graph API client\n\nWe have moved the development from rest-graph to [rest-core][].\nBy now on, we would only fix bugs in rest-graph rather than adding\nfeatures, and we would only backport important changes from rest-core\nonce in a period. If you want the latest goodies, please see [rest-core][]\nOtherwise, you can stay with rest-graph with bugs fixes.\n\n[rest-core]: https://github.com/godfat/rest-core"
   s.email = ["godfat (XD) godfat.org"]
   s.files = [
@@ -100,8 +101,9 @@ Gem::Specification.new do |s|
   "test/test_test_util.rb",
   "test/test_timeout.rb"]
   s.homepage = "https://github.com/godfat/rest-graph"
+  s.licenses = ["Apache License 2.0"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "2.0.6"
+  s.rubygems_version = "2.1.5"
   s.summary = "A lightweight Facebook Graph API client"
   s.test_files = [
   "test/test_api.rb",

@@ -1,30 +1,21 @@
-# encoding: utf-8
 
 begin
   require "#{dir = File.dirname(__FILE__)}/task/gemgem"
 rescue LoadError
   sh 'git submodule update --init'
-  exec Gem.ruby, '-S', 'rake', *ARGV
+  exec Gem.ruby, '-S', $PROGRAM_NAME, *ARGV
 end
 
-Gemgem.dir = dir
-($LOAD_PATH << File.expand_path("#{Gemgem.dir}/lib" )).uniq!
+Gemgem.init(dir) do |s|
+  require 'rest-graph/version'
+  s.name     = 'rest-graph'
+  s.version  = RestGraph::VERSION
+  s.homepage = 'https://github.com/godfat/rest-graph'
 
-desc 'Generate gemspec'
-task 'gem:spec' do
-  Gemgem.spec = Gemgem.create do |s|
-    require 'rest-graph/version'
-    s.name     = 'rest-graph'
-    s.version  = RestGraph::VERSION
-    s.homepage = 'https://github.com/godfat/rest-graph'
+  %w[].each{ |g| s.add_runtime_dependency(g) }
+  %w[].each{ |g| s.add_development_dependency(g) }
 
-    %w[].each{ |g| s.add_runtime_dependency(g) }
-    %w[].each{ |g| s.add_development_dependency(g) }
-
-    s.authors  = ['Cardinal Blue', 'Lin Jen-Shin (godfat)']
-  end
-
-  Gemgem.write
+  s.authors  = ['Cardinal Blue', 'Lin Jen-Shin (godfat)']
 end
 
 module Gemgem
