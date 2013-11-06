@@ -2,12 +2,11 @@ before_install: 'git submodule update --init'
 script: 'ruby -r bundler/setup -S rake test:travis'
 
 env:
-  - 'RESTGRAPH=rest-graph RBXOPT=-X19'
-  - 'RESTGRAPH=rails3 RBXOPT=-X19'
+  - 'RESTGRAPH=rest-graph'
+  - 'RESTGRAPH=rails3'
 
 rvm:
-  - 1.8.7
   - 1.9.3
   - 2.0.0
-  - rbx-head
+  - rbx-2.1.1
   - jruby-head
