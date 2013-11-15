@@ -1,6 +1,6 @@
 
 require 'test_helper'
-require 'rr'
+require 'muack'
 
 class RailsUtilTest < ActiveSupport::TestCase
   include Muack::API
