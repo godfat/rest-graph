@@ -11,3 +11,7 @@ group 'test' do
   gem 'muack'
   gem 'webmock'
 end
+
+platform :rbx do
+  gem 'racc' # required by journey required by actionpack
+end
