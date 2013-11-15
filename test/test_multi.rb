@@ -120,4 +120,4 @@ describe 'RestGraph#multi' do
   #
   # should 'error handler?' do
   # end
-end
+end if RUBY_ENGINE != 'jruby' # eventmachine for jruby is broken
