@@ -111,5 +111,5 @@ module RestGraph::TestUtil
         }
       end
     RUBY
-  }.join("\n"))
+  }.join("\n"), __FILE__, __LINE__)
 end
