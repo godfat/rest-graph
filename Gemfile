@@ -27,6 +27,7 @@ end
 
 platforms(:rbx) do
   gem 'rubysl-rexml' # required by webmock required by crack
+  gem 'racc'         # required by journey required by actionpack
 end
 
 gem 'rails', '3.2.15' if ENV['RESTGRAPH'] == 'rails3'

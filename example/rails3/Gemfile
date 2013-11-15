@@ -7,11 +7,11 @@ gem 'rest-client' # for rest-graph
 gem 'yajl-ruby'   # for rest-graph
 gem 'rest-graph', :path => '../../'
 
-group 'test' do
+group(:test) do
   gem 'muack'
   gem 'webmock'
 end
 
-platform :rbx do
+platform(:rbx) do
   gem 'racc' # required by journey required by actionpack
 end
