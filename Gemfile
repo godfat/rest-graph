@@ -25,5 +25,9 @@ platforms(:jruby) do
   gem 'jruby-openssl'
 end
 
-gem 'rails', '2.3.14' if ENV['RESTGRAPH'] == 'rails2'
-gem 'rails', '3.2.13' if ENV['RESTGRAPH'] == 'rails3'
+platforms(:rbx) do
+  gem 'rubysl-rexml' # required by webmock required by crack
+end
+
+gem 'rails', '2.3.18' if ENV['RESTGRAPH'] == 'rails2'
+gem 'rails', '3.2.15' if ENV['RESTGRAPH'] == 'rails3'
