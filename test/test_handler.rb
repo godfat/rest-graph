@@ -16,15 +16,21 @@ describe RestGraph do
       stub_request(:get, 'https://graph.facebook.com/me').
         to_return(:body => '{}')
 
-      mock(Time).now{ 666 }
-      mock(Time).now{ 999 }
+      begin # workaround polluting Time object, which would break rbx
+        time = Object.new
+        mock(time).now{ 666 }
+        mock(time).now{ 999 }
+        RestGraph.const_set(:Time, time)
 
-      logger = []
-      rg = RestGraph.new(:log_handler => lambda{ |e|
-                                           logger << [e.duration, e.url] })
-      rg.get('me')
+        logger = []
+        rg = RestGraph.new(:log_handler => lambda{ |e|
+                                             logger << [e.duration, e.url] })
+        rg.get('me')
 
-      logger.last.should == [333, 'https://graph.facebook.com/me']
+        logger.last.should == [333, 'https://graph.facebook.com/me']
+      ensure
+        RestGraph.send(:remove_const, :Time)
+      end
     end
   end
 
