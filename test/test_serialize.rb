@@ -12,17 +12,7 @@ describe RestGraph do
   end
 
   should 'be serialized with lighten' do
-    engines = if RUBY_VERSION >= '1.9.2'
-                require 'psych'
-                YAML::ENGINE.yamler = 'psych'
-                [Marshal, YAML, Psych]
-              elsif defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
-                [Marshal]
-              else
-                [YAML]
-              end
-
-    engines.each{ |engine|
+    [Marshal, YAML, Psych].each{ |engine|
       test = lambda{ |obj| engine.load(engine.dump(obj)) }
         rg = RestGraph.new(:log_handler => lambda{})
       lambda{ test[rg] }.should.raise(TypeError)
