@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors = [
   "Cardinal Blue",
   "Lin Jen-Shin (godfat)"]
-  s.date = "2013-09-29"
+  s.date = "2013-11-16"
   s.description = "A lightweight Facebook Graph API client\n\nWe have moved the development from rest-graph to [rest-core][].\nBy now on, we would only fix bugs in rest-graph rather than adding\nfeatures, and we would only backport important changes from rest-core\nonce in a period. If you want the latest goodies, please see [rest-core][]\nOtherwise, you can stay with rest-graph with bugs fixes.\n\n[rest-core]: https://github.com/godfat/rest-core"
   s.email = ["godfat (XD) godfat.org"]
   s.files = [
@@ -31,26 +31,6 @@ Gem::Specification.new do |s|
   "doc/tutorial.md",
   "example/multi/config.ru",
   "example/multi/rainbows.rb",
-  "example/rails2/Gemfile",
-  "example/rails2/README",
-  "example/rails2/Rakefile",
-  "example/rails2/app/controllers/application_controller.rb",
-  "example/rails2/app/views/application/helper.html.erb",
-  "example/rails2/config/boot.rb",
-  "example/rails2/config/environment.rb",
-  "example/rails2/config/environments/development.rb",
-  "example/rails2/config/environments/production.rb",
-  "example/rails2/config/environments/test.rb",
-  "example/rails2/config/initializers/cookie_verification_secret.rb",
-  "example/rails2/config/initializers/new_rails_defaults.rb",
-  "example/rails2/config/initializers/session_store.rb",
-  "example/rails2/config/preinitializer.rb",
-  "example/rails2/config/rest-graph.yaml",
-  "example/rails2/config/routes.rb",
-  "example/rails2/log",
-  "example/rails2/test/functional/application_controller_test.rb",
-  "example/rails2/test/test_helper.rb",
-  "example/rails2/test/unit/rails_util_test.rb",
   "example/rails3/Gemfile",
   "example/rails3/Rakefile",
   "example/rails3/app/controllers/application_controller.rb",
@@ -103,7 +83,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/godfat/rest-graph"
   s.licenses = ["Apache License 2.0"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "2.1.5"
+  s.rubygems_version = "2.1.11"
   s.summary = "A lightweight Facebook Graph API client"
   s.test_files = [
   "test/test_api.rb",
