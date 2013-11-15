@@ -102,7 +102,7 @@ module RestGraph::TestUtil
     'updated_time' => '2010-05-07T15:04:08+0000'}
   end
 
-  instance_eval(s = Methods.map{ |meth|
+  singleton_class.module_eval(Methods.map{ |meth|
     <<-RUBY
       def #{meth} *args, &block
         any_instance_of(RestGraph){ |rg|
