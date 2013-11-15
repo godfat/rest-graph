@@ -26,6 +26,7 @@ platforms(:jruby) do
 end
 
 platforms(:rbx) do
+  gem 'rubysl-test-unit'  # required by activesupport
   gem 'rubysl-enumerator' # required by activesupport
   gem 'rubysl-rexml'      # required by webmock required by crack
   gem 'racc'              # required by journey required by actionpack
