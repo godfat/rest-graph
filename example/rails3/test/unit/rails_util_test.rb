@@ -8,7 +8,7 @@ class RailsUtilTest < ActiveSupport::TestCase
   def setup_mock url
     mock(RestGraph::RailsUtil).rest_graph_in_canvas?{ false }
     mock(RestGraph::RailsUtil).request{
-      mock(Object.new).url{ url }
+      mock(Object.new).url{ url }.object
     }
   end
 
