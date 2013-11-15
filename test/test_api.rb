@@ -58,7 +58,7 @@ describe RestGraph do
                               result.should == {'data' => []}
                               EM.stop
                             }
-    }
+    } if RUBY_ENGINE != 'jruby' # eventmachine for jruby is broken
   end
 
   should 'post right' do
