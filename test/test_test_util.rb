@@ -26,8 +26,9 @@ describe RestGraph::TestUtil do
     RestGraph::TestUtil.history.should == []
     begin
       RestGraph.new.get('me')
-    rescue => e
-      e.should.kind_of?(WebMock::NetConnectNotAllowedError)
+    rescue WebMock::NetConnectNotAllowedError
+    else
+      'never'.should == 'reach'
     end
   end
 
