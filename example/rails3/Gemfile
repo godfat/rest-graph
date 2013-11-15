@@ -13,5 +13,7 @@ group(:test) do
 end
 
 platform(:rbx) do
-  gem 'racc' # required by journey required by actionpack
+  gem 'rubysl-enumerator' # required by activesupport
+  gem 'rubysl-rexml'      # required by webmock required by crack
+  gem 'racc'              # required by journey required by actionpack
 end
