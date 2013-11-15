@@ -9,7 +9,7 @@ require 'rest-graph/facebook_util'
 
 describe RestGraph::FacebookUtil do
   after do
-    RR.verify
+    Muack.verify
   end
 
   before do

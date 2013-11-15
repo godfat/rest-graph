@@ -8,7 +8,7 @@ end
 describe RestGraph do
   after do
     WebMock.reset!
-    RR.verify
+    Muack.verify
   end
 
   describe 'cache' do
@@ -25,7 +25,7 @@ describe RestGraph do
     end
 
     should 'respect expires_in' do
-      mock(@cache).method(:store){ mock!.arity{ -3 } }
+      mock(@cache).method(:store){ mock(Object.new).arity{ -3 }.object }
       mock(@cache).store(@rg.send(:cache_key, {}, @url), @body,
                          :expires_in => 3)
       @rg.get('cache', {}, :expires_in => 3).should == @body

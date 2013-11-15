@@ -8,13 +8,13 @@ end
 describe RestGraph do
   after do
     WebMock.reset!
-    RR.verify
+    Muack.verify
   end
 
   should 'respect timeout' do
     stub_request(:get, 'https://graph.facebook.com/me').
       to_return(:body => '{}')
-    mock.proxy(Timeout).timeout(numeric)
+    mock(Timeout).timeout(is_a(Numeric)).proxy
     RestGraph.new.get('me').should == {}
   end
 

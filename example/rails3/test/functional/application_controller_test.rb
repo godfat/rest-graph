@@ -1,13 +1,13 @@
 
 require 'test_helper'
 require 'webmock'
-require 'rr'
+require 'muack'
 
 WebMock.disable_net_connect!
 
 class ApplicationControllerTest < ActionController::TestCase
   include WebMock::API
-  include RR::Adapters::TestUnit
+  include Muack::API
 
   def setup
     body = rand(2) == 0 ? '{"error":{"type":"OAuthException"}}' :
@@ -18,7 +18,7 @@ class ApplicationControllerTest < ActionController::TestCase
   end
 
   def teardown
-    RR.verify
+    Muack.verify
     WebMock.reset!
   end
 

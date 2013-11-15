@@ -8,7 +8,7 @@ end
 describe RestGraph do
   after do
     WebMock.reset!
-    RR.verify
+    Muack.verify
   end
 
   describe 'log handler' do

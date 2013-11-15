@@ -8,7 +8,7 @@ end
 describe RestGraph do
   after do
     WebMock.reset!
-    RR.verify
+    Muack.verify
   end
 
   should 'generate correct url' do
@@ -95,7 +95,7 @@ describe RestGraph do
     stub_request(:put, url).
       with(:body => 'message=hi%20there').to_return(:body => '[]')
 
-    mock.proxy(rg = RestGraph.new).post_request({}, url, '[]')
+    mock(rg = RestGraph.new).post_request({}, url, '[]').proxy
     rg.put('feed/me', :message => 'hi there').
       should == []
   end

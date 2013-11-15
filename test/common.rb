@@ -4,14 +4,14 @@ require 'rest-graph'
 # need to require this before webmock in order to enable mocking in em-http
 require 'em-http-request'
 
-require 'rr'
 require 'webmock'
+require 'muack'
 require 'bacon'
 
 # for testing lighten (serialization)
 require 'yaml'
 
-include RR::Adapters::RRMethods
+include Muack::API
 include WebMock::API
 WebMock.disable_net_connect!
 Bacon.summary_on_exit

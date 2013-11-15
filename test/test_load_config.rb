@@ -10,7 +10,7 @@ require 'rest-graph/config_util'
 describe RestGraph::ConfigUtil do
 
   after do
-    RR.verify
+    Muack.verify
   end
 
   should 'honor rails config' do

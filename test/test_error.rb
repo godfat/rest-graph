@@ -8,7 +8,7 @@ end
 describe RestGraph::Error do
   after do
     WebMock.reset!
-    RR.verify
+    Muack.verify
   end
 
   should 'have the right ancestors' do

@@ -1,11 +1,11 @@
 
 require 'rest-graph/core'
-require 'rr'
+require 'muack'
 
 require 'uri'
 
 module RestGraph::TestUtil
-  extend RR::Adapters::RRMethods
+  include Muack::API
 
   Methods = [:get, :delete, :post, :put]
 
@@ -14,7 +14,8 @@ module RestGraph::TestUtil
     any_instance_of(RestGraph){ |rg|
       stub(rg).data{default_data}
 
-      stub(rg).fetch{ |opts, uri, meth, payload|
+      stub(rg).fetch(is_a(Hash)  , is_a(String),
+                     is_a(Symbol), anything    ){ |opts, uri, meth, payload|
         history << [meth, uri, payload]
         http     = 'https?://[\w\d]+(\.[\w\d]+)+/'
         response = case uri
@@ -45,10 +46,7 @@ module RestGraph::TestUtil
 
   def teardown
     history.clear
-    [:default_response, :default_data].each{ |meth| send("#{meth}=", nil) }
-    RR::Injections::DoubleInjection.instances[RestGraph].keys.each{ |meth|
-      RR::Injections::DoubleInjection.reset_double(RestGraph, meth)
-    }
+    Muack.verify
     self
   end
   alias_method :after, :teardown
@@ -108,8 +106,8 @@ module RestGraph::TestUtil
     <<-RUBY
       def #{meth} *args, &block
         any_instance_of(RestGraph){ |rg|
-          stub.proxy(rg).#{meth}(*args, &block)
-          stub.proxy(rg).#{meth}
+          stub(rg).#{meth}(*args, &block).proxy
+          stub(rg).#{meth}(anything).proxy
         }
       end
     RUBY

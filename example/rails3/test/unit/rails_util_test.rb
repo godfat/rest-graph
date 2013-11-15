@@ -3,7 +3,7 @@ require 'test_helper'
 require 'rr'
 
 class RailsUtilTest < ActiveSupport::TestCase
-  include RR::Adapters::TestUnit
+  include Muack::API
 
   def setup_mock url
     mock(RestGraph::RailsUtil).rest_graph_in_canvas?{ false }

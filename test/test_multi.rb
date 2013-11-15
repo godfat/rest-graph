@@ -8,7 +8,7 @@ end
 describe 'RestGraph#multi' do
   after do
     WebMock.reset!
-    RR.verify
+    Muack.verify
   end
 
   should 'do multi query with em-http-request' do
@@ -16,7 +16,7 @@ describe 'RestGraph#multi' do
     stub_request(:get, url).to_return(:body => '{"data":"get"}')
     stub_request(:put, url).to_return(:body => '{"data":"put"}')
     rg = RestGraph.new
-    mock.proxy(rg).request_em(anything, anything)
+    mock(rg).request_em(anything, anything).proxy
     EM.run{
       rg.multi([[:get, 'me'], [:put, 'me']]){ |results|
         results.should == [{'data' => 'get'}, {'data' => 'put'}]
@@ -31,7 +31,7 @@ describe 'RestGraph#multi' do
       stub_request("#{meth[1..-1]}".to_sym, url).
         to_return(:body => "{\"data\":\"#{meth}\"}")
       rg = RestGraph.new
-      mock.proxy(rg).request_em(anything, anything)
+      mock(rg).request_em(anything, anything).proxy
       EM.run{
         rg.send(meth, 'me', {}){ |result|
           result.should == {'data' => meth.to_s}
@@ -45,8 +45,8 @@ describe 'RestGraph#multi' do
     rg = RestGraph.new
 
     args = [is_a(Hash), is_a(Array)]
-    mock.proxy(rg).request_em(*args) # at least one time
-    stub.proxy(rg).request_em(*args)
+    flag = false
+    stub(rg).request_em(*args){ |r| flag = true; r }.proxy
 
     %w[next previous].each{ |type|
       kind = "#{type}_page"
@@ -110,6 +110,8 @@ describe 'RestGraph#multi' do
         }
       }
     }
+
+    flag.should == true
   end
 
   # should 'cache in multi' do
