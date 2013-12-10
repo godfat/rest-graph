@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors = [
   "Cardinal Blue",
   "Lin Jen-Shin (godfat)"]
-  s.date = "2013-11-16"
-  s.description = "A lightweight Facebook Graph API client\n\nWe have moved the development from rest-graph to [rest-core][].\nBy now on, we would only fix bugs in rest-graph rather than adding\nfeatures, and we would only backport important changes from rest-core\nonce in a period. If you want the latest goodies, please see [rest-core][]\nOtherwise, you can stay with rest-graph with bugs fixes.\n\n[rest-core]: https://github.com/godfat/rest-core"
+  s.date = "2013-12-10"
+  s.description = "A lightweight Facebook Graph API client\n\nWe have moved the development from rest-graph to [rest-more][].\nFrom now on, we would only fix bugs in rest-graph rather than adding\nfeatures, and we would only backport important changes from rest-more\nonce in a period. If you want the latest goodies, please see [rest-more][]\nOtherwise, you can stay with rest-graph with bugs fixes.\n\n[rest-more]: https://github.com/godfat/rest-more"
   s.email = ["godfat (XD) godfat.org"]
   s.files = [
   ".gitignore",
@@ -59,7 +59,7 @@ Gem::Specification.new do |s|
   "lib/rest-graph/test_util.rb",
   "lib/rest-graph/version.rb",
   "rest-graph.gemspec",
-  "task/.gitignore",
+  "task/README.md",
   "task/gemgem.rb",
   "test/common.rb",
   "test/config/rest-graph.yaml",
