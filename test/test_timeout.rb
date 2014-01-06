@@ -14,7 +14,7 @@ describe RestGraph do
   should 'respect timeout' do
     stub_request(:get, 'https://graph.facebook.com/me').
       to_return(:body => '{}')
-    mock(Timeout).timeout(is_a(Numeric)).proxy
+    mock(Timeout).timeout(is_a(Numeric))
     RestGraph.new.get('me').should == {}
   end
 

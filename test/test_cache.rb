@@ -27,7 +27,7 @@ describe RestGraph do
     should 'respect expires_in' do
       mock(@cache).method(:store){ mock(Object.new).arity{ -3 }.object }
       mock(@cache).store(@rg.send(:cache_key, {}, @url), @body,
-                         :expires_in => 3)
+                         :expires_in => 3){}
       @rg.get('cache', {}, :expires_in => 3).should == @body
     end
 

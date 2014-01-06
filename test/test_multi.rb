@@ -16,7 +16,7 @@ describe 'RestGraph#multi' do
     stub_request(:get, url).to_return(:body => '{"data":"get"}')
     stub_request(:put, url).to_return(:body => '{"data":"put"}')
     rg = RestGraph.new
-    mock(rg).request_em(anything, anything).proxy
+    mock(rg).request_em(anything, anything)
     EM.run{
       rg.multi([[:get, 'me'], [:put, 'me']]){ |results|
         results.should == [{'data' => 'get'}, {'data' => 'put'}]
@@ -31,7 +31,7 @@ describe 'RestGraph#multi' do
       stub_request("#{meth[1..-1]}".to_sym, url).
         to_return(:body => "{\"data\":\"#{meth}\"}")
       rg = RestGraph.new
-      mock(rg).request_em(anything, anything).proxy
+      mock(rg).request_em(anything, anything)
       EM.run{
         rg.send(meth, 'me', {}){ |result|
           result.should == {'data' => meth.to_s}
@@ -46,7 +46,7 @@ describe 'RestGraph#multi' do
 
     args = [is_a(Hash), is_a(Array)]
     flag = false
-    stub(rg).request_em(*args){ |r| flag = true; r }.proxy
+    stub(rg).request_em(*args).peek_return{ |r| flag = true; r }
 
     %w[next previous].each{ |type|
       kind = "#{type}_page"

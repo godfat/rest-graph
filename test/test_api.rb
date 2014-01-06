@@ -95,7 +95,7 @@ describe RestGraph do
     stub_request(:put, url).
       with(:body => 'message=hi%20there').to_return(:body => '[]')
 
-    mock(rg = RestGraph.new).post_request({}, url, '[]').proxy
+    mock(rg = RestGraph.new).post_request({}, url, '[]')
     rg.put('feed/me', :message => 'hi there').
       should == []
   end

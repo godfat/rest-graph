@@ -221,7 +221,7 @@ class ApplicationControllerTest < ActionController::TestCase
     stub(@controller).cookies{cookies}
     f = RestGraph.new
     stub(@controller).rest_graph{f}
-    mock(f).parse_cookies!(cookies)
+    mock(f).parse_cookies!(cookies){}
   end
 
   def test_parse_cookies_fbs

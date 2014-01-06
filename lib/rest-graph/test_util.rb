@@ -106,8 +106,8 @@ module RestGraph::TestUtil
     <<-RUBY
       def #{meth} *args, &block
         any_instance_of(RestGraph){ |rg|
-          stub(rg).#{meth}(*args, &block).proxy
-          stub(rg).#{meth}(anything).proxy
+          stub(rg).#{meth}(*args, &block)
+          stub(rg).#{meth}(anything)
         }
       end
     RUBY
