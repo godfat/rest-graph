@@ -25,6 +25,7 @@ platforms :rbx do
   gem 'rubysl-fiber'      # used in rest-core
   gem 'rubysl-singleton'  # used in rake
   gem 'rubysl-rexml'      # used in crack used in webmock
+  gem 'rubysl-bigdecimal' # used in crack used in webmock
   gem 'rubysl-base64'     # used in em-socksify used in em-http-request
   gem 'rubysl-test-unit'  # used in activesupport
   gem 'rubysl-enumerator' # used in activesupport
