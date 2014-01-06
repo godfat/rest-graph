@@ -12,7 +12,7 @@ describe RestGraph do
   end
 
   should 'be serialized with lighten' do
-    [Marshal, YAML, Psych].each{ |engine|
+    [Marshal, YAML].each{ |engine|
       test = lambda{ |obj| engine.load(engine.dump(obj)) }
         rg = RestGraph.new(:log_handler => lambda{})
       lambda{ test[rg] }.should.raise(TypeError)
