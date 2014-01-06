@@ -3,6 +3,9 @@ source 'http://rubygems.org'
 
 gemspec
 
+gem 'rest-client'
+gem 'em-http-request'
+
 gem 'rake'
 gem 'bacon'
 gem 'muack'
@@ -14,22 +17,20 @@ gem 'json_pure'
 gem 'rack'
 gem 'ruby-hmac'
 
-gem 'rest-client'
-gem 'em-http-request'
-
-platforms(:ruby) do
+platforms :ruby do
   gem 'yajl-ruby'
 end
 
-platforms(:jruby) do
+platforms :rbx do
+  gem 'rubysl-singleton'  # used in rake
+  gem 'rubysl-rexml'      # used in webmock used in crack
+  gem 'rubysl-test-unit'  # used in activesupport
+  gem 'rubysl-enumerator' # used in activesupport
+  gem 'racc'              # used in journey used in actionpack
+end
+
+platforms :jruby do
   gem 'jruby-openssl'
 end
 
-platforms(:rbx) do
-  gem 'rubysl-test-unit'  # required by activesupport
-  gem 'rubysl-enumerator' # required by activesupport
-  gem 'rubysl-rexml'      # required by webmock required by crack
-  gem 'racc'              # required by journey required by actionpack
-end
-
-gem 'rails', '3.2.15' if ENV['RESTGRAPH'] == 'rails3'
+gem 'rails', '3.2.16' if ENV['RESTGRAPH'] == 'rails3'
