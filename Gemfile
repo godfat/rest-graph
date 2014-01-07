@@ -29,6 +29,7 @@ platforms :rbx do
   gem 'rubysl-base64'     # used in em-socksify used in em-http-request
   gem 'rubysl-test-unit'  # used in activesupport
   gem 'rubysl-enumerator' # used in activesupport
+  gem 'rubysl-benchmark'  # used in activesupport
   gem 'racc'              # used in journey used in actionpack
 end
 
