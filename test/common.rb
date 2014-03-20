@@ -11,10 +11,9 @@ require 'bacon'
 # for testing lighten (serialization)
 require 'yaml'
 
-include Muack::API
-include WebMock::API
 WebMock.disable_net_connect!
 Bacon.summary_on_exit
+Bacon::Context.__send__(:include, Muack::API, WebMock::API)
 
 module TestHelper
   module_function

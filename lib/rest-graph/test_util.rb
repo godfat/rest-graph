@@ -5,7 +5,7 @@ require 'muack'
 require 'uri'
 
 module RestGraph::TestUtil
-  include Muack::API
+  extend Muack::API
 
   Methods = [:get, :delete, :post, :put]
 
