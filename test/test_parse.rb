@@ -84,7 +84,7 @@ describe RestGraph do
     secret = 'aloha'
     json   = RestGraph.json_encode('ooh' => 'dir', 'moo' => 'bar')
     encode = lambda{ |str|
-      [str].pack('m').tr("\n=", '').tr('+/', '-_')
+      [str].pack('m0').tr('=', '').tr('+/', '-_')
     }
     json_encoded = encode[json]
     sig = OpenSSL::HMAC.digest('sha256', secret, json_encoded)
